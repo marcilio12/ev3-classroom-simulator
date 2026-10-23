@@ -1,0 +1,3168 @@
+:root {
+  /* Paleta Oficial LEGO MINDSTORMS Education EV3 Classroom v1.5.3 */
+  --ev3-motors: #0084FF;
+  --ev3-motors-dark: #006ACC;
+  --ev3-movement: #EC407A;
+  --ev3-movement-dark: #C2185B;
+  --ev3-display: #7E57C2;
+  --ev3-display-dark: #5E35B1;
+  --ev3-sound: #AB47BC;
+  --ev3-sound-dark: #8E24AA;
+  --ev3-events: #FFBF00;
+  --ev3-events-dark: #D99B00;
+  --ev3-control: #FF8F00;
+  --ev3-control-dark: #D97700;
+  --ev3-sensors: #00B0FF;
+  --ev3-sensors-dark: #0088CC;
+  --ev3-operators: #00C853;
+  --ev3-operators-dark: #00963E;
+  --ev3-variables: #FF6D00;
+  --ev3-variables-dark: #CC5700;
+  --ev3-myblocks: #FF5252;
+  --ev3-myblocks-dark: #D32F2F;
+
+  /* Cores de Interface EV3 Classroom */
+  --bg-workspace: #F8F9FA;
+  --bg-header: #EAEAEA;
+  --bg-menubar: #F5F5F5;
+  --bg-flyout: #FFFFFF;
+  --bg-rail: #FFFFFF;
+  --border-light: #E0E0E0;
+  --border-medium: #CCCCCC;
+  --text-primary: #212529;
+  --text-secondary: #5F6368;
+  --play-blue: #38B6FF;
+  --play-blue-hover: #0098F0;
+  --stop-red: #FF3B30;
+  --ev3-red: #E3000B;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-workspace);
+  color: var(--text-primary);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==================== 1. BARRA DE TÍTULO E MENU SUPERIOR (FIEL AO EV3 CLASSROOM 1.5.3) ==================== */
+.window-titlebar {
+  height: 26px;
+  background: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-size: 11.5px;
+  color: #222;
+  flex-shrink: 0;
+}
+
+.window-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.ev3-app-icon {
+  width: 15px;
+  height: 15px;
+  background: var(--ev3-red);
+  color: #fff;
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 7.5px;
+  letter-spacing: -0.4px;
+}
+
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #444;
+  font-size: 12px;
+}
+
+.menubar {
+  height: 24px;
+  background: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-bottom: 1px solid #E2E2E2;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.menubar-left, .menubar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-btn {
+  background: transparent;
+  border: none;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #222;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.menu-btn:hover {
+  background: #E4E4E4;
+}
+
+.menu-dropdown {
+  position: relative;
+}
+
+.dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 2px;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
+  min-width: 240px;
+  z-index: 3500;
+  padding: 6px 0;
+  display: none;
+}
+
+.dropdown-panel.open {
+  display: block;
+}
+
+.dropdown-item {
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 12.5px;
+  color: #212529;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dropdown-item:hover {
+  background: #F1F6FF;
+  color: var(--ev3-motors);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #EBEBEB;
+  margin: 4px 0;
+}
+
+/* ==================== 2. BARRA DE ABAS DO PROJETO (🏠 | Aba Projeto | +) ==================== */
+.project-tabbar {
+  height: 40px;
+  background: #EDEDED;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 12px 0 0;
+  border-bottom: 1px solid #DCDCDC;
+  flex-shrink: 0;
+}
+
+.tabbar-left {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  gap: 2px;
+}
+
+.home-tab-btn {
+  width: 52px;
+  height: 100%;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #666;
+  transition: background 0.15s, color 0.15s;
+}
+
+.home-tab-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: #111;
+}
+
+.home-tab-btn.active {
+  background: #FFFFFF;
+  color: #555;
+  box-shadow: 1px 0 0 #E0E0E0;
+}
+
+.tabs-container {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  gap: 4px;
+}
+
+.project-tab {
+  height: 33px;
+  background: #F8F9FA;
+  border-radius: 10px 10px 0 0;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  border: 1px solid #DCDCDC;
+  border-bottom: none;
+  cursor: pointer;
+  position: relative;
+}
+
+.project-tab.active {
+  background: #FFFFFF;
+  box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.project-title-input {
+  border: none;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  width: 96px;
+  outline: none;
+  padding: 2px 3px;
+  border-radius: 3px;
+}
+
+.project-title-input:focus {
+  background: #F0F4F8;
+}
+
+.tab-icon-btn {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  padding: 2px;
+}
+
+.tab-icon-btn:hover {
+  color: #111;
+}
+
+.tabbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+}
+
+.new-tab-plus-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 22px;
+  font-weight: 300;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.new-tab-plus-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #111;
+}
+
+/* ==================== 3. CONTAINER PRINCIPAL DIVIDIDO ==================== */
+.main-split-layout {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Barra de Categorias Esquerda (10 Categorias Oficiais EV3 Classroom) */
+.palette-sidebar {
+  display: flex;
+  height: 100%;
+  background: var(--bg-flyout);
+  border-right: 1px solid #E2E2E2;
+  flex-shrink: 0;
+  z-index: 20;
+  position: relative;
+  transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.category-rail {
+  width: 58px;
+  background: var(--bg-rail);
+  border-right: 1px solid #F0F0F0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 5px;
+  overflow-y: auto;
+}
+
+.category-rail::-webkit-scrollbar {
+  width: 0;
+}
+
+.category-btn {
+  width: 52px;
+  padding: 5px 2px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.category-btn:hover,
+.category-btn.active {
+  background: #F2F4F7;
+}
+
+.category-dot {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  transition: transform 0.15s;
+}
+
+.category-btn.active .category-dot {
+  transform: scale(1.12);
+}
+
+.category-label {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  text-transform: uppercase;
+  color: #555;
+  text-align: center;
+  max-width: 50px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Flyout de Blocos */
+.blocks-flyout {
+  width: 295px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  position: relative;
+}
+
+.flyout-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  padding: 14px 12px 28px 10px;
+}
+
+.flyout-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.flyout-scroll::-webkit-scrollbar-thumb {
+  background: #BDBDBD;
+  border-radius: 3px;
+}
+
+.flyout-category-section {
+  margin-bottom: 26px;
+}
+
+.flyout-category-title {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #616161;
+  margin-bottom: 12px;
+  padding-left: 2px;
+}
+
+.flyout-block-item {
+  margin-bottom: 10px;
+  cursor: grab;
+  transition: transform 0.12s ease, filter 0.12s ease;
+  display: block;
+  width: fit-content;
+}
+
+.flyout-block-item:hover {
+  transform: translateX(3px);
+  filter: brightness(1.04);
+}
+
+.flyout-block-item:active {
+  cursor: grabbing;
+}
+
+.flyout-footer {
+  height: 30px;
+  border-top: 1px solid #EEEEEE;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #666;
+  letter-spacing: 0.3px;
+  background: #FAFAFA;
+}
+
+/* Destaque sutil e elegante na barra de blocos ao arrastar um bloco para exclusão (EV3 Classroom) */
+.palette-sidebar.discard-highlight {
+  background-color: #EEF4FD !important;
+  border-right-color: #0070F3 !important;
+  box-shadow: inset -4px 0 0 0 #0070F3, 0 0 24px rgba(0, 112, 243, 0.18) !important;
+}
+
+.palette-sidebar.discard-highlight .blocks-flyout {
+  background-color: #F4F8FE !important;
+}
+
+.palette-sidebar.discard-highlight .category-rail {
+  background-color: #E8EFFC !important;
+}
+
+/* ==================== 4. WORKSPACE DE PROGRAMAÇÃO ==================== */
+.workspace-area {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  background-color: var(--bg-workspace);
+  background-image: radial-gradient(#DCE0E5 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  overflow: hidden;
+  min-width: 340px;
+  cursor: default;
+}
+
+.workspace-area.panning {
+  cursor: grabbing;
+}
+
+/* Badge discreta de ajuda de seleção no topo direito do workspace */
+.workspace-selection-badge {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  z-index: 15;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #FFD600;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1E293B;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 10px rgba(255, 214, 0, 0.25);
+}
+
+.workspace-selection-badge.visible {
+  display: inline-flex;
+}
+
+.ws-delete-pill-btn {
+  background: #FFEBEE;
+  color: #C62828;
+  border: 1px solid #FFCDD2;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ws-delete-pill-btn:hover {
+  background: #E53935;
+  color: #FFFFFF;
+}
+
+/* Ícone flutuante do EV3 no canto superior esquerdo do workspace */
+.ev3-brick-floating-btn {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  z-index: 15;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.ev3-brick-floating-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.ev3-brick-badge-dot {
+  position: absolute;
+  top: 2px;
+  right: 11px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2ECC71;
+  border: 1.5px solid #fff;
+}
+
+.ev3-brick-floating-btn.disconnected .ev3-brick-badge-dot {
+  background: #E53935;
+}
+
+.ev3-brick-floating-label {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #1B7A43;
+}
+
+.ev3-brick-floating-btn.disconnected .ev3-brick-floating-label {
+  color: #E53935;
+}
+
+/* Controles de Zoom, Organização e Undo/Redo no canto inferior esquerdo do Workspace */
+.workspace-bottom-controls {
+  position: absolute;
+  bottom: 14px;
+  left: 16px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ws-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 3px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.ws-circle-ctrl {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #555;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.14s ease;
+}
+
+.ws-circle-ctrl:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #111;
+  transform: scale(1.06);
+}
+
+.ws-circle-ctrl:active {
+  transform: scale(0.94);
+}
+
+.ws-zoom-pill {
+  background: transparent;
+  border: none;
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.ws-zoom-pill:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: #0084FF;
+}
+
+/* Retângulo de Seleção em Caixa (Rubberband Marquee) */
+.selection-marquee {
+  position: absolute;
+  border: 1.5px dashed #0084FF;
+  background: rgba(0, 132, 255, 0.12);
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Camada de Blocos no Workspace */
+.workspace-canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-origin: 0 0;
+}
+
+.block-node {
+  position: absolute;
+  cursor: grab;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+  transition: filter 0.1s;
+}
+
+.block-node:active {
+  cursor: grabbing;
+}
+
+.block-node.dragging {
+  z-index: 900 !important;
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28));
+  opacity: 0.96;
+}
+
+/* Bloco ou Conjunto de Blocos Selecionado (contorno amarelo idêntico à execução) */
+.block-node.selected {
+  z-index: 50;
+  filter: drop-shadow(0 0 8px rgba(255, 214, 0, 0.8)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.18));
+}
+
+.block-node.selected > svg > .block-bg-path {
+  stroke: #FFD600 !important;
+  stroke-width: 3.5px !important;
+}
+
+/* Bloco em execução no Runtime (efeito de luz e contorno dourado pulsante) */
+.block-node.running {
+  z-index: 60;
+  filter: drop-shadow(0 0 10px rgba(255, 214, 0, 0.95)) drop-shadow(0 0 20px rgba(255, 179, 0, 0.5));
+  animation: ev3BlockPulse 1.1s infinite alternate ease-in-out;
+}
+
+.block-node.running > svg > .block-bg-path {
+  stroke: #FFD600 !important;
+  stroke-width: 3.5px !important;
+}
+
+@keyframes ev3BlockPulse {
+  from {
+    filter: drop-shadow(0 0 7px rgba(255, 214, 0, 0.8)) drop-shadow(0 0 14px rgba(255, 179, 0, 0.4));
+  }
+  to {
+    filter: drop-shadow(0 0 14px rgba(255, 238, 88, 1)) drop-shadow(0 0 26px rgba(255, 193, 7, 0.75));
+  }
+}
+
+/* Sombra/Silhueta Fantasma de Encaixe (Ghost Snap Preview estilo Scratch 3.0 / EV3) */
+.snap-ghost-node {
+  position: absolute;
+  pointer-events: none;
+  z-index: 40;
+  opacity: 0.42;
+}
+
+.snap-ghost-node svg path {
+  fill: #495057 !important;
+  stroke: #212529 !important;
+  stroke-width: 1.5px !important;
+}
+
+.snap-ghost-node.boolean-ghost {
+  opacity: 0.85;
+  filter: drop-shadow(0 0 10px rgba(255, 214, 0, 0.9));
+}
+
+.snap-ghost-node.boolean-ghost svg path {
+  fill: rgba(255, 214, 0, 0.28) !important;
+  stroke: #FFD600 !important;
+  stroke-width: 2.5px !important;
+  stroke-dasharray: 5, 3.5;
+}
+
+/* Camada Global Flutuante durante Arrasto a partir da Paleta ou do Workspace */
+.global-drag-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.workspace-drag-wrapper {
+  position: fixed;
+  pointer-events: none;
+  transform-origin: 0 0;
+  z-index: 9999;
+}
+
+.workspace-drag-wrapper * {
+  pointer-events: none !important;
+}
+
+/* Menu de Contexto (Botão Direito nos Blocos/Workspace) */
+.ev3-context-menu {
+  position: fixed;
+  background: #FFFFFF;
+  border: 1px solid #D0D7DE;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  padding: 5px 0;
+  min-width: 210px;
+  z-index: 9500;
+  display: none;
+}
+
+.ev3-context-menu.open {
+  display: block;
+}
+
+.ev3-context-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 500;
+  color: #212529;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ev3-context-item:hover {
+  background: #F1F6FF;
+  color: var(--ev3-motors);
+}
+
+.ev3-context-item.danger:hover {
+  background: #FFEBEE;
+  color: #D32F2F;
+}
+
+/* Campos editáveis dentro dos blocos (Inputs & Dropdowns estilo EV3 Classroom) */
+.block-foreign-body {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  height: 100%;
+  padding: 0 12px 0 10px;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.block-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  border-right: 1.5px solid rgba(255, 255, 255, 0.38);
+  padding-right: 8px;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.block-icon-badge svg {
+  display: block;
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.14));
+}
+
+.block-input-pill {
+  pointer-events: auto;
+  background: #FFFFFF;
+  color: #212529;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  height: 28px;
+  min-width: 38px;
+  max-width: 84px;
+  padding: 0 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.block-input-pill::-webkit-outer-spin-button,
+.block-input-pill::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.block-input-pill {
+  -moz-appearance: textfield;
+}
+
+.block-input-pill:focus {
+  border-color: #0084FF;
+  box-shadow: 0 0 0 2.5px rgba(0, 132, 255, 0.45);
+}
+
+.block-select-pill {
+  pointer-events: auto;
+  background: rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+  border: 1.2px solid rgba(255, 255, 255, 0.38);
+  border-radius: 999px;
+  height: 28px;
+  padding: 0 9px;
+  font-size: 12px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.block-select-pill.single-value {
+  cursor: default;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.18);
+  border-color: rgba(255, 255, 255, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-select-pill option {
+  background: #FFFFFF;
+  color: #212529;
+}
+
+.block-steer-pill {
+  pointer-events: auto;
+  background: #FFFFFF;
+  color: #212529;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.block-text-pill {
+  pointer-events: auto;
+  background: #FFFFFF;
+  color: #212529;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  height: 28px;
+  min-width: 48px;
+  max-width: 110px;
+  padding: 0 9px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  outline: none;
+  cursor: text;
+  user-select: text;
+  -webkit-user-select: text;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.block-text-pill:focus {
+  border-color: #212529;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Slot hexagonal booleano estilo Scratch 3.0 / EV3 Classroom */
+.block-boolean-slot {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  position: relative;
+  user-select: none;
+}
+
+.block-boolean-slot.empty {
+  width: 48px;
+  height: 28px;
+  margin: 0 4px;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-boolean-slot.empty .boolean-slot-empty-svg {
+  display: block;
+  overflow: visible;
+}
+
+.block-boolean-slot.empty .boolean-slot-empty-svg polygon {
+  fill: rgba(0, 0, 0, 0.32);
+  stroke: rgba(0, 0, 0, 0.45);
+  stroke-width: 1.5px;
+  transition: fill 0.15s, stroke 0.15s;
+}
+
+.block-boolean-slot.empty:hover .boolean-slot-empty-svg polygon {
+  fill: rgba(0, 0, 0, 0.45);
+  stroke: rgba(255, 255, 255, 0.55);
+}
+
+.block-boolean-slot.snap-hover {
+  filter: drop-shadow(0 0 8px rgba(255, 214, 0, 0.95)) drop-shadow(0 0 14px rgba(255, 214, 0, 0.65));
+  animation: booleanSlotSnapGlow 0.8s infinite alternate ease-in-out;
+}
+
+.block-boolean-slot.snap-hover .boolean-slot-empty-svg polygon {
+  fill: rgba(255, 214, 0, 0.32) !important;
+  stroke: #FFD600 !important;
+  stroke-width: 2.2px !important;
+}
+
+@keyframes booleanSlotSnapGlow {
+  from { filter: drop-shadow(0 0 6px rgba(255, 214, 0, 0.8)); }
+  to { filter: drop-shadow(0 0 12px rgba(255, 238, 88, 1)); }
+}
+
+.block-boolean-slot.filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 4px;
+}
+
+.block-boolean-slot.filled > .block-node {
+  position: relative !important;
+  left: 0 !important;
+  top: 0 !important;
+  display: inline-block;
+  vertical-align: middle;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
+}
+
+.block-else-label {
+  position: absolute;
+  left: 12px;
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 600;
+  pointer-events: none;
+  user-select: none;
+}
+
+.block-loop-arrow {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* Notas Explicativas Amarelas com linha conectora */
+.ev3-sticky-note {
+  position: absolute;
+  width: 175px;
+  background: #FFF9C4;
+  border: 1px solid #E6DC8B;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  z-index: 10;
+  font-size: 11px;
+  color: #5C5424;
+  overflow: hidden;
+}
+
+.ev3-sticky-header {
+  height: 18px;
+  background: #EFE48B;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  cursor: grab;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.ev3-sticky-body {
+  padding: 8px 10px;
+  line-height: 1.38;
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Divisor Redimensionável com a Aba "||" idêntica ao EV3 Classroom */
+.split-resizer {
+  width: 4px;
+  background: #E0E0E0;
+  cursor: col-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  position: relative;
+  transition: background 0.15s;
+}
+
+.split-resizer:hover,
+.split-resizer.resizing {
+  background: var(--play-blue);
+}
+
+.resizer-handle-tab {
+  position: absolute;
+  left: -18px;
+  width: 18px;
+  height: 46px;
+  background: #FFFFFF;
+  border: 1px solid #DCDCDC;
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -2px 1px 6px rgba(0, 0, 0, 0.06);
+  color: #666;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: col-resize;
+}
+
+/* ==================== 5. PAINEL DE SIMULAÇÃO (ARENA 2D + HUD) ==================== */
+.hidden-sim {
+  display: none !important;
+}
+
+.simulation-panel {
+  width: 500px;
+  min-width: 340px;
+  max-width: 65vw;
+  height: 100%;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ==================== 5B. POP-UP DE CONEXÃO DO EV3 (FIEL A Conectar.png) ==================== */
+.ev3-connect-backdrop {
+  position: fixed;
+  top: 26px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(34, 34, 34, 0.58);
+  z-index: 3500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.ev3-connect-backdrop.open {
+  display: flex;
+}
+
+.ev3-connect-card {
+  width: 685px;
+  max-width: 94vw;
+  min-height: 515px;
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.38);
+  padding: 24px 36px 38px 36px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ev3-connect-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.ev3-connect-mode-link {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 500;
+  color: #757575;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.ev3-connect-mode-link:hover {
+  color: #111111;
+  background: #F4F5F7;
+}
+
+.ev3-connect-close-btn {
+  background: none;
+  border: none;
+  color: #757575;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ev3-connect-close-btn:hover {
+  background: #F2F2F2;
+  color: #000000;
+}
+
+.ev3-connect-title {
+  font-size: 29px;
+  font-weight: 800;
+  color: #000000;
+  letter-spacing: -0.3px;
+  margin-bottom: 18px;
+}
+
+.ev3-connect-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.ev3-connect-steps {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 10px;
+}
+
+.ev3-connect-step-item {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.ev3-connect-action-box {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ev3-connect-sim-btn {
+  background: #0084FF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.28);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.ev3-connect-sim-btn:hover {
+  background: #006FD6;
+  transform: translateY(-1px);
+}
+
+.ev3-connect-hint {
+  font-size: 11px;
+  color: #757575;
+}
+
+.ev3-connect-brick-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Recorte exato do Bloco Inteligente EV3 de Conectar.png */
+.ev3-connect-brick-crop {
+  width: 215px;
+  height: 310px;
+  background-image: url('../Conectar.png');
+  background-repeat: no-repeat;
+  background-size: 1248px auto;
+  background-position: -635px -112px;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.ev3-connect-brick-crop:hover {
+  transform: scale(1.03);
+  filter: drop-shadow(0 6px 16px rgba(46, 204, 113, 0.28));
+}
+
+.ev3-hud-panel {
+  background: #F7F8FA;
+  border-bottom: 1px solid var(--border-light);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.hud-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #444;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-brick-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.brick-btn {
+  background: #FFFFFF;
+  border: 1px solid #D0D5DD;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.brick-btn:hover {
+  background: var(--ev3-events);
+  color: #fff;
+  border-color: var(--ev3-events-dark);
+}
+
+.hud-ports-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.port-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E6EA;
+  border-radius: 6px;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.port-card.motor-port {
+  border-left: 3px solid var(--ev3-motors);
+}
+
+.port-card.movement-port {
+  border-left: 3px solid var(--ev3-movement);
+}
+
+.port-card.sensor-port {
+  border-left: 3px solid var(--ev3-sensors);
+}
+
+.port-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 9px;
+  font-weight: 700;
+  color: #6C757D;
+}
+
+.port-badge {
+  background: #E9ECEF;
+  color: #212529;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-weight: 800;
+}
+
+.port-value {
+  font-size: 11px;
+  font-weight: 700;
+  color: #212529;
+  font-variant-numeric: tabular-nums;
+}
+
+.port-sub {
+  font-size: 9px;
+  color: #6C757D;
+  font-variant-numeric: tabular-nums;
+}
+
+.arena-toolbar {
+  height: 34px;
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.arena-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.arena-btn {
+  background: #F4F5F7;
+  border: 1px solid #DCE0E5;
+  border-radius: 5px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.arena-btn:hover {
+  background: #E6F2FF;
+  border-color: var(--ev3-motors);
+  color: var(--ev3-motors);
+}
+
+.arena-btn.active {
+  background: var(--ev3-motors);
+  border-color: var(--ev3-motors);
+  color: #fff;
+}
+
+.arena-select {
+  background: #F4F5F7;
+  border: 1px solid #DCE0E5;
+  border-radius: 5px;
+  padding: 3px 6px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+}
+
+.arena-canvas-wrapper {
+  flex: 1;
+  position: relative;
+  background: #E9ECEF;
+  overflow: hidden;
+}
+
+#arenaCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+#arenaCanvas:active {
+  cursor: grabbing;
+}
+
+.arena-overlay-hint {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  color: #495057;
+  pointer-events: none;
+}
+
+.execution-statusbar {
+  height: 26px;
+  background: #F8F9FA;
+  border-top: 1px solid var(--border-light);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10.5px;
+  color: #495057;
+  flex-shrink: 0;
+}
+
+/* Botões Circulares no Canto Inferior Direito */
+.floating-play-cluster {
+  position: absolute;
+  bottom: 36px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 40;
+}
+
+.secondary-fab-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  color: #38B6FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.15s, background 0.15s;
+}
+
+.secondary-fab-btn:hover {
+  transform: scale(1.06);
+  background: #F5FAFF;
+}
+
+.play-fab-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--play-blue);
+  border: none;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(56, 182, 255, 0.45);
+  transition: transform 0.15s, background 0.15s;
+}
+
+.play-fab-btn:hover {
+  background: var(--play-blue-hover);
+  transform: scale(1.06);
+}
+
+.play-fab-btn.running {
+  background: var(--stop-red);
+  box-shadow: 0 4px 14px rgba(255, 59, 48, 0.45);
+}
+
+/* ==================== 6. POPOVER DE DIREÇÃO ==================== */
+.steering-popover {
+  position: fixed;
+  background: #FFFFFF;
+  border: 1px solid #D0D7DE;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+  z-index: 4000;
+  width: 220px;
+  display: none;
+}
+
+.steering-popover.open {
+  display: block;
+}
+
+.steering-popover-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.steering-slider {
+  width: 100%;
+  accent-color: var(--ev3-movement);
+  cursor: pointer;
+}
+
+.steering-presets {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  gap: 4px;
+}
+
+.steering-preset-btn {
+  flex: 1;
+  background: #F1F3F5;
+  border: 1px solid #DCE0E5;
+  border-radius: 4px;
+  padding: 3px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.steering-preset-btn:hover {
+  background: #FFE4EE;
+  border-color: var(--ev3-movement);
+  color: var(--ev3-movement-dark);
+}
+
+/* ==================== 7A. TELA INICIAL (PRIMEIRA TELA — FIEL A Página inicial.jpeg) ==================== */
+.ev3-start-screen {
+  position: fixed;
+  top: 90px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  z-index: 2500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.ev3-start-screen.open {
+  display: flex;
+}
+
+.ev3-start-split-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(14px);
+}
+
+.ev3-start-option {
+  background: transparent;
+  border: none;
+  width: 310px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: transform 0.16s ease, background-color 0.16s ease;
+}
+
+.ev3-start-option:hover {
+  background-color: #F8FAFC;
+  transform: translateY(-3px);
+}
+
+.ev3-start-option:active {
+  transform: translateY(0);
+}
+
+.ev3-start-icon-wrap {
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.ev3-start-title {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.24;
+  letter-spacing: 0.2px;
+  margin-bottom: 8px;
+}
+
+.ev3-start-title.muted {
+  color: #757575;
+}
+
+.ev3-start-option:hover .ev3-start-title.muted {
+  color: #333333;
+}
+
+.ev3-start-title.dark {
+  color: #000000;
+  margin-top: 6px;
+}
+
+.ev3-start-subtitle {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888888;
+}
+
+.ev3-start-subtitle.dark-sub {
+  color: #444444;
+}
+
+.ev3-start-vertical-divider {
+  width: 1px;
+  height: 215px;
+  background: #EFEFEF;
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+/* ==================== 7B. MODAL DA PÁGINA INICIAL (FIEL A Pagina inicial.jpeg) ==================== */
+.ev3-home-backdrop {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(58, 58, 58, 0.86);
+  display: none;
+  justify-content: center;
+  align-items: stretch;
+  z-index: 3000;
+  padding: 4px 13% 0 13%;
+}
+
+.ev3-home-backdrop.open {
+  display: flex;
+}
+
+.ev3-home-modal {
+  background: #F5F5F5;
+  border-radius: 18px 18px 0 0;
+  width: 100%;
+  max-width: 1060px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+}
+
+.ev3-home-topbar {
+  height: 62px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #E5E5E5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  flex-shrink: 0;
+}
+
+.ev3-home-icon-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ev3-home-icon-btn:hover {
+  background: #F2F2F2;
+  color: #111;
+}
+
+.ev3-home-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.ev3-home-nav-item {
+  background: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  padding: 8px 6px;
+  letter-spacing: 0.3px;
+  transition: color 0.15s;
+}
+
+.ev3-home-nav-item:hover {
+  color: #111;
+}
+
+.ev3-home-nav-item.active {
+  color: #000;
+  font-weight: 800;
+}
+
+.ev3-home-scroll {
+  flex: 1;
+  overflow-y: auto;
+  background: #F5F5F5;
+}
+
+.ev3-home-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.ev3-home-scroll::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+  border-radius: 3px;
+}
+
+.ev3-hero-section {
+  position: relative;
+  height: 295px;
+  background: #F3F3F3;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 42px;
+}
+
+.ev3-hero-bg-photo {
+  position: absolute;
+  inset: 0;
+  background-image: url('../Pagina inicial.jpeg');
+  background-repeat: no-repeat;
+  background-size: 138.8% auto;
+  background-position: 50% 21.5%;
+  pointer-events: none;
+}
+
+.ev3-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 380px;
+  background: linear-gradient(90deg, #F3F3F3 82%, rgba(243, 243, 243, 0) 100%);
+  padding: 20px 40px 20px 0;
+}
+
+.ev3-hero-title {
+  font-size: 40px;
+  font-weight: 800;
+  color: #000000;
+  letter-spacing: -0.5px;
+  margin-bottom: 18px;
+  line-height: 1.1;
+}
+
+.ev3-hero-subtitle {
+  font-size: 15px;
+  color: #333333;
+  line-height: 1.42;
+  margin-bottom: 28px;
+}
+
+.ev3-iniciar-pill-btn {
+  background: #FFFFFF;
+  color: #0077CC;
+  border: 1.8px solid #0084FF;
+  border-radius: 999px;
+  padding: 11px 32px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ev3-iniciar-pill-btn:hover {
+  background: #0084FF;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(0, 132, 255, 0.25);
+}
+
+.ev3-recent-section {
+  background: #FFFFFF;
+  padding: 22px 38px 28px 38px;
+}
+
+.ev3-section-heading {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.ev3-recent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.ev3-project-item {
+  width: 110px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ev3-project-square {
+  width: 108px;
+  height: 108px;
+  background: #FFFFFF;
+  border: 1px solid #E2E2E2;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+  position: relative;
+}
+
+.ev3-project-item:hover .ev3-project-square {
+  border-color: #0084FF;
+  box-shadow: 0 4px 14px rgba(0, 132, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+.ev3-project-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #222;
+  max-width: 106px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ev3-project-time {
+  font-size: 11px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.ev3-bottom-cards-section {
+  padding: 24px 38px 36px 38px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  background: #F5F5F5;
+}
+
+.ev3-large-feature-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  padding: 22px 22px;
+  min-height: 215px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  border: 1.5px solid transparent;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  overflow: hidden;
+  position: relative;
+}
+
+.ev3-large-feature-card:hover {
+  transform: translateY(-3px);
+  border-color: #0084FF;
+  box-shadow: 0 8px 22px rgba(0, 132, 255, 0.12);
+}
+
+.ev3-challenge-feature-card {
+  background: linear-gradient(155deg, #FFFFFF 55%, #FFFDF5 100%);
+  border-color: #FFE082;
+}
+
+.ev3-challenge-feature-card:hover {
+  border-color: #FFB300;
+  box-shadow: 0 10px 26px rgba(255, 179, 0, 0.22);
+}
+
+.ev3-feature-pill-badge {
+  display: inline-block;
+  background: #FFF8E1;
+  color: #E65100;
+  border: 1px solid #FFE082;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.ev3-challenge-trophy-art {
+  align-self: flex-end;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ev3-large-feature-card h4 {
+  font-size: 18.5px;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 6px;
+}
+
+.ev3-large-feature-card p {
+  font-size: 12.5px;
+  color: #555;
+  max-width: 92%;
+  line-height: 1.42;
+}
+
+.ev3-feature-card-img {
+  height: 110px;
+  object-fit: contain;
+  align-self: flex-end;
+  margin-top: 8px;
+}
+
+/* ==================== 8. VISUALIZADOR DE CONSTRUÇÃO EM TELA CHEIA ==================== */
+.ev3-builder-overlay {
+  position: fixed;
+  top: 26px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  z-index: 3800;
+  display: none;
+  flex-direction: column;
+}
+
+.ev3-builder-overlay.open {
+  display: flex;
+}
+
+.ev3-builder-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #666;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.ev3-builder-close:hover {
+  color: #000;
+}
+
+.ev3-builder-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 60px;
+  overflow: hidden;
+}
+
+.ev3-builder-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.ev3-builder-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1.8px solid #2196F3;
+  color: #2196F3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.15s;
+}
+
+.ev3-builder-nav-arrow:hover {
+  background: #2196F3;
+  color: #FFFFFF;
+}
+
+.ev3-builder-nav-arrow.prev {
+  left: 24px;
+}
+
+.ev3-builder-nav-arrow.next {
+  right: 24px;
+}
+
+.ev3-builder-bottom {
+  height: 74px;
+  padding: 0 56px 14px 56px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ev3-builder-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ev3-builder-slider {
+  flex: 1;
+  accent-color: #2196F3;
+  height: 4px;
+  cursor: pointer;
+}
+
+.ev3-builder-step-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2196F3;
+  min-width: 75px;
+  text-align: right;
+}
+
+.ev3-builder-zoom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ==================== 9. GERENCIAMENTO DE MÚLTIPLAS ABAS DE PROJETO E TELAS INTERNAS DA HOME ==================== */
+.tabs-container {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  gap: 3px;
+  overflow-x: auto;
+  max-width: calc(100vw - 140px);
+}
+
+.tabs-container::-webkit-scrollbar {
+  height: 0;
+}
+
+.project-tab {
+  height: 33px;
+  background: #DFDFDF;
+  border-radius: 10px 10px 0 0;
+  padding: 0 10px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+  border: 1px solid #D2D2D2;
+  border-bottom: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.project-tab:hover {
+  background: #EAEAEA;
+  color: #222;
+}
+
+.project-tab.active {
+  background: #FFFFFF;
+  color: #212529;
+  border-color: #DCDCDC;
+  box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.project-tab-title {
+  font-size: 12px;
+  font-weight: 500;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-tab.active .project-tab-title {
+  font-weight: 600;
+}
+
+.tab-close-btn,
+.tab-dots-btn {
+  background: none;
+  border: none;
+  color: #777;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+  transition: background 0.12s, color 0.12s;
+}
+
+.tab-dots-btn:hover {
+  background: rgba(0, 0, 0, 0.07);
+  color: #111;
+}
+
+.tab-close-btn:hover {
+  background: #FFEBEE;
+  color: #D32F2F;
+}
+
+/* Menu flutuante do botão ⋮ da aba */
+.tab-context-dropdown {
+  position: fixed;
+  background: #FFFFFF;
+  border: 1px solid #D0D7DE;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+  padding: 5px 0;
+  min-width: 200px;
+  z-index: 4500;
+  display: none;
+}
+
+.tab-context-dropdown.open {
+  display: block;
+}
+
+/* Abas internas da Tela Inicial (PÁGINA INICIAL | INICIAR | UNIDADES | CONSTRUIR | MEUS PROJETOS) */
+.ev3-home-view {
+  display: none;
+}
+
+.ev3-home-view.active {
+  display: block;
+}
+
+.ev3-home-subpage {
+  padding: 28px 38px 40px 38px;
+}
+
+.ev3-subpage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ev3-subpage-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111;
+}
+
+.ev3-subpage-subtitle {
+  font-size: 13.5px;
+  color: #555;
+  margin-top: 4px;
+}
+
+.ev3-activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ev3-activity-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E5E9;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+
+.ev3-activity-card:hover {
+  transform: translateY(-3px);
+  border-color: #0084FF;
+  box-shadow: 0 10px 24px rgba(0, 132, 255, 0.12);
+}
+
+.ev3-activity-banner {
+  height: 120px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #FFFFFF;
+  position: relative;
+}
+
+.ev3-activity-badge {
+  align-self: flex-start;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.ev3-activity-banner h3 {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.ev3-activity-body {
+  padding: 16px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.ev3-activity-body p {
+  font-size: 12.5px;
+  color: #555;
+  line-height: 1.45;
+}
+
+.ev3-activity-cta {
+  align-self: flex-start;
+  background: #F0F7FF;
+  color: #0077CC;
+  border: 1px solid #B3DAFF;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ev3-activity-card:hover .ev3-activity-cta {
+  background: #0084FF;
+  color: #FFFFFF;
+  border-color: #0084FF;
+}
+
+/* Botão de excluir projeto recente no hover do card quadrado */
+.ev3-project-delete-mini {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #E0E0E0;
+  color: #777;
+  font-size: 10px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.ev3-project-item:hover .ev3-project-delete-mini {
+  display: flex;
+}
+
+.ev3-project-delete-mini:hover {
+  background: #FFEBEE;
+  color: #D32F2F;
+  border-color: #FFCDD2;
+}
+
+/* Gerenciador "MEUS PROJETOS" */
+.ev3-projects-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ev3-search-input {
+  background: #FFFFFF;
+  border: 1px solid #D0D5DD;
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  width: 230px;
+  outline: none;
+}
+
+.ev3-search-input:focus {
+  border-color: #0084FF;
+}
+
+.ev3-primary-btn {
+  background: #0084FF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s;
+}
+
+.ev3-primary-btn:hover {
+  background: #006ACC;
+}
+
+.ev3-secondary-btn {
+  background: #FFFFFF;
+  color: #333;
+  border: 1px solid #D0D5DD;
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ev3-secondary-btn:hover {
+  border-color: #0084FF;
+  color: #0084FF;
+}
+
+.ev3-myprojects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.ev3-myproject-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E5E9;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ev3-myproject-card:hover {
+  border-color: #0084FF;
+  box-shadow: 0 6px 18px rgba(0, 132, 255, 0.1);
+}
+
+.ev3-myproject-preview {
+  height: 92px;
+  background: #F8F9FA;
+  border: 1px solid #EFEFEF;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.ev3-myproject-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.ev3-mini-action-btn {
+  flex: 1;
+  background: #F4F6F8;
+  border: 1px solid #DCE0E5;
+  border-radius: 6px;
+  padding: 5px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.12s;
+}
+
+.ev3-mini-action-btn:hover {
+  background: #E6F2FF;
+  border-color: #0084FF;
+  color: #0084FF;
+}
+
+.ev3-mini-action-btn.danger:hover {
+  background: #FFEBEE;
+  border-color: #FFCDD2;
+  color: #D32F2F;
+}
+
+/* ==================== 10. ABA DE DESAFIOS GAMIFICADOS E OVERLAY DE VITÓRIA ==================== */
+.ev3-gamification-hero {
+  background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+  border-radius: 16px;
+  padding: 24px 28px;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
+}
+
+.ev3-gamification-left {
+  flex: 1;
+}
+
+.ev3-gamification-kicker {
+  display: inline-block;
+  background: rgba(255, 179, 0, 0.2);
+  color: #FFD54F;
+  border: 1px solid rgba(255, 213, 79, 0.35);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  margin-bottom: 8px;
+}
+
+.ev3-gamification-title {
+  font-size: 25px;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin-bottom: 6px;
+}
+
+.ev3-gamification-desc {
+  font-size: 12.5px;
+  color: #CBD5E1;
+  line-height: 1.48;
+  max-width: 600px;
+  margin-bottom: 14px;
+}
+
+.ev3-gamification-progress-wrap {
+  max-width: 520px;
+}
+
+.ev3-gamification-progress-labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #E2E8F0;
+  margin-bottom: 6px;
+}
+
+.ev3-reset-progress-link {
+  background: none;
+  border: none;
+  color: #94A3B8;
+  font-size: 11px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ev3-reset-progress-link:hover {
+  color: #F8FAFC;
+}
+
+.ev3-gamification-progress-bar {
+  height: 9px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ev3-gamification-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00E676, #00B0FF);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.ev3-gamification-stats {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.ev3-gstat-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 12px 16px;
+  min-width: 118px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.ev3-gstat-label {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #94A3B8;
+  letter-spacing: 0.5px;
+}
+
+.ev3-gstat-value {
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.ev3-gstat-value.gold {
+  color: #FFD54F;
+}
+
+.ev3-gstat-value.cyan {
+  color: #40C4FF;
+}
+
+/* Botões de Filtro de Categoria de Desafios */
+.ev3-challenge-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ev3-challenge-filter-btn {
+  background: #FFFFFF;
+  border: 1px solid #D0D7DE;
+  border-radius: 999px;
+  padding: 7px 15px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ev3-challenge-filter-btn:hover {
+  border-color: #0084FF;
+  color: #0084FF;
+}
+
+.ev3-challenge-filter-btn.active {
+  background: #0084FF;
+  border-color: #0084FF;
+  color: #FFFFFF;
+  box-shadow: 0 3px 10px rgba(0, 132, 255, 0.25);
+}
+
+/* Grade de Cards de Desafios */
+.ev3-challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 18px;
+}
+
+.ev3-challenge-card {
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.ev3-challenge-card:hover {
+  transform: translateY(-3px);
+  border-color: #0084FF;
+  box-shadow: 0 12px 26px rgba(0, 132, 255, 0.14);
+}
+
+.ev3-challenge-card.completed {
+  border-color: #00C853;
+}
+
+.ev3-challenge-card-banner {
+  padding: 14px 18px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.ev3-challenge-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ev3-challenge-level-pill {
+  background: rgba(0, 0, 0, 0.26);
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+}
+
+.ev3-challenge-xp-pill {
+  background: rgba(255, 255, 255, 0.22);
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.ev3-challenge-card-banner h3 {
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.ev3-challenge-stars-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+}
+
+.ev3-star {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.ev3-star.earned {
+  color: #FFD600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.ev3-challenge-card-body {
+  padding: 15px 18px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 1;
+}
+
+.ev3-challenge-desc {
+  font-size: 12.3px;
+  color: #475569;
+  line-height: 1.45;
+}
+
+.ev3-challenge-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ev3-challenge-tag {
+  background: #F1F5F9;
+  color: #334155;
+  border: 1px solid #E2E8F0;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.ev3-challenge-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid #F1F5F9;
+}
+
+.ev3-challenge-status-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748B;
+}
+
+.ev3-challenge-status-text.done {
+  color: #00A844;
+}
+
+.ev3-challenge-play-btn {
+  background: #0084FF;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 15px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ev3-challenge-card:hover .ev3-challenge-play-btn {
+  background: #0069CC;
+}
+
+/* HUD de Desafio Ativo dentro da Arena 2D */
+.challenge-hud-banner {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  color: #FFFFFF;
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  z-index: 15;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.challenge-hud-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.challenge-hud-badge {
+  background: #FFB300;
+  color: #111;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.challenge-hud-switch-btn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.challenge-hud-switch-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* Quando o HUD de desafio está visível, move a dica de arrastar para o rodapé esquerdo */
+.arena-canvas-wrapper.has-challenge-hud .arena-overlay-hint {
+  top: auto;
+  bottom: 8px;
+  left: 10px;
+  max-width: calc(100% - 140px);
+}
+
+/* Overlay de Vitória ao Concluir Desafio */
+.challenge-victory-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(3px);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.challenge-victory-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 22px 24px;
+  width: 100%;
+  max-width: 370px;
+  text-align: center;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+  border: 2px solid #FFD54F;
+  animation: victoryPopIn 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+@keyframes victoryPopIn {
+  from {
+    transform: scale(0.84);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.challenge-victory-badge {
+  display: inline-block;
+  background: #E8F5E9;
+  color: #00A844;
+  border: 1px solid #A5D6A7;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.challenge-victory-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.challenge-victory-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.v-star {
+  color: #E2E8F0;
+}
+
+.v-star.earned {
+  color: #FFB300;
+  filter: drop-shadow(0 2px 6px rgba(255, 179, 0, 0.45));
+}
+
+.challenge-victory-xp {
+  display: inline-block;
+  background: #FFF8E1;
+  color: #E65100;
+  border: 1px solid #FFE082;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.challenge-victory-checklist {
+  list-style: none;
+  text-align: left;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 16px;
+}
+
+.challenge-victory-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ==================== 10. AUTO-SAVE INDICATOR NA MENUBAR ==================== */
+.auto-save-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #15803D;
+  transition: all 0.2s ease;
+}
+
+.auto-save-pill .save-dot {
+  width: 6.5px;
+  height: 6.5px;
+  border-radius: 50%;
+  background: #16A34A;
+  box-shadow: 0 0 5px rgba(22, 163, 74, 0.6);
+}
+
+.auto-save-pill.saving {
+  color: #D97706;
+}
+
+.auto-save-pill.saving .save-dot {
+  background: #F59E0B;
+  box-shadow: 0 0 5px rgba(245, 158, 11, 0.6);
+  animation: saveBlink 0.6s infinite alternate;
+}
+
+@keyframes saveBlink {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+/* ==================== 11. CONTROLES EXTRAS NA ARENA TOOLBAR ==================== */
+.arena-speed-select {
+  background: #FFFFFF;
+  border: 1px solid #D0D7DE;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  outline: none;
+}
+
+.arena-speed-select:focus {
+  border-color: #0084FF;
+}
+
+.arena-btn.active {
+  background: #0084FF !important;
+  color: #FFFFFF !important;
+  border-color: #0084FF !important;
+}
+
+/* ==================== 12. MODAL DE ATALHOS DE TECLADO (?) ==================== */
+.shortcuts-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  width: 92%;
+  max-width: 640px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+  overflow: hidden;
+  animation: victoryPop 0.22s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.shortcuts-header {
+  padding: 16px 20px;
+  background: #F8FAFC;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shortcuts-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #EEF2FF;
+  border: 1px solid #C7D2FE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.shortcuts-grid {
+  padding: 16px 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+@media (max-width: 600px) {
+  .shortcuts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.shortcut-item {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.shortcut-keys {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+.shortcut-keys kbd {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-bottom-width: 2px;
+  border-radius: 5px;
+  padding: 2px 6px;
+  font-size: 10.5px;
+  font-family: inherit;
+  color: #1E293B;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.shortcut-desc {
+  font-size: 11px;
+  color: #64748B;
+  line-height: 1.35;
+}
+
+.shortcuts-footer {
+  padding: 12px 20px;
+  background: #F8FAFC;
+  border-top: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11.5px;
+  color: #475569;
+}
+
+/* ==================== 13. TOAST FLUTUANTE MODERNO ==================== */
+.ev3-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(40px);
+  background: #1E293B;
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28), opacity 0.2s ease;
+}
+
+.ev3-toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.ev3-toast-icon {
+  font-size: 14px;
+}
+
+

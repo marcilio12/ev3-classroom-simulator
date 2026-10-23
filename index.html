@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LEGO® MINDSTORMS® Education EV3 Classroom - 1.5.3</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- 1. Barra de Título Superior (Idêntica ao EV3 Classroom 1.5.3) -->
+  <div class="window-titlebar">
+    <div class="window-titlebar-left">
+      <span class="ev3-app-icon">LEGO</span>
+      <span>LEGO® MINDSTORMS® Education EV3 Classroom - 1.5.3</span>
+    </div>
+    <div class="window-controls">
+      <span>─</span>
+      <span>▢</span>
+      <span>✕</span>
+    </div>
+  </div>
+
+  <!-- 2. Barra de Menus (Arquivo | Editar | Ajuda) -->
+  <div class="menubar">
+    <div class="menubar-left">
+      <div class="menu-dropdown">
+        <button class="menu-btn" data-dropdown-trigger="fileDropdown">Arquivo</button>
+        <div id="fileDropdown" class="dropdown-panel">
+          <button class="dropdown-item" id="menuNewProjectBtn">
+            <span>Novo Projeto do Zero</span>
+            <small>Ctrl+N</small>
+          </button>
+          <button class="dropdown-item" id="menuOpenStartScreenBtn">
+            <span>Tela Inicial</span>
+          </button>
+          <button class="dropdown-item" id="menuOpenHomeBtn">
+            <span>Página Inicial (Comece aqui)</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" id="menuDuplicateProjectBtn">
+            <span>Duplicar Projeto Atual</span>
+          </button>
+          <button class="dropdown-item" id="menuExportProjectBtn">
+            <span>Exportar Projeto (.json)</span>
+          </button>
+          <button class="dropdown-item" id="menuImportProjectBtn">
+            <span>Importar Projeto (.json)</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" id="menuCloseProjectBtn" style="color:#D32F2F;">
+            <span>Fechar Projeto Atual</span>
+            <small>Ctrl+W</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-dropdown">
+        <button class="menu-btn" data-dropdown-trigger="editDropdown">Editar</button>
+        <div id="editDropdown" class="dropdown-panel">
+          <button class="dropdown-item" id="menuUndoBtn">
+            <span>Desfazer</span>
+            <small>Ctrl+Z</small>
+          </button>
+          <button class="dropdown-item" id="menuRedoBtn">
+            <span>Refazer</span>
+            <small>Ctrl+Y</small>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" id="menuSelectAllBtn">
+            <span>Selecionar Tudo</span>
+            <small>Ctrl+A</small>
+          </button>
+          <button class="dropdown-item" id="menuCleanUpBtn">
+            <span>Organizar e Alinhar Blocos</span>
+          </button>
+          <button class="dropdown-item" id="menuCenterViewBtn">
+            <span>Centralizar Visão</span>
+          </button>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item danger" id="menuDeleteSelectionBtn">
+            <span>Excluir Seleção</span>
+            <small>Delete</small>
+          </button>
+        </div>
+      </div>
+
+      <div class="menu-dropdown">
+        <button class="menu-btn" data-dropdown-trigger="helpDropdown">Ajuda</button>
+        <div id="helpDropdown" class="dropdown-panel">
+          <button class="dropdown-item" id="openShortcutsModalBtn">
+            <span>Atalhos de Teclado e Dicas</span>
+            <small>?</small>
+          </button>
+          <button class="dropdown-item" id="openBuilderFromMenuBtn">
+            <span>Instruções de Construção da Base Motriz</span>
+          </button>
+          <button class="dropdown-item" id="addStickyNoteBtn">
+            <span>Adicionar Comentário / Nota Amarela</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="menubar-right">
+      <div id="autoSaveIndicator" class="auto-save-pill" title="Todas as alterações são salvas automaticamente no navegador">
+        <span class="save-dot"></span>
+        <span class="save-label">Salvo</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input oculto para importar arquivo .json de projeto -->
+  <input type="file" id="importProjectFileInput" accept=".json" style="display:none;" />
+
+  <!-- Menu flutuante de opções da aba de projeto (⋮) -->
+  <div id="tabContextMenu" class="tab-context-dropdown">
+    <button class="ev3-context-item" id="tabMenuRenameBtn">
+      <span>Renomear projeto</span>
+    </button>
+    <button class="ev3-context-item" id="tabMenuDuplicateBtn">
+      <span>Duplicar em nova aba</span>
+    </button>
+    <button class="ev3-context-item" id="tabMenuAddNoteBtn">
+      <span>Adicionar comentário</span>
+    </button>
+    <button class="ev3-context-item" id="tabMenuExportBtn">
+      <span>Exportar arquivo (.json)</span>
+    </button>
+    <div class="dropdown-divider"></div>
+    <button class="ev3-context-item danger" id="tabMenuCloseBtn">
+      <span>Fechar projeto</span>
+      <small>✕</small>
+    </button>
+  </div>
+
+  <!-- 3. Barra de Abas do Projeto (🏠 | Abas de Projetos Abertos | +) -->
+  <header class="project-tabbar">
+    <div class="tabbar-left">
+      <button class="home-tab-btn active" id="openHomeModalBtn" title="Tela Inicial / Página Inicial">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/>
+        </svg>
+      </button>
+
+      <!-- Container Dinâmico de Abas de Projetos Abertos -->
+      <div class="tabs-container" id="tabsContainer"></div>
+    </div>
+
+    <div class="tabbar-right">
+      <button class="new-tab-plus-btn" id="newTabPlusBtn" title="Criar Novo Projeto do Zero">+</button>
+    </div>
+  </header>
+
+  <!-- 4. Layout Principal Dividido: Workspace de Blocos (Esquerda/Centro) + Simulação 2D (Direita) -->
+  <main class="main-split-layout">
+
+    <!-- Barra Lateral de Categorias (10 categorias oficiais) + Paleta de Blocos -->
+    <aside class="palette-sidebar">
+      <nav id="categoryRail" class="category-rail" aria-label="Categorias de blocos EV3"></nav>
+      <div class="blocks-flyout">
+        <div id="flyoutScroll" class="flyout-scroll"></div>
+        <div class="flyout-footer">⌄ TODOS OS BLOCOS DE CÓDIGO</div>
+      </div>
+    </aside>
+
+    <!-- Workspace Central de Programação em Blocos -->
+    <section id="workspaceArea" class="workspace-area">
+
+      <!-- Ícone Flutuante do Bloco EV3 no canto superior esquerdo (fiel a ambiente de programação.jpeg) -->
+      <button id="floatingBrickBtn" class="ev3-brick-floating-btn disconnected" title="Clique para conectar o Bloco EV3 e abrir o Simulador">
+        <span class="ev3-brick-badge-dot"></span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="1.8">
+          <rect x="5" y="2" width="14" height="20" rx="2.5" fill="#fff"/>
+          <rect x="7.5" y="5" width="9" height="6" rx="1" fill="#212529"/>
+          <circle cx="12" cy="15.5" r="2" fill="#212529"/>
+          <path d="M9 15.5h6M12 13v5" stroke="#212529" stroke-width="1.3"/>
+        </svg>
+        <span id="floatingBrickLabel" class="ev3-brick-floating-label">conectar</span>
+      </button>
+
+      <!-- Pílula Indicadora de Bloco / Conjunto Selecionado -->
+      <div id="selectionBadge" class="workspace-selection-badge">
+        <span id="selectionBadgeText">Conjunto selecionado</span>
+        <button id="deleteSelectionBtn" class="ws-delete-pill-btn" title="Apagar seleção (Tecla Delete)">🗑 Excluir (Del)</button>
+      </div>
+
+      <!-- Canvas onde as pilhas de blocos SVG e notas são posicionadas -->
+      <div id="workspaceCanvas" class="workspace-canvas"></div>
+
+      <!-- Retângulo de Seleção em Caixa (Rubberband Marquee) -->
+      <div id="selectionMarquee" class="selection-marquee" style="display:none;"></div>
+
+      <!-- Controles de Zoom (-) (%) (+) (Reset) (Organizar) (Atalhos) e Undo / Redo no canto inferior esquerdo -->
+      <div class="workspace-bottom-controls">
+        <div class="ws-controls-group">
+          <button class="ws-circle-ctrl" id="zoomOutBtn" title="Diminuir Zoom">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </button>
+          <button class="ws-zoom-pill" id="zoomLevelBadge" title="Redefinir para 100%">100%</button>
+          <button class="ws-circle-ctrl" id="zoomInBtn" title="Aumentar Zoom">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </button>
+          <button class="ws-circle-ctrl" id="zoomResetBtn" title="Redefinir Zoom e Posição (100%)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/>
+            </svg>
+          </button>
+          <button class="ws-circle-ctrl" id="zoomFitBtn" title="Centralizar e Enquadrar Todos os Blocos">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="ws-controls-group">
+          <button class="ws-circle-ctrl" id="cleanUpWorkspaceBtn" title="Organizar e Alinhar Blocos">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="4" y1="6" x2="20" y2="6"/>
+              <line x1="4" y1="12" x2="14" y2="12"/>
+              <line x1="4" y1="18" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <button class="ws-circle-ctrl" id="workspaceShortcutsBtn" title="Atalhos de Teclado (?)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="ws-controls-group">
+          <button class="ws-circle-ctrl" id="undoBtn" title="Desfazer (Ctrl+Z)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M9 14L4 9l5-5"/>
+              <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>
+            </svg>
+          </button>
+          <button class="ws-circle-ctrl" id="redoBtn" title="Refazer (Ctrl+Y)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M15 14l5-5-5-5"/>
+              <path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Divisor Redimensionável (oculto até o aluno conectar o EV3) -->
+    <div id="splitResizer" class="split-resizer hidden-sim" title="Arraste para ajustar a largura da Arena 2D">
+      <div class="resizer-handle-tab">||</div>
+    </div>
+
+    <!-- Lado Direito: Janela de Simulação (Só abre após o aluno clicar em Conectar!) -->
+    <section id="simulationPanel" class="simulation-panel hidden-sim">
+
+      <!-- Painel HUD Superior: Portas de Motores (A, B, C, D) e Sensores (1, 2, 3, 4) -->
+      <div class="ev3-hud-panel">
+        <div class="hud-top-row">
+          <div class="hud-title">
+            <span>Portas EV3 (A, B, C, D &amp; 1, 2, 3, 4)</span>
+          </div>
+          <div class="hud-brick-buttons" title="Botões físicos do Bloco EV3">
+            <button class="brick-btn" data-brick-btn="esquerda">◀ Esq</button>
+            <button class="brick-btn" data-brick-btn="centro">● Centro</button>
+            <button class="brick-btn" data-brick-btn="direita">Dir ▶</button>
+          </div>
+        </div>
+
+        <div class="hud-ports-grid">
+          <div class="port-card motor-port">
+            <div class="port-header">
+              <span>GARRA</span>
+              <span class="port-badge">A</span>
+            </div>
+            <div class="port-value" id="portValA">0%</div>
+            <div class="port-sub" id="portSubA">0°</div>
+          </div>
+
+          <div class="port-card movement-port">
+            <div class="port-header">
+              <span>RODA ESQ.</span>
+              <span class="port-badge">B</span>
+            </div>
+            <div class="port-value" id="portValB">0% (0 RPM)</div>
+            <div class="port-sub" id="portSubB">0.0 rot | 0°</div>
+          </div>
+
+          <div class="port-card movement-port">
+            <div class="port-header">
+              <span>RODA DIR.</span>
+              <span class="port-badge">C</span>
+            </div>
+            <div class="port-value" id="portValC">0% (0 RPM)</div>
+            <div class="port-sub" id="portSubC">0.0 rot | 0°</div>
+          </div>
+
+          <div class="port-card motor-port">
+            <div class="port-header">
+              <span>MOTOR AUX.</span>
+              <span class="port-badge">D</span>
+            </div>
+            <div class="port-value" id="portValD">0%</div>
+            <div class="port-sub" id="portSubD">0°</div>
+          </div>
+        </div>
+
+        <div class="hud-ports-grid">
+          <div class="port-card sensor-port">
+            <div class="port-header">
+              <span>TOQUE</span>
+              <span class="port-badge">1</span>
+            </div>
+            <div class="port-value" id="portVal1">0 (Livre)</div>
+          </div>
+
+          <div class="port-card sensor-port">
+            <div class="port-header">
+              <span>GIROSCÓPIO</span>
+              <span class="port-badge">2</span>
+            </div>
+            <div class="port-value" id="portVal2">0°</div>
+          </div>
+
+          <div class="port-card sensor-port">
+            <div class="port-header">
+              <span>COR / LINHA</span>
+              <span class="port-badge">3</span>
+            </div>
+            <div class="port-value" id="portVal3">Branco</div>
+          </div>
+
+          <div class="port-card sensor-port" style="background:#F0FAFF; border-color:#80D8FF;">
+            <div class="port-header">
+              <span style="color:#0077B6;">ULTRASSÔNICO</span>
+              <span class="port-badge" style="background:#00B0FF; color:#fff;">4</span>
+            </div>
+            <div class="port-value" id="portVal4" style="color:#006494;">50.0 cm</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Ferramentas da Pista 2D -->
+      <div class="arena-toolbar">
+        <div class="arena-toolbar-group">
+          <select id="scenarioSelect" class="arena-select" title="Selecionar Pista ou Desafio">
+            <optgroup label="Pistas Livres">
+              <option value="pista_padrao">Pista Padrão (Linha + Obstáculos)</option>
+              <option value="cuboide">Desafio Agarrar Cuboide</option>
+              <option value="obstaculos">Labirinto Ultrassônico</option>
+              <option value="livre">Arena Livre (Grade 10cm)</option>
+            </optgroup>
+            <optgroup label="Nível 1 • Sem Sensores (Trajetos e Curvas)">
+              <option value="desafio_1_reta_alvo">🏆 Desafio 1: Desvio Inicial em U (2 Curvas)</option>
+              <option value="desafio_2_slalom_sem_sensor">🏆 Desafio 2: Slalom Duplo (3 Curvas)</option>
+              <option value="desafio_3_serpentina_curvas">🏆 Desafio 3: Corredor Serpentina (4 Curvas)</option>
+              <option value="desafio_4_circuito_4_cantos">🏆 Desafio 4: Volta nos 4 Cantos (Anel Quadrado)</option>
+            </optgroup>
+            <optgroup label="Nível 2 • Desvio com Sensores (Ultrassônico)">
+              <option value="desafio_5_sonar_parede">🏆 Desafio 5: Alerta de Parede (1 Muro)</option>
+              <option value="desafio_6_labirinto_sonar">🏆 Desafio 6: Corredor Duplo (2 Paredes)</option>
+              <option value="desafio_7_espiral_sonar">🏆 Desafio 7: Labirinto em Espiral (4 Paredes)</option>
+              <option value="desafio_8_tunel_zigzag_sonar">🏆 Desafio 8: Túnel Zig-Zag Escalonado (4 Paredes)</option>
+            </optgroup>
+            <optgroup label="Nível 3 • Seguir e Detectar Linhas (Cor)">
+              <option value="desafio_9_parar_na_linha">🏆 Desafio 9: Frenagem na Faixa Preta</option>
+              <option value="desafio_10_circuito_linha">🏆 Desafio 10: Trilha Preta em Z (2 Curvas)</option>
+              <option value="desafio_11_linha_serpentina">🏆 Desafio 11: Trilha Sinuosa (4 Curvas)</option>
+              <option value="desafio_12_linha_autodromo">🏆 Desafio 12: Autódromo Chicane (5 Curvas)</option>
+            </optgroup>
+            <optgroup label="Nível 4 • Pegar e Levar Caixas (Logística)">
+              <option value="desafio_13_entrega_simples">🏆 Desafio 13: Coleta e Entrega Direta (1 Caixa)</option>
+              <option value="desafio_14_logistica_obstaculo">🏆 Desafio 14: Entrega com Desvio (1 Caixa + Curva)</option>
+              <option value="desafio_15_duas_caixas_docas">🏆 Desafio 15: Operação Dupla (2 Caixas em 2 Docas)</option>
+              <option value="desafio_16_tres_caixas_armazem">🏆 Desafio 16: Mestre da Logística (3 Caixas e 3 Docas)</option>
+            </optgroup>
+          </select>
+          <button id="resetRobotArenaBtn" class="arena-btn" title="Reposicionar Robô no Ponto Inicial">↺ Início</button>
+          <button id="addObstacleBtn" class="arena-btn" title="Adicionar obstáculo">+ Obstáculo</button>
+          <button id="openBuilderBtn" class="arena-btn" title="Ver Modelo 3D do Robô">Robô 3D</button>
+        </div>
+
+        <div class="arena-toolbar-group">
+          <select id="simSpeedSelect" class="arena-speed-select" title="Velocidade da Simulação">
+            <option value="0.5">0.5x (Lento)</option>
+            <option value="1.0" selected>1.0x (Normal)</option>
+            <option value="2.0">2.0x (Rápido)</option>
+          </select>
+          <button id="toggleGridBtn" class="arena-btn" title="Mostrar Grade Métrica (5 cm / 10 cm)">Grade</button>
+          <button id="rotateRobotBtn" class="arena-btn" title="Girar robô em 45°">↻ 45°</button>
+          <button id="toggleConeBtn" class="arena-btn active" title="Mostrar feixe ultrassônico">Sonar</button>
+          <button id="toggleTrailBtn" class="arena-btn active" title="Mostrar rastro">Rastro</button>
+          <button id="clearTrailBtn" class="arena-btn" title="Limpar Rastro Atual">🗑</button>
+        </div>
+      </div>
+
+      <!-- Arena 2D (HTML5 Canvas) -->
+      <div class="arena-canvas-wrapper">
+        <canvas id="arenaCanvas"></canvas>
+
+        <!-- HUD de Missão Ativa quando um Desafio Gamificado está selecionado -->
+        <div id="challengeHudBanner" class="challenge-hud-banner" style="display:none;">
+          <div class="challenge-hud-left">
+            <span id="challengeHudLevelBadge" class="challenge-hud-badge">NÍVEL 1</span>
+            <strong id="challengeHudTitle">Desafio 1: Desvio Inicial</strong>
+          </div>
+          <button type="button" id="openChallengesFromArenaBtn" class="challenge-hud-switch-btn" title="Ver catálogo de desafios">
+            🏆 Trocar Desafio
+          </button>
+        </div>
+
+        <!-- Overlay Gamificado de Vitória ao Concluir um Desafio -->
+        <div id="challengeVictoryOverlay" class="challenge-victory-overlay" style="display:none;">
+          <div class="challenge-victory-card">
+            <div class="challenge-victory-badge">MISSÃO CONCLUÍDA!</div>
+            <h3 id="victoryChallengeTitle" class="challenge-victory-title">Desafio 1 Concluído!</h3>
+            <div id="victoryStarsRow" class="challenge-victory-stars">
+              <span class="v-star earned">★</span>
+              <span class="v-star earned">★</span>
+              <span class="v-star earned">★</span>
+            </div>
+            <div id="victoryXpPill" class="challenge-victory-xp">+150 XP GANHOS</div>
+            <ul id="victoryChecklist" class="challenge-victory-checklist"></ul>
+            <div class="challenge-victory-actions">
+              <button type="button" id="victoryRetryBtn" class="ev3-secondary-btn">↺ Repetir</button>
+              <button type="button" id="victoryAllChallengesBtn" class="ev3-secondary-btn">🏆 Todos os Desafios</button>
+              <button type="button" id="victoryNextChallengeBtn" class="ev3-primary-btn">Próximo Desafio →</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="arena-overlay-hint">
+          Arraste o <strong>Robô</strong>, os <strong>Obstáculos</strong> ou o <strong>Cuboide</strong> • Scroll gira o robô
+        </div>
+      </div>
+
+      <!-- Barra Inferior de Status -->
+      <div class="execution-statusbar">
+        <span id="statusLogText">Pronto. Clique no botão azul Play para iniciar.</span>
+        <span style="font-weight:600; color:#0084FF;">1 rot = 17.6 cm</span>
+      </div>
+    </section>
+
+    <!-- Botões Circulares no Canto Inferior Direito (visíveis tanto desconectado quanto conectado) -->
+    <div class="floating-play-cluster">
+      <button id="resetArenaFabBtn" class="secondary-fab-btn" title="Reposicionar Robô / Download">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button id="playFabBtn" class="play-fab-btn" title="Executar Programa (Play)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- =========================================================================
+       POP-UP DE CONEXÃO DO BLOCO EV3 (Fiel a Conectar.png)
+       Exibido quando o aluno clica em "conectar" na tela do projeto
+       ========================================================================= -->
+  <div id="ev3ConnectModal" class="ev3-connect-backdrop">
+    <div class="ev3-connect-card">
+      <!-- Topo Direito: "CONECTAR VIA BLUETOOTH" + Botão Fechar (✕) -->
+      <div class="ev3-connect-topbar">
+        <button type="button" id="toggleConnectModeBtn" class="ev3-connect-mode-link">
+          CONECTAR VIA BLUETOOTH
+        </button>
+        <button type="button" id="closeConnectModalBtn" class="ev3-connect-close-btn" title="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <line x1="5" y1="5" x2="19" y2="19"/>
+            <line x1="19" y1="5" x2="5" y2="19"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Título Principal -->
+      <h2 id="connectModalTitle" class="ev3-connect-title">Conectar via Cabo USB</h2>
+
+      <!-- Corpo em Duas Colunas: Instruções à esquerda + Ilustração do Bloco EV3 à direita -->
+      <div class="ev3-connect-body">
+        <div class="ev3-connect-steps">
+          <p class="ev3-connect-step-item">1. Ligue seu Bloco EV3.</p>
+          <p id="connectStep2Text" class="ev3-connect-step-item">
+            2. Use o cabo USB para conectar o seu Bloco EV3.
+          </p>
+
+          <div class="ev3-connect-action-box">
+            <button type="button" id="confirmConnectSimBtn" class="ev3-connect-sim-btn">
+              Conectar Bloco EV3 (Abrir Simulador)
+            </button>
+            <span class="ev3-connect-hint">Ou clique diretamente sobre o Bloco EV3 ao lado para conectar</span>
+          </div>
+        </div>
+
+        <div class="ev3-connect-brick-col">
+          <div id="connectBrickIllustration" class="ev3-connect-brick-crop" title="Clique no Bloco EV3 para conectar e abrir o Simulador 2D"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popover Interativo de Direção -->
+  <div id="steeringPopover" class="steering-popover">
+    <div id="steeringPopoverTitle" class="steering-popover-title">reto: 0</div>
+    <input type="range" id="steeringSliderInput" class="steering-slider" min="-100" max="100" step="5" value="0" />
+    <div class="steering-presets">
+      <button type="button" class="steering-preset-btn" data-steer-preset="-100">-100</button>
+      <button type="button" class="steering-preset-btn" data-steer-preset="-50">-50</button>
+      <button type="button" class="steering-preset-btn" data-steer-preset="0">reto: 0</button>
+      <button type="button" class="steering-preset-btn" data-steer-preset="50">+50</button>
+      <button type="button" class="steering-preset-btn" data-steer-preset="100">+100</button>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       TELA INICIAL (Primeira tela exibida ao abrir o sistema — Fiel a Página inicial.jpeg)
+       Opções: "IR PARA A PÁGINA INICIAL" | "NOVO PROJETO"
+       ========================================================================= -->
+  <section id="ev3StartScreen" class="ev3-start-screen open">
+    <div class="ev3-start-split-container">
+      <!-- Lado Esquerdo: IR PARA A PÁGINA INICIAL -->
+      <button type="button" id="startScreenGoHomeBtn" class="ev3-start-option left-option">
+        <div class="ev3-start-icon-wrap">
+          <svg width="70" height="70" viewBox="0 0 64 64" fill="none">
+            <path d="M12 28L32 10L52 28V54H37V37H27V54H12V28Z" stroke="#757575" stroke-width="2.4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="ev3-start-title muted">IR PARA A<br/>PÁGINA INICIAL</h2>
+        <p class="ev3-start-subtitle">Explorar materiais de aprendizagem</p>
+      </button>
+
+      <!-- Linha Divisória Vertical Central -->
+      <div class="ev3-start-vertical-divider"></div>
+
+      <!-- Lado Direito: NOVO PROJETO -->
+      <button type="button" id="startScreenNewProjectBtn" class="ev3-start-option right-option">
+        <div class="ev3-start-icon-wrap">
+          <svg width="62" height="62" viewBox="0 0 64 64" fill="none">
+            <rect x="8" y="8" width="48" height="48" rx="6" stroke="#000000" stroke-width="2.8"/>
+            <line x1="32" y1="21" x2="32" y2="43" stroke="#000000" stroke-width="2.8"/>
+            <line x1="21" y1="32" x2="43" y2="32" stroke="#000000" stroke-width="2.8"/>
+          </svg>
+        </div>
+        <h2 class="ev3-start-title dark">NOVO PROJETO</h2>
+        <p class="ev3-start-subtitle dark-sub">Criar nova Tela de Programação</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       PÁGINA INICIAL OFICIAL (Modal "Comece aqui" com abas — Fiel a Pagina inicial.jpeg)
+       ========================================================================= -->
+  <div id="homeModal" class="ev3-home-backdrop">
+    <div class="ev3-home-modal">
+
+      <!-- Barra de Navegação Superior da Tela Inicial -->
+      <div class="ev3-home-topbar">
+        <button id="closeHomeModalBtn" class="ev3-home-icon-btn" title="Ir ao ambiente de programação">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <line x1="5" y1="5" x2="19" y2="19"/>
+            <line x1="19" y1="5" x2="5" y2="19"/>
+          </svg>
+        </button>
+
+        <nav class="ev3-home-nav">
+          <button class="ev3-home-nav-item active" data-home-tab="homeViewMain">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M3 10.5L12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"/>
+            </svg>
+            <span>PÁGINA INICIAL</span>
+          </button>
+
+          <button class="ev3-home-nav-item" data-home-tab="homeViewStart">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
+              <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
+            </svg>
+            <span>INICIAR</span>
+          </button>
+
+          <button class="ev3-home-nav-item" data-home-tab="homeViewUnits">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="5" y="3" width="14" height="18" rx="2"/>
+              <line x1="9" y1="8" x2="15" y2="8"/>
+              <line x1="9" y1="12" x2="15" y2="12"/>
+              <line x1="9" y1="16" x2="13" y2="16"/>
+            </svg>
+            <span>UNIDADES</span>
+          </button>
+
+          <button class="ev3-home-nav-item" data-home-tab="homeViewChallenges">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+              <path d="M4 22h16"/>
+              <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+              <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </svg>
+            <span>DESAFIOS</span>
+          </button>
+
+          <button class="ev3-home-nav-item" data-home-tab="homeViewBuild">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+            <span>CONSTRUIR</span>
+          </button>
+
+          <button class="ev3-home-nav-item" data-home-tab="homeViewProjects">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span>MEUS PROJETOS</span>
+          </button>
+        </nav>
+
+        <button class="ev3-home-icon-btn" id="homeGearBtn" title="Gerenciar Projetos">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Conteúdo Rolável da Tela Inicial -->
+      <div class="ev3-home-scroll">
+
+        <!-- ==================== ABA 1: PÁGINA INICIAL ==================== -->
+        <div id="homeViewMain" class="ev3-home-view active">
+          <!-- Hero Section: "Comece aqui" + Mão segurando o Bloco EV3 -->
+          <section class="ev3-hero-section">
+            <div class="ev3-hero-bg-photo"></div>
+            <div class="ev3-hero-content">
+              <h1 class="ev3-hero-title">Comece aqui</h1>
+              <p class="ev3-hero-subtitle">
+                Familiarize-se com o EV3 em três<br />atividades divertidas!
+              </p>
+              <button id="startFromHomeBtn" class="ev3-iniciar-pill-btn">INICIAR</button>
+            </div>
+          </section>
+
+          <!-- Seção "Projetos recentes" renderizada dinamicamente -->
+          <section class="ev3-recent-section">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <h2 class="ev3-section-heading" style="margin-bottom:0;">Projetos recentes</h2>
+              <button class="ev3-secondary-btn" id="viewAllProjectsLinkBtn" style="padding:4px 12px; font-size:11.5px;">Ver todos os projetos →</button>
+            </div>
+            <div class="ev3-recent-row" id="recentProjectsRow"></div>
+          </section>
+
+          <!-- Seção Inferior: "Planos de Unidade", "Desafios" e "Modelos do Conjunto Principal" -->
+          <section class="ev3-bottom-cards-section">
+            <div class="ev3-large-feature-card" id="cardOpenUnitsBtn">
+              <div>
+                <h4>Planos de Unidade</h4>
+                <p>Atividades práticas guiadas de robótica, cinemática diferencial e sensores EV3.</p>
+              </div>
+              <img src="modelo de robô.jpeg" alt="Planos de Unidade EV3" class="ev3-feature-card-img" />
+            </div>
+
+            <div class="ev3-large-feature-card ev3-challenge-feature-card" id="cardOpenChallengesBtn">
+              <div>
+                <span class="ev3-feature-pill-badge" id="homeCardChallengeStatsBadge">🏆 16 MISSÕES • 0/48 ⭐</span>
+                <h4>Desafios</h4>
+                <p>Arena gamificada com 16 missões: circuitos de múltiplas curvas, labirintos de sonar, autódromo de linha e entregas de múltiplas caixas.</p>
+              </div>
+              <div class="ev3-challenge-trophy-art" aria-hidden="true">
+                <svg width="74" height="74" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="28" fill="#FFF8E1" stroke="#FFE082" stroke-width="2"/>
+                  <path d="M20 18H44V29C44 35.627 38.627 41 32 41C25.373 41 20 35.627 20 29V18Z" fill="#FFB300" stroke="#F57F17" stroke-width="2.2"/>
+                  <path d="M20 21H14C14 27 16.5 30 20 30" stroke="#F57F17" stroke-width="2.4" stroke-linecap="round"/>
+                  <path d="M44 21H50C50 27 47.5 30 44 30" stroke="#F57F17" stroke-width="2.4" stroke-linecap="round"/>
+                  <path d="M32 41V48" stroke="#F57F17" stroke-width="3" stroke-linecap="round"/>
+                  <rect x="23" y="48" width="18" height="5" rx="2.5" fill="#F57F17"/>
+                  <path d="M32 23L34.1 27.3L38.8 28L35.4 31.3L36.2 36L32 33.8L27.8 36L28.6 31.3L25.2 28L29.9 27.3L32 23Z" fill="#FFFDE7"/>
+                </svg>
+              </div>
+            </div>
+
+            <div class="ev3-large-feature-card" id="cardOpenBuilderBtn">
+              <div>
+                <h4>Modelos do Conjunto Principal</h4>
+                <p>Instruções interativas da Base Motriz EV3 com rodas B+C e sensor ultrassônico.</p>
+              </div>
+              <img src="modelo de robô 2.jpeg" alt="Modelos do Conjunto Principal EV3" class="ev3-feature-card-img" />
+            </div>
+          </section>
+        </div>
+
+        <!-- ==================== ABA: DESAFIOS GAMIFICADOS ==================== -->
+        <div id="homeViewChallenges" class="ev3-home-view">
+          <div class="ev3-home-subpage">
+            <!-- Painel Gamificado Superior (Patente, XP, Estrelas e Barra de Progresso) -->
+            <div class="ev3-gamification-hero">
+              <div class="ev3-gamification-left">
+                <span class="ev3-gamification-kicker">ARENA DE COMPETIÇÃO EV3 • 16 CENÁRIOS</span>
+                <h2 class="ev3-gamification-title">Desafios de Robótica</h2>
+                <p class="ev3-gamification-desc">
+                  Programe o robô EV3 para superar 16 cenários progressivos: trajetos serpentina e circuitos de 4 cantos sem sensores, labirintos em espiral e zigue-zague com ultrassônico, autódromo de linha preta com chicanes e operações logísticas com até 3 caixas e 3 docas!
+                </p>
+                <div class="ev3-gamification-progress-wrap">
+                  <div class="ev3-gamification-progress-labels">
+                    <span id="challengeProgressText">Progresso da Campanha: 0 / 16 Desafios Concluídos</span>
+                    <button type="button" id="resetChallengesProgressBtn" class="ev3-reset-progress-link" title="Zerar estrelas e XP dos desafios">
+                      Resetar progresso
+                    </button>
+                  </div>
+                  <div class="ev3-gamification-progress-bar">
+                    <div id="challengeProgressBarFill" class="ev3-gamification-progress-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ev3-gamification-stats">
+                <div class="ev3-gstat-card">
+                  <span class="ev3-gstat-label">PATENTE ATUAL</span>
+                  <strong class="ev3-gstat-value" id="challengePlayerRank">🤖 Cadete EV3</strong>
+                </div>
+                <div class="ev3-gstat-card">
+                  <span class="ev3-gstat-label">ESTRELAS</span>
+                  <strong class="ev3-gstat-value gold" id="challengeTotalStars">0 / 48 ⭐</strong>
+                </div>
+                <div class="ev3-gstat-card">
+                  <span class="ev3-gstat-label">PONTUAÇÃO XP</span>
+                  <strong class="ev3-gstat-value cyan" id="challengeTotalXp">0 XP</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filtros por Categoria de Desafio -->
+            <div class="ev3-challenge-filters" id="challengeCategoryFilters">
+              <button type="button" class="ev3-challenge-filter-btn active" data-challenge-filter="all">
+                Todos os Desafios (16)
+              </button>
+              <button type="button" class="ev3-challenge-filter-btn" data-challenge-filter="sem_sensores">
+                1. Trajetos Sem Sensores (4)
+              </button>
+              <button type="button" class="ev3-challenge-filter-btn" data-challenge-filter="com_sensores">
+                2. Desvio com Sensores (4)
+              </button>
+              <button type="button" class="ev3-challenge-filter-btn" data-challenge-filter="seguir_linhas">
+                3. Seguir e Detectar Linhas (4)
+              </button>
+              <button type="button" class="ev3-challenge-filter-btn" data-challenge-filter="pegar_caixas">
+                4. Pegar e Levar Caixas (4)
+              </button>
+            </div>
+
+            <!-- Grade de Cards de Desafios renderizada via JS -->
+            <div class="ev3-challenges-grid" id="challengesGrid"></div>
+          </div>
+        </div>
+
+        <!-- ==================== ABA 2: INICIAR (3 ATIVIDADES GUIADAS) ==================== -->
+        <div id="homeViewStart" class="ev3-home-view">
+          <div class="ev3-home-subpage">
+            <div class="ev3-subpage-header">
+              <div>
+                <h2 class="ev3-subpage-title">Comece aqui: 3 Atividades Divertidas</h2>
+                <p class="ev3-subpage-subtitle">Aprenda os fundamentos do LEGO® MINDSTORMS® Education EV3 passo a passo.</p>
+              </div>
+              <button class="ev3-primary-btn" data-create-blank-project="true">+ Criar Projeto em Branco</button>
+            </div>
+
+            <div class="ev3-activities-grid">
+              <div class="ev3-activity-card" data-open-template="activity_1_movement">
+                <div class="ev3-activity-banner" style="background: linear-gradient(135deg, #EC407A, #AD1457);">
+                  <span class="ev3-activity-badge">ATIVIDADE 1 • MOVIMENTO</span>
+                  <h3>1. Primeiros Movimentos (Motores B+C)</h3>
+                </div>
+                <div class="ev3-activity-body">
+                  <p>Programe a Base Motriz para avançar, fazer curvas precisas usando cinemática diferencial e retornar ao ponto de partida.</p>
+                  <button class="ev3-activity-cta">Iniciar Atividade 1 →</button>
+                </div>
+              </div>
+
+              <div class="ev3-activity-card" data-open-template="ultrasonic_demo">
+                <div class="ev3-activity-banner" style="background: linear-gradient(135deg, #00B0FF, #0077C2);">
+                  <span class="ev3-activity-badge">ATIVIDADE 2 • SENSOR PORTA 4</span>
+                  <h3>2. Detectar e Desviar com Ultrassônico</h3>
+                </div>
+                <div class="ev3-activity-body">
+                  <p>Use o Sensor Ultrassônico frontal na Porta 4 para medir a distância em centímetros, parar antes do obstáculo e desviar automaticamente.</p>
+                  <button class="ev3-activity-cta">Iniciar Atividade 2 →</button>
+                </div>
+              </div>
+
+              <div class="ev3-activity-card" data-open-template="detector_linha">
+                <div class="ev3-activity-banner" style="background: linear-gradient(135deg, #FF8F00, #E65100);">
+                  <span class="ev3-activity-badge">ATIVIDADE 3 • SENSOR PORTA 3</span>
+                  <h3>3. Cores, Linhas Pretas e Sons</h3>
+                </div>
+                <div class="ev3-activity-body">
+                  <p>Utilize o Sensor de Cor na Porta 3 para identificar a linha preta da pista, acender o LED do Bloco EV3 e emitir sinais sonoros.</p>
+                  <button class="ev3-activity-cta">Iniciar Atividade 3 →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== ABA 3: UNIDADES (PLANOS DE UNIDADE) ==================== -->
+        <div id="homeViewUnits" class="ev3-home-view">
+          <div class="ev3-home-subpage">
+            <div class="ev3-subpage-header">
+              <div>
+                <h2 class="ev3-subpage-title">Planos de Unidade EV3 Classroom</h2>
+                <p class="ev3-subpage-subtitle">Projetos educacionais completos de robótica móvel e automação.</p>
+              </div>
+            </div>
+
+            <div class="ev3-activities-grid">
+              <div class="ev3-activity-card" data-open-template="agarrar_cuboide">
+                <div class="ev3-activity-banner" style="background: linear-gradient(135deg, #0084FF, #0055B3);">
+                  <span class="ev3-activity-badge">UNIDADE 1 • GARRA MOTORIZADA (PORTA A)</span>
+                  <h3>Agarrar e Liberar o Cuboide</h3>
+                </div>
+                <div class="ev3-activity-body">
+                  <p>Projeto oficial do EV3 Classroom: controle o Motor Médio na Porta A para fechar a garra no Cuboide, girar a Base Motriz e liberá-lo.</p>
+                  <button class="ev3-activity-cta">Abrir Unidade →</button>
+                </div>
+              </div>
+
+              <div class="ev3-activity-card" data-open-template="quadrado_loop">
+                <div class="ev3-activity-banner" style="background: linear-gradient(135deg, #7E57C2, #4527A0);">
+                  <span class="ev3-activity-badge">UNIDADE 2 • ESTRUTURAS DE REPETIÇÃO</span>
+                  <h3>Geometria na Arena: Percurso Quadrado</h3>
+                </div>
+                <div class="ev3-activity-body">
+                  <p>Utilize o bloco de repetição para desenhar um quadrado geométrico perfeito usando o rastro de trajetória da Base Motriz.</p>
+                  <button class="ev3-activity-cta">Abrir Unidade →</button>
+                </div>
+              </div>
+
+              <div class="ev3-activity-card" data-open-template="ultrasonic_demo">
+                <div class="ev3-activity-banner" style="background: linear-gradient(135deg, #00C853, #007E33);">
+                  <span class="ev3-activity-badge">UNIDADE 3 • ROBÓTICA AUTÔNOMA</span>
+                  <h3>Navegação Anticolisão com Sonar</h3>
+                </div>
+                <div class="ev3-activity-body">
+                  <p>Explore a leitura em tempo real do feixe ultrassônico e posicione obstáculos móveis na arena para testar seu algoritmo.</p>
+                  <button class="ev3-activity-cta">Abrir Unidade →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== ABA 4: CONSTRUIR (MODELOS DO CONJUNTO PRINCIPAL) ==================== -->
+        <div id="homeViewBuild" class="ev3-home-view">
+          <div class="ev3-home-subpage">
+            <div class="ev3-subpage-header">
+              <div>
+                <h2 class="ev3-subpage-title">Modelos do Conjunto Principal EV3</h2>
+                <p class="ev3-subpage-subtitle">Visualize as instruções de montagem da Base Motriz utilizada na simulação 2D.</p>
+              </div>
+            </div>
+
+            <div class="ev3-activities-grid">
+              <div class="ev3-activity-card" id="buildCardStep1">
+                <img src="modelo de robô 2.jpeg" alt="Base Motriz EV3 Chassi" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
+                <div class="ev3-activity-body">
+                  <div>
+                    <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 1: Base Motriz EV3 (Rodas B e C)</h4>
+                    <p>Chassi diferencial com dois Motores Grandes sincronizados nas portas B (esquerda) e C (direita) e Bloco Inteligente EV3.</p>
+                  </div>
+                  <button class="ev3-activity-cta">Abrir Visualizador 3D (Passo 1) →</button>
+                </div>
+              </div>
+
+              <div class="ev3-activity-card" id="buildCardStep2">
+                <img src="modelo de robô.jpeg" alt="Base Motriz EV3 com Sensor Ultrassônico" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
+                <div class="ev3-activity-body">
+                  <div>
+                    <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 2: Módulo Sensor Ultrassônico e Garra</h4>
+                    <p>Instalação do Sensor Ultrassônico frontal na porta 4, Sensor de Cor na porta 3 e Garra no Motor Médio A.</p>
+                  </div>
+                  <button class="ev3-activity-cta">Abrir Visualizador 3D (Passo 2) →</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== ABA 5: MEUS PROJETOS (GERENCIADOR COMPLETO) ==================== -->
+        <div id="homeViewProjects" class="ev3-home-view">
+          <div class="ev3-home-subpage">
+            <div class="ev3-subpage-header">
+              <div>
+                <h2 class="ev3-subpage-title">Meus Projetos</h2>
+                <p class="ev3-subpage-subtitle">Crie novos projetos do zero, gerencie seus projetos salvos ou importe arquivos.</p>
+              </div>
+
+              <div class="ev3-projects-toolbar">
+                <input type="text" id="searchProjectsInput" class="ev3-search-input" placeholder="🔍 Pesquisar projetos..." />
+                <button class="ev3-secondary-btn" id="myProjectsImportBtn">📂 Importar (.json)</button>
+                <button class="ev3-primary-btn" data-create-blank-project="true">+ Novo Projeto do Zero</button>
+              </div>
+            </div>
+
+            <div class="ev3-myprojects-grid" id="myProjectsGrid"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       VISUALIZADOR DE CONSTRUÇÃO EM TELA CHEIA (Idêntico a modelo de robô.jpeg e modelo de robô 2.jpeg)
+       ========================================================================= -->
+  <div id="builderOverlay" class="ev3-builder-overlay">
+    <button id="closeBuilderOverlayBtn" class="ev3-builder-close" title="Fechar instruções de construção">✕</button>
+
+    <div class="ev3-builder-stage">
+      <button id="builderPrevBtn" class="ev3-builder-nav-arrow prev" title="Passo anterior">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+
+      <img id="builderStageImg" src="modelo de robô 2.jpeg" alt="Modelo de Construção do Robô EV3" class="ev3-builder-img" />
+
+      <button id="builderNextBtn" class="ev3-builder-nav-arrow next" title="Próximo passo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="ev3-builder-bottom">
+      <div class="ev3-builder-progress-row">
+        <input type="range" id="builderStepSlider" class="ev3-builder-slider" min="1" max="2" step="1" value="1" />
+        <span id="builderStepBadge" class="ev3-builder-step-badge">Passo 1 / 2</span>
+      </div>
+
+      <div class="ev3-builder-zoom-row">
+        <div style="display:flex; gap:8px;">
+          <button class="ws-circle-ctrl" id="builderZoomOutBtn" title="Diminuir Zoom">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </button>
+          <button class="ws-circle-ctrl" id="builderZoomInBtn" title="Aumentar Zoom">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </button>
+          <button class="ws-circle-ctrl" id="builderZoomResetBtn" title="Redefinir Zoom">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M4 9h5V4M20 9h-5V4M4 15h5v5M20 15h-5v5"/>
+            </svg>
+          </button>
+        </div>
+
+        <span id="builderStepTitle" style="font-size:12.5px; font-weight:600; color:#555;">
+          1. Base Motriz EV3 (Motores B e C + Bloco Inteligente EV3)
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL DE ATALHOS DE TECLADO E USABILIDADE (F1 / ?)
+       ========================================================================= -->
+  <div id="shortcutsModal" class="ev3-connect-backdrop" style="display:none;">
+    <div class="shortcuts-card">
+      <div class="shortcuts-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div class="shortcuts-icon-box">⌨️</div>
+          <div>
+            <h3 style="font-size:17px; font-weight:800; color:#1E293B;">Atalhos de Teclado e Dicas de Usabilidade</h3>
+            <p style="font-size:12px; color:#64748B;">Acelere sua programação e testes no LEGO MINDSTORMS EV3 Classroom</p>
+          </div>
+        </div>
+        <button type="button" id="closeShortcutsModalBtn" class="ev3-connect-close-btn" title="Fechar">✕</button>
+      </div>
+
+      <div class="shortcuts-grid">
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Delete</kbd> ou <kbd>Backspace</kbd></div>
+          <div class="shortcut-desc">Excluir bloco ou conjunto de blocos selecionado</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> + <kbd>Z</kbd></div>
+          <div class="shortcut-desc">Desfazer última alteração de blocos ou exclusão</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> + <kbd>Y</kbd></div>
+          <div class="shortcut-desc">Refazer alteração desfeita</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> + <kbd>D</kbd></div>
+          <div class="shortcut-desc">Duplicar conjunto de blocos selecionado</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Ctrl</kbd> + <kbd>A</kbd></div>
+          <div class="shortcut-desc">Selecionar todos os blocos na tela</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Espaço</kbd></div>
+          <div class="shortcut-desc">Executar / Parar programa (Play / Stop)</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Esc</kbd></div>
+          <div class="shortcut-desc">Desmarcar blocos ou fechar janelas e popups</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Clique Direito</kbd></div>
+          <div class="shortcut-desc">Menu de contexto: duplicar, separar, comentar ou excluir</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Arraste no Fundo</kbd></div>
+          <div class="shortcut-desc">Mover área de programação (Pan) ou caixa de seleção múltipla</div>
+        </div>
+        <div class="shortcut-item">
+          <div class="shortcut-keys"><kbd>Scroll no Robô</kbd></div>
+          <div class="shortcut-desc">Girar robô em 15° na arena antes de executar</div>
+        </div>
+      </div>
+
+      <div class="shortcuts-footer">
+        <span>💡 Dica: Duplo-clique no nome da aba para renomear o projeto diretamente!</span>
+        <button type="button" id="shortcutsGotItBtn" class="ev3-primary-btn" style="padding:7px 18px; font-size:12px;">Entendido!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Flutuante de Notificação -->
+  <div id="ev3Toast" class="ev3-toast"></div>
+
+  <script src="js/blocks-config.js"></script>
+  <script src="js/workspace.js"></script>
+  <script src="js/physics-arena.js"></script>
+  <script src="js/runtime.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
