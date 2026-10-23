@@ -1846,7 +1846,7 @@ document.addEventListener('DOMContentLoaded', () => {
       connectStep2Text.textContent = '2. Ative o Bluetooth no seu Bloco Inteligente e selecione-o para conectar.';
       toggleConnectModeBtn.textContent = 'CONECTAR VIA CABO USB';
     } else {
-      connectModalTitle.textContent = 'Conectar via Cabo USB';
+      connectModalTitle.textContent = 'Conectar Bloco Inteligente';
       connectStep2Text.textContent = '2. Use o cabo USB para conectar o seu Bloco Inteligente ao computador.';
       toggleConnectModeBtn.textContent = 'CONECTAR VIA BLUETOOTH';
     }
