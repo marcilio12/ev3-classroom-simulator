@@ -1,6 +1,6 @@
 /**
  * Inicialização, Gerenciador de Projetos Multi-Abas e Orquestração da Tela Inicial
- * LEGO® MINDSTORMS® Education EV3 Classroom v1.5.3
+ * RoboSim - Simulador virtual de robótica compatível com a linguagem de blocos
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
       {
         id: 'proj_6_inicio',
         name: 'Projeto 6',
-        subtitle: 'Bloco Inicial EV3',
+        subtitle: 'Bloco Inicial RoboSim',
         scenario: 'pista_padrao',
         timeLabel: 'há um mês',
         updatedAt: now - 40 * 86400000,
@@ -711,7 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${proj.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.ev3.json`;
+    a.download = `${proj.name.replace(/[^a-zA-Z0-9_-]/g, '_')}.robosim.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -823,7 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('tabMenuAddNoteBtn').addEventListener('click', () => {
     tabContextMenu.classList.remove('open');
-    workspace.addStickyNote('Comentário do projeto EV3...', 370, 80);
+    workspace.addStickyNote('Comentário do projeto RoboSim...', 370, 80);
   });
 
   document.getElementById('tabMenuExportBtn').addEventListener('click', () => {
@@ -1297,7 +1297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       title: '16. Mestre da Logística: 3 Caixas e 3 Docas',
       xpReward: 550,
       bannerGradient: 'linear-gradient(135deg, #D50000, #7F0000)',
-      description: 'Desafio Supremo EV3: recolha as 3 cargas (Carga 1, Carga 2 e Carga 3), desvie do Pilar Central e distribua uma caixa em cada doca (DOCA A, DOCA B e DOCA C)!',
+      description: 'Desafio Supremo RoboSim: recolha as 3 cargas (Carga 1, Carga 2 e Carga 3), desvie do Pilar Central e distribua uma caixa em cada doca (DOCA A, DOCA B e DOCA C)!',
       tags: ['Garra (Motor A)', '3 Caixas + 3 Docas', 'Desafio Mestre'],
       starterItems: [
         { type: 'when_program_starts' },
@@ -1359,9 +1359,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    let rank = '🤖 Cadete EV3';
-    if (totalStars >= maxStars) rank = '👑 Mestre Supremo EV3';
-    else if (totalStars >= 36) rank = '🚀 Engenheiro Sênior EV3';
+    let rank = '🤖 Cadete RoboSim';
+    if (totalStars >= maxStars) rank = '👑 Mestre Supremo RoboSim';
+    else if (totalStars >= 36) rank = '🚀 Engenheiro Sênior RoboSim';
     else if (totalStars >= 24) rank = '📦 Especialista Logístico';
     else if (totalStars >= 12) rank = '🧭 Navegador de Sensores';
     else if (totalStars >= 4) rank = '🏎️ Piloto de Precisão';
@@ -1462,7 +1462,7 @@ document.addEventListener('DOMContentLoaded', () => {
         name: `Desafio ${ch.number}`,
         subtitle: ch.title,
         scenario: ch.id,
-        timeLabel: 'Desafio EV3',
+        timeLabel: 'Desafio RoboSim',
         updatedAt: Date.now(),
         data: buildSerializedTemplate([
           {
@@ -1843,11 +1843,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!connectModalTitle || !connectStep2Text || !toggleConnectModeBtn) return;
     if (isBluetoothMode) {
       connectModalTitle.textContent = 'Conectar via Bluetooth';
-      connectStep2Text.textContent = '2. Ative o Bluetooth no seu Bloco EV3 e selecione-o para conectar.';
+      connectStep2Text.textContent = '2. Ative o Bluetooth no seu robô e selecione-o para conectar.';
       toggleConnectModeBtn.textContent = 'CONECTAR VIA CABO USB';
     } else {
       connectModalTitle.textContent = 'Conectar via Cabo USB';
-      connectStep2Text.textContent = '2. Use o cabo USB para conectar o seu Bloco EV3.';
+      connectStep2Text.textContent = '2. Conecte o robô para habilitar a simulação interativa.';
       toggleConnectModeBtn.textContent = 'CONECTAR VIA BLUETOOTH';
     }
   }
@@ -1858,7 +1858,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     floatingBrickBtn.classList.remove('disconnected');
     floatingBrickLabel.textContent = 'conectado';
-    floatingBrickBtn.title = 'Bloco EV3 Conectado (Clique para desconectar e recolher o Simulador)';
+    floatingBrickBtn.title = 'Robô Conectado (Clique para desconectar e recolher o Simulador)';
 
     if (resizer) resizer.classList.remove('hidden-sim');
     if (simPanel) simPanel.classList.remove('hidden-sim');
@@ -1868,7 +1868,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 30);
 
     if (statusLogText) {
-      statusLogText.textContent = 'Bloco Inteligente EV3 conectado! Arena de Simulação 2D pronta.';
+      statusLogText.textContent = 'Robô conectado! Arena de Simulação 2D pronta.';
     }
   }
 
@@ -1878,13 +1878,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     floatingBrickBtn.classList.add('disconnected');
     floatingBrickLabel.textContent = 'conectar';
-    floatingBrickBtn.title = 'Clique para conectar o Bloco EV3 e abrir o Simulador';
+    floatingBrickBtn.title = 'Clique para conectar o Robô e abrir o Simulador';
 
     if (resizer) resizer.classList.add('hidden-sim');
     if (simPanel) simPanel.classList.add('hidden-sim');
 
     if (statusLogText) {
-      statusLogText.textContent = 'EV3 desconectado. Clique em "conectar" para abrir o Simulador.';
+      statusLogText.textContent = 'Robô desconectado. Clique em "conectar" para abrir o Simulador.';
     }
   }
 
@@ -2168,12 +2168,12 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       src: 'modelo de robô 2.jpeg',
       badge: 'Passo 1 / 2',
-      title: '1. Base Motriz EV3 — Chassi e Rodas Laterais Sincronizadas (Portas B e C)'
+      title: '1. Base Motriz — Chassi e Rodas Laterais Sincronizadas (Portas B e C)'
     },
     {
       src: 'modelo de robô.jpeg',
       badge: 'Passo 2 / 2',
-      title: '2. Base Motriz EV3 — Instalação do Sensor Ultrassônico Frontal (Porta 4)'
+      title: '2. Base Motriz — Instalação do Sensor Ultrassônico Frontal (Porta 4)'
     }
   ];
   let currentBuilderStep = 0;

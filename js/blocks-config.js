@@ -1,5 +1,5 @@
 /**
- * Catálogo Completo e Fidedigno de Blocos - LEGO® MINDSTORMS® Education EV3 Classroom (v1.5.3)
+ * Catálogo Completo e Fidedigno de Blocos - RoboSim
  * Modelado diretamente a partir das 8 imagens oficiais do diretório:
  * - Bloco motores.jpeg
  * - Bloco Movimento.jpeg
@@ -506,7 +506,7 @@ window.EV3_BLOCK_DEFINITIONS = {
     icon: 'brick',
     tokens: [
       { kind: 'label', text: 'escrever' },
-      { kind: 'text', name: 'text', default: 'EV3' },
+      { kind: 'text', name: 'text', default: 'RoboSim' },
       { kind: 'label', text: 'na linha' },
       { kind: 'number', name: 'line', default: 1, min: 1, max: 12, step: 1 }
     ]
@@ -518,7 +518,7 @@ window.EV3_BLOCK_DEFINITIONS = {
     icon: 'brick',
     tokens: [
       { kind: 'label', text: 'escrever' },
-      { kind: 'text', name: 'text', default: 'EV3' },
+      { kind: 'text', name: 'text', default: 'RoboSim' },
       { kind: 'label', text: 'em' },
       { kind: 'number', name: 'x', default: 1, min: 0, max: 177, step: 1 },
       { kind: 'label', text: ',' },

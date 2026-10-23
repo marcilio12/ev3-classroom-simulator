@@ -1,5 +1,5 @@
 /**
- * Workspace de Programação Baseado em Blocos SVG (Padrão Oficial LEGO MINDSTORMS EV3 Classroom v1.5.3)
+ * Workspace de Programação Baseado em Blocos SVG - RoboSim
  * Funcionalidades fidedignas ao software oficial:
  * 1. Seleção de bloco ou de todo o conjunto conectado ao clicar em qualquer bloco da pilha.
  * 2. Exclusão imediata do bloco/conjunto selecionado ao pressionar Delete ou Backspace (com suporte a Ctrl+Z).
@@ -425,7 +425,7 @@ class EV3Workspace {
   }
 
   /**
-   * Feedback de áudio sintético Web Audio API (Lego click, snap, trash, chime)
+   * Feedback de áudio sintético Web Audio API (Click, snap, trash, chime)
    */
   playAudioFeedback(type = 'snap') {
     try {
@@ -445,7 +445,7 @@ class EV3Workspace {
       gain.connect(this.audioCtx.destination);
 
       if (type === 'snap') {
-        // Lego snap click
+        // Snap click
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(880, now);
         osc.frequency.exponentialRampToValueAtTime(260, now + 0.035);
@@ -1757,7 +1757,7 @@ class EV3Workspace {
           const root = this.getRootBlockOfStack(blockId);
           if (root) this.duplicateStackFrom(root.id);
         } else if (act === 'comment') {
-          this.addStickyNote('Comentário do bloco EV3...', blk.x + 280, blk.y, blk.id);
+          this.addStickyNote('Comentário do bloco...', blk.x + 280, blk.y, blk.id);
         } else if (act === 'select-single') {
           this.selectBlock(blockId, false);
         } else if (act === 'delete-single') {

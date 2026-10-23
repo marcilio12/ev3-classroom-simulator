@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LEGO® MINDSTORMS® Education EV3 Classroom - 1.5.3</title>
+  <title>RoboSim - Simulador virtual de robótica compatível com a linguagem de blocos</title>
+  <link rel="icon" type="image/jpeg" href="Logo.jpg" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
 
-  <!-- 1. Barra de Título Superior (Idêntica ao EV3 Classroom 1.5.3) -->
+  <!-- 1. Barra de Título Superior -->
   <div class="window-titlebar">
     <div class="window-titlebar-left">
-      <span class="ev3-app-icon">LEGO</span>
-      <span>LEGO® MINDSTORMS® Education EV3 Classroom - 1.5.3</span>
+      <img src="Logo.jpg" class="robosim-app-icon" alt="RoboSim" />
+      <span>RoboSim - Simulador virtual de robótica compatível com a linguagem de blocos</span>
     </div>
     <div class="window-controls">
       <span>─</span>
@@ -267,9 +268,9 @@
       <div class="ev3-hud-panel">
         <div class="hud-top-row">
           <div class="hud-title">
-            <span>Portas EV3 (A, B, C, D &amp; 1, 2, 3, 4)</span>
+            <span>Portas do Robô (A, B, C, D &amp; 1, 2, 3, 4)</span>
           </div>
-          <div class="hud-brick-buttons" title="Botões físicos do Bloco EV3">
+          <div class="hud-brick-buttons" title="Botões de controle do robô">
             <button class="brick-btn" data-brick-btn="esquerda">◀ Esq</button>
             <button class="brick-btn" data-brick-btn="centro">● Centro</button>
             <button class="brick-btn" data-brick-btn="direita">Dir ▶</button>
@@ -468,7 +469,7 @@
   </main>
 
   <!-- =========================================================================
-       POP-UP DE CONEXÃO DO BLOCO EV3 (Fiel a Conectar.png)
+       POP-UP DE CONEXÃO DO ROBÔ
        Exibido quando o aluno clica em "conectar" na tela do projeto
        ========================================================================= -->
   <div id="ev3ConnectModal" class="ev3-connect-backdrop">
@@ -487,26 +488,26 @@
       </div>
 
       <!-- Título Principal -->
-      <h2 id="connectModalTitle" class="ev3-connect-title">Conectar via Cabo USB</h2>
+      <h2 id="connectModalTitle" class="ev3-connect-title">Conectar Robô Virtual</h2>
 
-      <!-- Corpo em Duas Colunas: Instruções à esquerda + Ilustração do Bloco EV3 à direita -->
+      <!-- Corpo em Duas Colunas: Instruções à esquerda + Ilustração do Robô à direita -->
       <div class="ev3-connect-body">
         <div class="ev3-connect-steps">
-          <p class="ev3-connect-step-item">1. Ligue seu Bloco EV3.</p>
+          <p class="ev3-connect-step-item">1. Ligue o seu robô virtual.</p>
           <p id="connectStep2Text" class="ev3-connect-step-item">
-            2. Use o cabo USB para conectar o seu Bloco EV3.
+            2. Conecte o robô para habilitar a simulação interativa.
           </p>
 
           <div class="ev3-connect-action-box">
             <button type="button" id="confirmConnectSimBtn" class="ev3-connect-sim-btn">
-              Conectar Bloco EV3 (Abrir Simulador)
+              Conectar Robô (Abrir Simulador)
             </button>
-            <span class="ev3-connect-hint">Ou clique diretamente sobre o Bloco EV3 ao lado para conectar</span>
+            <span class="ev3-connect-hint">Ou clique diretamente sobre o robô ao lado para conectar</span>
           </div>
         </div>
 
         <div class="ev3-connect-brick-col">
-          <div id="connectBrickIllustration" class="ev3-connect-brick-crop" title="Clique no Bloco EV3 para conectar e abrir o Simulador 2D"></div>
+          <div id="connectBrickIllustration" class="ev3-connect-brick-crop" title="Clique no robô para conectar e abrir o Simulador 2D"></div>
         </div>
       </div>
     </div>
@@ -526,10 +527,17 @@
   </div>
 
   <!-- =========================================================================
-       TELA INICIAL (Primeira tela exibida ao abrir o sistema — Fiel a Página inicial.jpeg)
+       TELA INICIAL (Primeira tela exibida ao abrir o sistema)
        Opções: "IR PARA A PÁGINA INICIAL" | "NOVO PROJETO"
        ========================================================================= -->
   <section id="ev3StartScreen" class="ev3-start-screen open">
+    <div class="robosim-start-brand">
+      <img src="Logo.jpg" alt="RoboSim Logo" class="robosim-start-logo" />
+      <div class="robosim-start-brand-text">
+        <h1 class="robosim-start-title">RoboSim</h1>
+        <p class="robosim-start-subtitle">Simulador virtual de robótica compatível com a linguagem de blocos</p>
+      </div>
+    </div>
     <div class="ev3-start-split-container">
       <!-- Lado Esquerdo: IR PARA A PÁGINA INICIAL -->
       <button type="button" id="startScreenGoHomeBtn" class="ev3-start-option left-option">
@@ -561,13 +569,19 @@
   </section>
 
   <!-- =========================================================================
-       PÁGINA INICIAL OFICIAL (Modal "Comece aqui" com abas — Fiel a Pagina inicial.jpeg)
+       PÁGINA INICIAL OFICIAL (Modal "Comece aqui" com abas)
        ========================================================================= -->
   <div id="homeModal" class="ev3-home-backdrop">
     <div class="ev3-home-modal">
 
       <!-- Barra de Navegação Superior da Tela Inicial -->
       <div class="ev3-home-topbar">
+        <div class="robosim-modal-brand">
+          <img src="Logo.jpg" alt="RoboSim" class="robosim-modal-logo" />
+          <span class="robosim-modal-title">RoboSim</span>
+        </div>
+
+        <button id="closeHomeModalBtn" class="ev3-home-icon-btn" title="Ir ao ambiente de programação">
         <button id="closeHomeModalBtn" class="ev3-home-icon-btn" title="Ir ao ambiente de programação">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
             <line x1="5" y1="5" x2="19" y2="19"/>
@@ -644,15 +658,17 @@
 
         <!-- ==================== ABA 1: PÁGINA INICIAL ==================== -->
         <div id="homeViewMain" class="ev3-home-view active">
-          <!-- Hero Section: "Comece aqui" + Mão segurando o Bloco EV3 -->
+          <!-- Hero Section: "Comece aqui" + Logo do RoboSim -->
           <section class="ev3-hero-section">
-            <div class="ev3-hero-bg-photo"></div>
             <div class="ev3-hero-content">
               <h1 class="ev3-hero-title">Comece aqui</h1>
               <p class="ev3-hero-subtitle">
-                Familiarize-se com o EV3 em três<br />atividades divertidas!
+                Familiarize-se com o RoboSim em três<br />atividades divertidas de robótica!
               </p>
               <button id="startFromHomeBtn" class="ev3-iniciar-pill-btn">INICIAR</button>
+            </div>
+            <div class="robosim-hero-logo-wrap">
+              <img src="Logo.jpg" alt="RoboSim" class="robosim-hero-logo" />
             </div>
           </section>
 
@@ -665,14 +681,14 @@
             <div class="ev3-recent-row" id="recentProjectsRow"></div>
           </section>
 
-          <!-- Seção Inferior: "Planos de Unidade", "Desafios" e "Modelos do Conjunto Principal" -->
+          <!-- Seção Inferior: "Planos de Unidade", "Desafios" e "Modelos da Base Motriz" -->
           <section class="ev3-bottom-cards-section">
             <div class="ev3-large-feature-card" id="cardOpenUnitsBtn">
               <div>
                 <h4>Planos de Unidade</h4>
-                <p>Atividades práticas guiadas de robótica, cinemática diferencial e sensores EV3.</p>
+                <p>Atividades práticas guiadas de robótica, cinemática diferencial e sensores.</p>
               </div>
-              <img src="modelo de robô.jpeg" alt="Planos de Unidade EV3" class="ev3-feature-card-img" />
+              <img src="modelo de robô.jpeg" alt="Planos de Unidade" class="ev3-feature-card-img" />
             </div>
 
             <div class="ev3-large-feature-card ev3-challenge-feature-card" id="cardOpenChallengesBtn">
@@ -696,10 +712,10 @@
 
             <div class="ev3-large-feature-card" id="cardOpenBuilderBtn">
               <div>
-                <h4>Modelos do Conjunto Principal</h4>
-                <p>Instruções interativas da Base Motriz EV3 com rodas B+C e sensor ultrassônico.</p>
+                <h4>Modelos da Base Motriz</h4>
+                <p>Instruções interativas da Base Motriz com motores B+C e sensor ultrassônico.</p>
               </div>
-              <img src="modelo de robô 2.jpeg" alt="Modelos do Conjunto Principal EV3" class="ev3-feature-card-img" />
+              <img src="modelo de robô 2.jpeg" alt="Modelos da Base Motriz" class="ev3-feature-card-img" />
             </div>
           </section>
         </div>
@@ -710,10 +726,10 @@
             <!-- Painel Gamificado Superior (Patente, XP, Estrelas e Barra de Progresso) -->
             <div class="ev3-gamification-hero">
               <div class="ev3-gamification-left">
-                <span class="ev3-gamification-kicker">ARENA DE COMPETIÇÃO EV3 • 16 CENÁRIOS</span>
+                <span class="ev3-gamification-kicker">ARENA DE COMPETIÇÃO • 16 CENÁRIOS</span>
                 <h2 class="ev3-gamification-title">Desafios de Robótica</h2>
                 <p class="ev3-gamification-desc">
-                  Programe o robô EV3 para superar 16 cenários progressivos: trajetos serpentina e circuitos de 4 cantos sem sensores, labirintos em espiral e zigue-zague com ultrassônico, autódromo de linha preta com chicanes e operações logísticas com até 3 caixas e 3 docas!
+                  Programe o robô para superar 16 cenários progressivos: trajetos serpentina e circuitos de 4 cantos sem sensores, labirintos em espiral e zigue-zague com ultrassônico, autódromo de linha preta com chicanes e operações logísticas com até 3 caixas e 3 docas!
                 </p>
                 <div class="ev3-gamification-progress-wrap">
                   <div class="ev3-gamification-progress-labels">
@@ -731,7 +747,7 @@
               <div class="ev3-gamification-stats">
                 <div class="ev3-gstat-card">
                   <span class="ev3-gstat-label">PATENTE ATUAL</span>
-                  <strong class="ev3-gstat-value" id="challengePlayerRank">🤖 Cadete EV3</strong>
+                  <strong class="ev3-gstat-value" id="challengePlayerRank">🤖 Cadete RoboSim</strong>
                 </div>
                 <div class="ev3-gstat-card">
                   <span class="ev3-gstat-label">ESTRELAS</span>
@@ -774,7 +790,7 @@
             <div class="ev3-subpage-header">
               <div>
                 <h2 class="ev3-subpage-title">Comece aqui: 3 Atividades Divertidas</h2>
-                <p class="ev3-subpage-subtitle">Aprenda os fundamentos do LEGO® MINDSTORMS® Education EV3 passo a passo.</p>
+                <p class="ev3-subpage-subtitle">Aprenda os fundamentos da robótica e programação em blocos passo a passo com o RoboSim.</p>
               </div>
               <button class="ev3-primary-btn" data-create-blank-project="true">+ Criar Projeto em Branco</button>
             </div>
@@ -868,25 +884,25 @@
           <div class="ev3-home-subpage">
             <div class="ev3-subpage-header">
               <div>
-                <h2 class="ev3-subpage-title">Modelos do Conjunto Principal EV3</h2>
+                <h2 class="ev3-subpage-title">Modelos da Base Motriz</h2>
                 <p class="ev3-subpage-subtitle">Visualize as instruções de montagem da Base Motriz utilizada na simulação 2D.</p>
               </div>
             </div>
 
             <div class="ev3-activities-grid">
               <div class="ev3-activity-card" id="buildCardStep1">
-                <img src="modelo de robô 2.jpeg" alt="Base Motriz EV3 Chassi" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
+                <img src="modelo de robô 2.jpeg" alt="Base Motriz Chassi" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
                 <div class="ev3-activity-body">
                   <div>
-                    <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 1: Base Motriz EV3 (Rodas B e C)</h4>
-                    <p>Chassi diferencial com dois Motores Grandes sincronizados nas portas B (esquerda) e C (direita) e Bloco Inteligente EV3.</p>
+                    <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 1: Base Motriz (Rodas B e C)</h4>
+                    <p>Chassi diferencial com dois Motores Grandes sincronizados nas portas B (esquerda) e C (direita) e controlador robótico.</p>
                   </div>
                   <button class="ev3-activity-cta">Abrir Visualizador 3D (Passo 1) →</button>
                 </div>
               </div>
 
               <div class="ev3-activity-card" id="buildCardStep2">
-                <img src="modelo de robô.jpeg" alt="Base Motriz EV3 com Sensor Ultrassônico" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
+                <img src="modelo de robô.jpeg" alt="Base Motriz com Sensor Ultrassônico" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
                 <div class="ev3-activity-body">
                   <div>
                     <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 2: Módulo Sensor Ultrassônico e Garra</h4>
@@ -936,7 +952,7 @@
         </svg>
       </button>
 
-      <img id="builderStageImg" src="modelo de robô 2.jpeg" alt="Modelo de Construção do Robô EV3" class="ev3-builder-img" />
+      <img id="builderStageImg" src="modelo de robô 2.jpeg" alt="Modelo de Construção do Robô" class="ev3-builder-img" />
 
       <button id="builderNextBtn" class="ev3-builder-nav-arrow next" title="Próximo passo">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -990,7 +1006,7 @@
           <div class="shortcuts-icon-box">⌨️</div>
           <div>
             <h3 style="font-size:17px; font-weight:800; color:#1E293B;">Atalhos de Teclado e Dicas de Usabilidade</h3>
-            <p style="font-size:12px; color:#64748B;">Acelere sua programação e testes no LEGO MINDSTORMS EV3 Classroom</p>
+            <p style="font-size:12px; color:#64748B;">Acelere sua programação e testes no RoboSim</p>
           </div>
         </div>
         <button type="button" id="closeShortcutsModalBtn" class="ev3-connect-close-btn" title="Fechar">✕</button>

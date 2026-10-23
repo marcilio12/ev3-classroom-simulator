@@ -1,5 +1,5 @@
 /**
- * Interpretador / Runtime Assíncrono (async/await) - LEGO MINDSTORMS EV3 Classroom
+ * Interpretador / Runtime Assíncrono (async/await) - RoboSim
  * Percorre pilhas de blocos sequencialmente, envia comandos de física ao robô,
  * monitora rotações/graus/tempo/sensores e destaca o bloco ativo em tempo real.
  */
@@ -32,7 +32,7 @@ class EV3Runtime {
     const token = this.runToken;
     this.isRunning = true;
     this.onStateChange(true);
-    this.onLog('Executando programa EV3...');
+    this.onLog('Executando programa RoboSim...');
 
     try {
       await Promise.all(startHats.map(hat => this.executeChain(hat.id, token)));
@@ -452,32 +452,32 @@ class EV3Runtime {
 
       // ==================== MONITOR ====================
       case 'display_write_line': {
-        this.onLog(`Monitor EV3 (Linha ${p.line}): "${p.text}"`);
+        this.onLog(`Monitor (Linha ${p.line}): "${p.text}"`);
         await this.sleep(80, token);
         break;
       }
 
       case 'display_write_xy': {
-        this.onLog(`Monitor EV3 (${p.x}, ${p.y}): "${p.text}"`);
+        this.onLog(`Monitor (${p.x}, ${p.y}): "${p.text}"`);
         await this.sleep(80, token);
         break;
       }
 
       case 'display_image_for': {
         const secs = Math.max(0.1, Number(p.seconds) || 2);
-        this.onLog(`Monitor EV3 exibindo "${p.image}" por ${secs} s`);
+        this.onLog(`Monitor exibindo "${p.image}" por ${secs} s`);
         await this.sleep(secs * 1000, token);
         break;
       }
 
       case 'display_image': {
-        this.onLog(`Monitor EV3 exibindo "${p.image}"`);
+        this.onLog(`Monitor exibindo "${p.image}"`);
         await this.sleep(80, token);
         break;
       }
 
       case 'display_clear': {
-        this.onLog('Monitor EV3 apagado.');
+        this.onLog('Monitor apagado.');
         await this.sleep(60, token);
         break;
       }
@@ -485,14 +485,14 @@ class EV3Runtime {
       case 'brick_status_light': {
         const colorStr = String(p.lightColor || 'green').replace('_pulse', '');
         this.arena.robot.statusLight = colorStr;
-        this.onLog(`Luz de status do EV3 definida para ${p.lightColor}`);
+        this.onLog(`Luz de status definida para ${p.lightColor}`);
         await this.sleep(60, token);
         break;
       }
 
       case 'brick_status_light_off': {
         this.arena.robot.statusLight = 'off';
-        this.onLog('Luz de status do EV3 desligada.');
+        this.onLog('Luz de status desligada.');
         await this.sleep(60, token);
         break;
       }
@@ -673,7 +673,7 @@ class EV3Runtime {
       }
 
       case 'sensor_reset_timer': {
-        this.onLog('Cronômetro do EV3 redefinido para 0.0 s.');
+        this.onLog('Cronômetro redefinido para 0.0 s.');
         await this.sleep(50, token);
         break;
       }

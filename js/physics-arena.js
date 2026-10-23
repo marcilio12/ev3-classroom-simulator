@@ -1,5 +1,5 @@
 /**
- * Motor de Simulação 2D e Cinemática Diferencial - LEGO MINDSTORMS EV3
+ * Motor de Simulação 2D e Cinemática Diferencial - RoboSim
  * - Escala métrica calibrada: 4 pixels = 1 cm (Roda EV3 = 5.6 cm diâmetro -> 17.6 cm por rotação)
  * - Cinemática diferencial oficial EV3 para motores B (esquerdo) e C (direito)
  * - Braço/Garra frontal motorizado na porta A (interage com cuboide)
@@ -1059,7 +1059,7 @@ class EV3PhysicsArena {
     }
     ctx.stroke();
 
-    // 2. Bordas da Mesa de Competição LEGO
+    // 2. Bordas da Mesa de Competição
     ctx.strokeStyle = '#343A40';
     ctx.lineWidth = 6;
     ctx.strokeRect(13, 13, w - 26, h - 26);
@@ -1305,7 +1305,7 @@ class EV3PhysicsArena {
       ctx.restore();
     }
 
-    // 8. Cuboides LEGO (1, 2 ou 3 Caixas Interativas)
+    // 8. Cuboides (1, 2 ou 3 Caixas Interativas)
     for (const box of this.cuboids) {
       ctx.save();
       const s = box.size || 28;
@@ -1317,7 +1317,7 @@ class EV3PhysicsArena {
       ctx.fill();
       ctx.stroke();
 
-      // 4 studs LEGO no topo do cuboide
+      // Pinos no topo do cuboide
       ctx.fillStyle = 'rgba(255,255,255,0.35)';
       [-5, 5].forEach(dx => {
         [-5, 5].forEach(dy => {

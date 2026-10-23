@@ -1,5 +1,5 @@
 :root {
-  /* Paleta Oficial LEGO MINDSTORMS Education EV3 Classroom v1.5.3 */
+  /* RoboSim - Simulador virtual de robótica compatível com a linguagem de blocos */
   --ev3-motors: #0084FF;
   --ev3-motors-dark: #006ACC;
   --ev3-movement: #EC407A;
@@ -75,18 +75,13 @@ body {
   gap: 7px;
 }
 
-.ev3-app-icon {
-  width: 15px;
-  height: 15px;
-  background: var(--ev3-red);
-  color: #fff;
-  border-radius: 2px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 7.5px;
-  letter-spacing: -0.4px;
+.robosim-app-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
+  display: inline-block;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .window-controls {
@@ -1594,7 +1589,7 @@ body {
   color: var(--ev3-movement-dark);
 }
 
-/* ==================== 7A. TELA INICIAL (PRIMEIRA TELA — FIEL A Página inicial.jpeg) ==================== */
+/* ==================== 7A. TELA INICIAL (PRIMEIRA TELA COM MARCA ROBOSIM) ==================== */
 .ev3-start-screen {
   position: fixed;
   top: 90px;
@@ -1604,19 +1599,55 @@ body {
   background: #FFFFFF;
   z-index: 2500;
   display: none;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 }
 
 .ev3-start-screen.open {
   display: flex;
 }
 
+.robosim-start-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 26px;
+  text-align: center;
+}
+
+.robosim-start-logo {
+  width: 96px;
+  height: 96px;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  margin-bottom: 12px;
+}
+
+.robosim-start-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1E293B;
+  letter-spacing: -0.5px;
+  margin: 0 0 5px 0;
+}
+
+.robosim-start-subtitle {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #64748B;
+  margin: 0;
+  max-width: 520px;
+}
+
 .ev3-start-split-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(14px);
+  transform: translateY(8px);
 }
 
 .ev3-start-option {
@@ -1690,7 +1721,7 @@ body {
   flex-shrink: 0;
 }
 
-/* ==================== 7B. MODAL DA PÁGINA INICIAL (FIEL A Pagina inicial.jpeg) ==================== */
+/* ==================== 7B. MODAL DA PÁGINA INICIAL ROBOSIM ==================== */
 .ev3-home-backdrop {
   position: fixed;
   top: 50px;
@@ -1730,6 +1761,28 @@ body {
   justify-content: space-between;
   padding: 0 24px;
   flex-shrink: 0;
+}
+
+.robosim-modal-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-right: 14px;
+}
+
+.robosim-modal-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.robosim-modal-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #1E293B;
+  letter-spacing: -0.4px;
 }
 
 .ev3-home-icon-btn {
@@ -1796,46 +1849,60 @@ body {
 
 .ev3-hero-section {
   position: relative;
-  height: 295px;
-  background: #F3F3F3;
+  min-height: 280px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F1F5F9 100%);
+  border-radius: 14px;
+  margin: 16px 20px 24px 20px;
+  border: 1px solid #E2E8F0;
   overflow: hidden;
   display: flex;
   align-items: center;
-  padding: 0 42px;
+  justify-content: space-between;
+  padding: 32px 50px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 
-.ev3-hero-bg-photo {
-  position: absolute;
-  inset: 0;
-  background-image: url('../Pagina inicial.jpeg');
-  background-repeat: no-repeat;
-  background-size: 138.8% auto;
-  background-position: 50% 21.5%;
-  pointer-events: none;
+.robosim-hero-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.robosim-hero-logo {
+  width: 175px;
+  height: 175px;
+  border-radius: 28px;
+  object-fit: cover;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.16);
+  animation: robosimFloat 3.6s ease-in-out infinite alternate;
+}
+
+@keyframes robosimFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-7px); }
 }
 
 .ev3-hero-content {
   position: relative;
   z-index: 2;
-  max-width: 380px;
-  background: linear-gradient(90deg, #F3F3F3 82%, rgba(243, 243, 243, 0) 100%);
-  padding: 20px 40px 20px 0;
+  max-width: 440px;
 }
 
 .ev3-hero-title {
   font-size: 40px;
   font-weight: 800;
-  color: #000000;
-  letter-spacing: -0.5px;
-  margin-bottom: 18px;
+  color: #0F172A;
+  letter-spacing: -0.6px;
+  margin-bottom: 14px;
   line-height: 1.1;
 }
 
 .ev3-hero-subtitle {
   font-size: 15px;
-  color: #333333;
-  line-height: 1.42;
-  margin-bottom: 28px;
+  color: #475569;
+  line-height: 1.45;
+  margin-bottom: 26px;
 }
 
 .ev3-iniciar-pill-btn {
