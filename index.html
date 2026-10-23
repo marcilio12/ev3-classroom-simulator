@@ -168,8 +168,8 @@
     <!-- Workspace Central de Programação em Blocos -->
     <section id="workspaceArea" class="workspace-area">
 
-      <!-- Ícone Flutuante do Bloco EV3 no canto superior esquerdo (fiel a ambiente de programação.jpeg) -->
-      <button id="floatingBrickBtn" class="ev3-brick-floating-btn disconnected" title="Clique para conectar o Bloco EV3 e abrir o Simulador">
+      <!-- Ícone Flutuante do Bloco Inteligente no canto superior esquerdo -->
+      <button id="floatingBrickBtn" class="ev3-brick-floating-btn disconnected" title="Clique para conectar o Bloco Inteligente e abrir o Simulador">
         <span class="ev3-brick-badge-dot"></span>
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#212529" stroke-width="1.8">
           <rect x="5" y="2" width="14" height="20" rx="2.5" fill="#fff"/>
@@ -488,26 +488,26 @@
       </div>
 
       <!-- Título Principal -->
-      <h2 id="connectModalTitle" class="ev3-connect-title">Conectar Robô Virtual</h2>
+      <h2 id="connectModalTitle" class="ev3-connect-title">Conectar via Cabo USB</h2>
 
       <!-- Corpo em Duas Colunas: Instruções à esquerda + Ilustração do Robô à direita -->
       <div class="ev3-connect-body">
         <div class="ev3-connect-steps">
-          <p class="ev3-connect-step-item">1. Ligue o seu robô virtual.</p>
+          <p class="ev3-connect-step-item">1. Ligue seu Bloco Inteligente.</p>
           <p id="connectStep2Text" class="ev3-connect-step-item">
-            2. Conecte o robô para habilitar a simulação interativa.
+            2. Use o cabo USB para conectar o seu Bloco Inteligente ao computador.
           </p>
 
           <div class="ev3-connect-action-box">
             <button type="button" id="confirmConnectSimBtn" class="ev3-connect-sim-btn">
-              Conectar Robô (Abrir Simulador)
+              Conectar Bloco Inteligente (Abrir Simulador)
             </button>
-            <span class="ev3-connect-hint">Ou clique diretamente sobre o robô ao lado para conectar</span>
+            <span class="ev3-connect-hint">Ou clique diretamente sobre o Bloco ao lado para conectar</span>
           </div>
         </div>
 
         <div class="ev3-connect-brick-col">
-          <div id="connectBrickIllustration" class="ev3-connect-brick-crop" title="Clique no robô para conectar e abrir o Simulador 2D"></div>
+          <div id="connectBrickIllustration" class="ev3-connect-brick-crop" title="Clique no Bloco Inteligente para conectar e abrir o Simulador 2D"></div>
         </div>
       </div>
     </div>
@@ -688,7 +688,7 @@
                 <h4>Planos de Unidade</h4>
                 <p>Atividades práticas guiadas de robótica, cinemática diferencial e sensores.</p>
               </div>
-              <img src="modelo de robô.jpeg" alt="Planos de Unidade" class="ev3-feature-card-img" />
+              <img src="modelo de robô.jpg" alt="Planos de Unidade" class="ev3-feature-card-img" />
             </div>
 
             <div class="ev3-large-feature-card ev3-challenge-feature-card" id="cardOpenChallengesBtn">
@@ -715,7 +715,7 @@
                 <h4>Modelos da Base Motriz</h4>
                 <p>Instruções interativas da Base Motriz com motores B+C e sensor ultrassônico.</p>
               </div>
-              <img src="modelo de robô 2.jpeg" alt="Modelos da Base Motriz" class="ev3-feature-card-img" />
+              <img src="modelo de robô 2.jpg" alt="Modelos da Base Motriz" class="ev3-feature-card-img" />
             </div>
           </section>
         </div>
@@ -824,7 +824,7 @@
                   <h3>3. Cores, Linhas Pretas e Sons</h3>
                 </div>
                 <div class="ev3-activity-body">
-                  <p>Utilize o Sensor de Cor na Porta 3 para identificar a linha preta da pista, acender o LED do Bloco EV3 e emitir sinais sonoros.</p>
+                  <p>Utilize o Sensor de Cor na Porta 3 para identificar a linha preta da pista, acender o LED do Bloco Inteligente e emitir sinais sonoros.</p>
                   <button class="ev3-activity-cta">Iniciar Atividade 3 →</button>
                 </div>
               </div>
@@ -837,7 +837,7 @@
           <div class="ev3-home-subpage">
             <div class="ev3-subpage-header">
               <div>
-                <h2 class="ev3-subpage-title">Planos de Unidade EV3 Classroom</h2>
+                <h2 class="ev3-subpage-title">Planos de Unidade RoboSim</h2>
                 <p class="ev3-subpage-subtitle">Projetos educacionais completos de robótica móvel e automação.</p>
               </div>
             </div>
@@ -849,7 +849,7 @@
                   <h3>Agarrar e Liberar o Cuboide</h3>
                 </div>
                 <div class="ev3-activity-body">
-                  <p>Projeto oficial do EV3 Classroom: controle o Motor Médio na Porta A para fechar a garra no Cuboide, girar a Base Motriz e liberá-lo.</p>
+                  <p>Projeto oficial do RoboSim: controle o Motor Médio na Porta A para fechar a garra no Cuboide, girar a Base Motriz e liberá-lo.</p>
                   <button class="ev3-activity-cta">Abrir Unidade →</button>
                 </div>
               </div>
@@ -891,7 +891,7 @@
 
             <div class="ev3-activities-grid">
               <div class="ev3-activity-card" id="buildCardStep1">
-                <img src="modelo de robô 2.jpeg" alt="Base Motriz Chassi" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
+                <img src="modelo de robô 2.jpg" alt="Base Motriz Chassi" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
                 <div class="ev3-activity-body">
                   <div>
                     <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 1: Base Motriz (Rodas B e C)</h4>
@@ -902,7 +902,7 @@
               </div>
 
               <div class="ev3-activity-card" id="buildCardStep2">
-                <img src="modelo de robô.jpeg" alt="Base Motriz com Sensor Ultrassônico" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
+                <img src="modelo de robô.jpg" alt="Base Motriz com Sensor Ultrassônico" style="width:100%; height:190px; object-fit:contain; background:#fff; border-bottom:1px solid #eee;" />
                 <div class="ev3-activity-body">
                   <div>
                     <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">Passo 2: Módulo Sensor Ultrassônico e Garra</h4>
@@ -940,7 +940,7 @@
   </div>
 
   <!-- =========================================================================
-       VISUALIZADOR DE CONSTRUÇÃO EM TELA CHEIA (Idêntico a modelo de robô.jpeg e modelo de robô 2.jpeg)
+       VISUALIZADOR DE CONSTRUÇÃO EM TELA CHEIA (Idêntico a modelo de robô.jpg e modelo de robô 2.jpg)
        ========================================================================= -->
   <div id="builderOverlay" class="ev3-builder-overlay">
     <button id="closeBuilderOverlayBtn" class="ev3-builder-close" title="Fechar instruções de construção">✕</button>
@@ -952,7 +952,7 @@
         </svg>
       </button>
 
-      <img id="builderStageImg" src="modelo de robô 2.jpeg" alt="Modelo de Construção do Robô" class="ev3-builder-img" />
+      <img id="builderStageImg" src="modelo de robô 2.jpg" alt="Modelo de Construção do Robô" class="ev3-builder-img" />
 
       <button id="builderNextBtn" class="ev3-builder-nav-arrow next" title="Próximo passo">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -990,7 +990,7 @@
         </div>
 
         <span id="builderStepTitle" style="font-size:12.5px; font-weight:600; color:#555;">
-          1. Base Motriz EV3 (Motores B e C + Bloco Inteligente EV3)
+          1. Base Motriz (Motores B e C + Bloco Inteligente RoboSim)
         </span>
       </div>
     </div>

@@ -1809,7 +1809,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (portVal4) portVal4.textContent = `${robot.sensors.ultrasonicCm.toFixed(1)} cm`;
   }
 
-  // ==================== 7. POP-UP DE CONEXÃO (Conectar.png) E CONTROLES DA ARENA ====================
+  // ==================== 7. POP-UP DE CONEXÃO (Conectar.jpg / Bloco Robo.jpg) E CONTROLES DA ARENA ====================
   const floatingBrickBtn = document.getElementById('floatingBrickBtn');
   const floatingBrickLabel = document.getElementById('floatingBrickLabel');
   const resizer = document.getElementById('splitResizer');
@@ -1843,11 +1843,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!connectModalTitle || !connectStep2Text || !toggleConnectModeBtn) return;
     if (isBluetoothMode) {
       connectModalTitle.textContent = 'Conectar via Bluetooth';
-      connectStep2Text.textContent = '2. Ative o Bluetooth no seu robô e selecione-o para conectar.';
+      connectStep2Text.textContent = '2. Ative o Bluetooth no seu Bloco Inteligente e selecione-o para conectar.';
       toggleConnectModeBtn.textContent = 'CONECTAR VIA CABO USB';
     } else {
       connectModalTitle.textContent = 'Conectar via Cabo USB';
-      connectStep2Text.textContent = '2. Conecte o robô para habilitar a simulação interativa.';
+      connectStep2Text.textContent = '2. Use o cabo USB para conectar o seu Bloco Inteligente ao computador.';
       toggleConnectModeBtn.textContent = 'CONECTAR VIA BLUETOOTH';
     }
   }
@@ -2166,12 +2166,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const builderOverlay = document.getElementById('builderOverlay');
   const builderSteps = [
     {
-      src: 'modelo de robô 2.jpeg',
+      src: 'modelo de robô 2.jpg',
       badge: 'Passo 1 / 2',
       title: '1. Base Motriz — Chassi e Rodas Laterais Sincronizadas (Portas B e C)'
     },
     {
-      src: 'modelo de robô.jpeg',
+      src: 'modelo de robô.jpg',
       badge: 'Passo 2 / 2',
       title: '2. Base Motriz — Instalação do Sensor Ultrassônico Frontal (Porta 4)'
     }

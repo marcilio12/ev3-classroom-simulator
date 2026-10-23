@@ -1111,7 +1111,7 @@ body {
   flex-shrink: 0;
 }
 
-/* ==================== 5B. POP-UP DE CONEXÃO DO EV3 (FIEL A Conectar.png) ==================== */
+/* ==================== 5B. POP-UP DE CONEXÃO ROBOSIM (FIEL A Conectar.jpg) ==================== */
 .ev3-connect-backdrop {
   position: fixed;
   top: 26px;
@@ -1255,22 +1255,22 @@ body {
   justify-content: center;
 }
 
-/* Recorte exato do Bloco Inteligente EV3 de Conectar.png */
+/* Bloco Inteligente RoboSim exibido no Pop-up de Conexão */
 .ev3-connect-brick-crop {
-  width: 215px;
-  height: 310px;
-  background-image: url('../Conectar.png');
+  width: 280px;
+  height: 320px;
+  background-image: url('../Bloco Robo.jpg');
   background-repeat: no-repeat;
-  background-size: 1248px auto;
-  background-position: -635px -112px;
+  background-size: contain;
+  background-position: center;
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 12px;
   transition: transform 0.18s ease, filter 0.18s ease;
 }
 
 .ev3-connect-brick-crop:hover {
   transform: scale(1.03);
-  filter: drop-shadow(0 6px 16px rgba(46, 204, 113, 0.28));
+  filter: drop-shadow(0 6px 18px rgba(0, 132, 255, 0.32));
 }
 
 .ev3-hud-panel {

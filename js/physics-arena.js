@@ -1384,7 +1384,7 @@ class EV3PhysicsArena {
 
     const wheelbaseHalf = (this.WHEELBASE_CM * this.PX_PER_CM) / 2; // 24.4 px
 
-    // Braços / Garra Frontal (Porta A - inspirada em modelo de robô.jpeg)
+    // Braços / Garra Frontal (Porta A - inspirada em modelo de robô.jpg)
     const clawSpread = this.robot.clawAngleDeg < -20 ? 9 : 16;
     ctx.strokeStyle = '#B0BEC5';
     ctx.lineWidth = 4;
