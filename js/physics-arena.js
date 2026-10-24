@@ -64,7 +64,10 @@ class EV3PhysicsArena {
     this.bonusStar = null;
     this.hadCollision = false;
     this.challengeCompleted = false;
+    this.isGameOver = false;
+    this.isGameOver = false;
     this.onChallengeComplete = null;
+    this.onChallengeGameOver = null;
 
     this.dragTarget = null;
     this.lastFrameTime = performance.now();
@@ -120,6 +123,7 @@ class EV3PhysicsArena {
     this.bonusStar = null;
     this.hadCollision = false;
     this.challengeCompleted = false;
+    this.isGameOver = false;
     this.robot.grabbedCuboid = null;
     this.robot.clawAngleDeg = 0;
 
@@ -749,13 +753,17 @@ class EV3PhysicsArena {
       const nextAngle = this.robot.angle + dTheta;
 
       // Verificar colisão com as bordas da arena e obstáculos
-      if (!this.checkRobotCollision(nextX, nextY)) {
+      const col = this.checkRobotCollision(nextX, nextY);
+      if (!col) {
         this.robot.x = nextX;
         this.robot.y = nextY;
         this.robot.sensors.touch = false;
       } else {
         this.robot.sensors.touch = true;
         this.hadCollision = true;
+        if (this.isChallengeScenario() && !this.challengeCompleted && !this.isGameOver) {
+          this.triggerGameOver(col);
+        }
       }
 
       this.robot.angle = nextAngle;
@@ -815,7 +823,7 @@ class EV3PhysicsArena {
   }
 
   checkChallengeCompletion() {
-    if (!this.goalZones || this.goalZones.length === 0 || this.challengeCompleted || this.dragTarget) return;
+    if (!this.goalZones || this.goalZones.length === 0 || this.challengeCompleted || this.dragTarget || this.isGameOver) return;
     const mB = this.robot.motors.B;
     const mC = this.robot.motors.C;
     const hasDriven = Math.abs(mB.degrees) > 25 || Math.abs(mC.degrees) > 25;
@@ -903,17 +911,28 @@ class EV3PhysicsArena {
       y - radius < margin ||
       y + radius > this.height - margin
     ) {
-      return true;
+      return { type: 'boundary', label: 'Borda da Pista' };
     }
 
     for (const obs of this.obstacles) {
       const closestX = Math.max(obs.x, Math.min(x, obs.x + obs.w));
       const closestY = Math.max(obs.y, Math.min(y, obs.y + obs.h));
       if (Math.hypot(x - closestX, y - closestY) < radius - 2) {
-        return true;
+        return { type: 'obstacle', label: obs.label || 'Obstáculo', obstacle: obs };
       }
     }
-    return false;
+    return null;
+  }
+
+  triggerGameOver(col) {
+    this.isGameOver = true;
+    this.stopAllMotors();
+    if (typeof this.onChallengeGameOver === 'function') {
+      this.onChallengeGameOver({
+        scenario: this.currentScenario,
+        collision: col
+      });
+    }
   }
 
   // ==================== LEITURA DOS SENSORES (ULTRASSÔNICO E COR) ====================
@@ -1658,6 +1677,7 @@ class EV3PhysicsArena {
     this.robot.sensors.gyroAngleDeg = 0;
     this.hadCollision = false;
     this.challengeCompleted = false;
+    this.isGameOver = false;
 
     if (this.startPad) {
       this.robot.x = this.startPad.x + this.startPad.w / 2;

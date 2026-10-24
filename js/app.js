@@ -528,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
     arena.loadScenario(scen);
     updateArenaChallengeHud(scen);
     hideVictoryOverlay();
+    hideGameOverOverlay();
 
     if (proj.id === 'proj_cores_linhas') {
       arena.robot.x = 160;
@@ -1599,6 +1600,52 @@ document.addEventListener('DOMContentLoaded', () => {
     if (overlay) overlay.style.display = 'none';
   }
 
+  function hideGameOverOverlay() {
+    const overlay = document.getElementById('challengeGameOverOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+
+  function playGameOverSound() {
+    // Toca som dramático de colisão / Game Over usando o sintetizador do runtime
+    const notes = [
+      { freq: 330, dur: 0.16, delay: 0 },
+      { freq: 261.63, dur: 0.20, delay: 170 },
+      { freq: 196, dur: 0.40, delay: 380 }
+    ];
+    notes.forEach(n => {
+      setTimeout(() => {
+        if (runtime && typeof runtime.playTone === 'function') {
+          runtime.playTone(n.freq, n.dur);
+        }
+      }, n.delay);
+    });
+  }
+
+  arena.onChallengeGameOver = (info) => {
+    // Interrompe imediatamente a execução dos blocos e os motores
+    if (runtime && runtime.isRunning) {
+      runtime.stopProgram();
+    }
+
+    playGameOverSound();
+
+    const overlay = document.getElementById('challengeGameOverOverlay');
+    const msgEl = document.getElementById('gameoverMessage');
+    const targetLabel = info?.collision?.label || 'obstáculo';
+
+    if (msgEl) {
+      msgEl.innerHTML = `O robô colidiu com <strong>"${targetLabel}"</strong> durante a simulação!`;
+    }
+
+    if (overlay) {
+      overlay.style.display = 'flex';
+    }
+
+    if (statusLogText) {
+      statusLogText.textContent = `💥 GAME OVER: Colisão detectada com "${targetLabel}". Ajuste a programação!`;
+    }
+  };
+
   function playVictoryFanfare() {
     // Toca uma melodia alegre de vitória usando o sintetizador de áudio do runtime
     const notes = [
@@ -1723,6 +1770,42 @@ document.addEventListener('DOMContentLoaded', () => {
   if (victoryAllChallengesBtn) {
     victoryAllChallengesBtn.addEventListener('click', () => {
       hideVictoryOverlay();
+      hideGameOverOverlay();
+      renderChallengesSection();
+      openHomePageModal('homeViewChallenges');
+    });
+  }
+
+  const gameoverRetryBtn = document.getElementById('gameoverRetryBtn');
+  if (gameoverRetryBtn) {
+    gameoverRetryBtn.addEventListener('click', () => {
+      hideGameOverOverlay();
+      runtime.stopProgram();
+      arena.resetRobotPose();
+      if (statusLogText) {
+        statusLogText.textContent = 'Posição inicial restaurada. Ajuste os blocos e clique em Play.';
+      }
+    });
+  }
+
+  const gameoverWorkspaceBtn = document.getElementById('gameoverWorkspaceBtn');
+  if (gameoverWorkspaceBtn) {
+    gameoverWorkspaceBtn.addEventListener('click', () => {
+      hideGameOverOverlay();
+      runtime.stopProgram();
+      arena.resetRobotPose();
+      if (statusLogText) {
+        statusLogText.textContent = 'Edite os blocos no espaço de trabalho e execute novamente.';
+      }
+    });
+  }
+
+  const gameoverAllChallengesBtn = document.getElementById('gameoverAllChallengesBtn');
+  if (gameoverAllChallengesBtn) {
+    gameoverAllChallengesBtn.addEventListener('click', () => {
+      hideGameOverOverlay();
+      runtime.stopProgram();
+      arena.resetRobotPose();
       renderChallengesSection();
       openHomePageModal('homeViewChallenges');
     });
@@ -2012,6 +2095,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     hideVictoryOverlay();
+    hideGameOverOverlay();
     // Nos desafios, sempre volta o robô para a posição inicial antes de rodar o código
     if (!runtime.isRunning && arena && typeof arena.isChallengeScenario === 'function' && arena.isChallengeScenario()) {
       arena.resetRobotPose();
@@ -2028,6 +2112,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     hideVictoryOverlay();
+    hideGameOverOverlay();
     runtime.stopProgram();
     arena.resetRobotPose();
     statusLogText.textContent = 'Posição do robô e contadores de motores reiniciados.';
@@ -2035,6 +2120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('scenarioSelect').addEventListener('change', (e) => {
     hideVictoryOverlay();
+    hideGameOverOverlay();
     runtime.stopProgram();
     arena.loadScenario(e.target.value);
     updateArenaChallengeHud(e.target.value);
@@ -2159,7 +2245,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (resetRobotArenaBtn) {
     resetRobotArenaBtn.addEventListener('click', () => {
-      arena.resetRobotToStart();
+      hideVictoryOverlay();
+      hideGameOverOverlay();
+      arena.resetRobotPose();
       showToast('Robô reposicionado na posição inicial!', '↺');
     });
   }

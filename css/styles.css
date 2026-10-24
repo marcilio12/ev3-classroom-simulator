@@ -3064,6 +3064,106 @@ body {
   gap: 8px;
 }
 
+/* ==================== OVERLAY DE GAME OVER NOS DESAFIOS ==================== */
+.challenge-gameover-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(4px);
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.challenge-gameover-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 22px 24px;
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.40);
+  border: 2px solid #EF4444;
+  animation: gameoverShake 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes gameoverShake {
+  0% { transform: scale(0.85) translate(0, 0); opacity: 0; }
+  25% { transform: scale(1.02) translate(-6px, 0); opacity: 1; }
+  45% { transform: scale(0.98) translate(5px, 0); }
+  65% { transform: scale(1.01) translate(-3px, 0); }
+  85% { transform: scale(0.99) translate(2px, 0); }
+  100% { transform: scale(1) translate(0, 0); }
+}
+
+.challenge-gameover-badge {
+  display: inline-block;
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FCA5A5;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.challenge-gameover-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #DC2626;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.challenge-gameover-icon {
+  font-size: 34px;
+  line-height: 1;
+  margin: 6px 0 10px 0;
+  filter: drop-shadow(0 2px 6px rgba(239, 68, 68, 0.35));
+}
+
+.challenge-gameover-desc {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1F2937;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.challenge-gameover-hint {
+  text-align: left;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 11.5px;
+  color: #92400E;
+  margin-bottom: 16px;
+  line-height: 1.35;
+}
+
+.challenge-gameover-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.danger-btn {
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+  border-color: #B91C1C !important;
+}
+
+.danger-btn:hover {
+  background: #B91C1C !important;
+}
+
 /* ==================== 10. AUTO-SAVE INDICATOR NA MENUBAR ==================== */
 .auto-save-pill {
   display: inline-flex;

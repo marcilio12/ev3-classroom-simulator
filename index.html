@@ -443,6 +443,26 @@
           </div>
         </div>
 
+        <!-- Overlay Gamificado de Game Over ao Colidir com Obstáculo em Desafio -->
+        <div id="challengeGameOverOverlay" class="challenge-gameover-overlay" style="display:none;">
+          <div class="challenge-gameover-card">
+            <div class="challenge-gameover-badge">💥 COLISÃO DETECTADA!</div>
+            <h3 id="gameoverTitle" class="challenge-gameover-title">GAME OVER</h3>
+            <div class="challenge-gameover-icon">💥🤖⚠️</div>
+            <p id="gameoverMessage" class="challenge-gameover-desc">
+              O robô colidiu com um obstáculo durante a simulação!
+            </p>
+            <div class="challenge-gameover-hint">
+              💡 <strong>Dica RoboSim:</strong> Revise o número de rotações, o ângulo de curva ou use o sensor ultrassônico para detectar barreiras antes de colidir!
+            </div>
+            <div class="challenge-gameover-actions">
+              <button type="button" id="gameoverRetryBtn" class="ev3-primary-btn danger-btn">↺ Tentar Novamente</button>
+              <button type="button" id="gameoverWorkspaceBtn" class="ev3-secondary-btn">🧩 Ajustar Código</button>
+              <button type="button" id="gameoverAllChallengesBtn" class="ev3-secondary-btn">🏆 Desafios</button>
+            </div>
+          </div>
+        </div>
+
         <div class="arena-overlay-hint">
           Arraste o <strong>Robô</strong>, os <strong>Obstáculos</strong> ou o <strong>Cuboide</strong> • Scroll gira o robô
         </div>
