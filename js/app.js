@@ -2012,6 +2012,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     hideVictoryOverlay();
+    // Nos desafios, sempre volta o robô para a posição inicial antes de rodar o código
+    if (!runtime.isRunning && arena && typeof arena.isChallengeScenario === 'function' && arena.isChallengeScenario()) {
+      arena.resetRobotPose();
+      if (statusLogText) {
+        statusLogText.textContent = 'Posição inicial restaurada. Iniciando simulação do desafio...';
+      }
+    }
     runtime.startProgram();
   });
 

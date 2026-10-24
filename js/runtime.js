@@ -28,6 +28,11 @@ class EV3Runtime {
       return;
     }
 
+    // Nos desafios, sempre volta o robô para a posição de início antes de rodar o código
+    if (this.arena && typeof this.arena.isChallengeScenario === 'function' && this.arena.isChallengeScenario()) {
+      this.arena.resetRobotPose();
+    }
+
     this.runToken++;
     const token = this.runToken;
     this.isRunning = true;
@@ -56,6 +61,10 @@ class EV3Runtime {
     if (hats.length === 0) {
       this.onLog(`Botão "${buttonName}" pressionado (nenhum bloco de evento associado).`);
       return;
+    }
+
+    if (!this.isRunning && this.arena && typeof this.arena.isChallengeScenario === 'function' && this.arena.isChallengeScenario()) {
+      this.arena.resetRobotPose();
     }
 
     this.runToken++;
