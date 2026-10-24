@@ -659,7 +659,10 @@ class EV3PhysicsArena {
 
       const linearPx = (distPxL + distPxR) * 0.5;
       const wheelbasePx = this.WHEELBASE_CM * this.PX_PER_CM;
-      const dTheta = (distPxR - distPxL) / wheelbasePx;
+      // Cinemática diferencial correta para sistema Canvas (+Y para baixo, +X para frente):
+      // Quando a roda esquerda (B) avança mais rápido que a direita (C), o robô gira no sentido horário (direita, +dTheta).
+      // Quando a roda direita (C) avança mais rápido que a esquerda (B), o robô gira no sentido anti-horário (esquerda, -dTheta).
+      const dTheta = (distPxL - distPxR) / wheelbasePx;
 
       const nextX = this.robot.x + linearPx * Math.cos(this.robot.angle + dTheta * 0.5);
       const nextY = this.robot.y + linearPx * Math.sin(this.robot.angle + dTheta * 0.5);
@@ -1499,6 +1502,15 @@ class EV3PhysicsArena {
       ctx.moveTo(tx, y + 1);
       ctx.lineTo(tx, y + h - 1);
       ctx.stroke();
+    }
+
+    // Identificação visual clara da porta do motor (B = Esq, C = Dir)
+    if (label) {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '700 8px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y + h / 2);
     }
     ctx.restore();
   }
