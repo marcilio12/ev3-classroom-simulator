@@ -1034,30 +1034,95 @@ document.addEventListener('DOMContentLoaded', () => {
   let challengesProgress = {}; // scenarioId -> { stars: 1..3, completedAt }
 
   const CHALLENGES_CATALOG = [
-    // ==================== NÍVEL 1: TRAJETOS SEM SENSORES (4 DESAFIOS) ====================
+    // ==================== NÍVEL 1: DESVIO DE OBSTÁCULOS SEM SENSORES (8 DESAFIOS) ====================
     {
-      id: 'desafio_1_reta_alvo',
+      id: 'desafio_1_parada_barreira',
       number: 1,
       category: 'sem_sensores',
       levelBadge: 'NÍVEL 1 • SEM SENSORES',
-      title: '1. Desvio Inicial em U (2 Curvas)',
-      xpReward: 100,
+      title: '1. Parada Segura Antes da Barreira',
+      xpReward: 80,
       bannerGradient: 'linear-gradient(135deg, #00C853, #007E33)',
-      description: 'Contorne a barreira central usando apenas blocos de Movimento (motores B+C), pegue a estrela bônus no topo e estacione na zona CHEGADA.',
-      tags: ['Sem Sensores', '2 Curvas', 'Motores B+C'],
+      description: 'Avance em linha reta calculando o número exato de rotações para frear na zona ESTACIONAR sem encostar na Barreira Frontal.',
+      tags: ['Sem Sensores', 'Linha Reta', 'Frenagem de Precisão'],
+      starterItems: [
+        { type: 'when_program_starts' },
+        { type: 'move_set_speed', params: { speed: 50 } },
+        { type: 'move_for_rotations', params: { direction: 'forward', amount: 2, unit: 'rotations' } }
+      ],
+      noteText: '🏆 DESAFIO 1 (Parada Segura): Calcule a distância em linha reta até a zona verde ESTACIONAR! Passe pela Estrela Bônus (+★) e pare antes de bater na Barreira Frontal (obstáculos são fixos durante o teste).'
+    },
+    {
+      id: 'desafio_2_desvio_lateral',
+      number: 2,
+      category: 'sem_sensores',
+      levelBadge: 'NÍVEL 1 • SEM SENSORES',
+      title: '2. Desvio Lateral Simples (1 Obstáculo)',
+      xpReward: 110,
+      bannerGradient: 'linear-gradient(135deg, #00BFA5, #004D40)',
+      description: 'A faixa sul está bloqueada por um obstáculo. Faça uma troca de faixa em S para o norte, recolha a estrela bônus e alcance a CHEGADA.',
+      tags: ['Sem Sensores', 'Troca de Faixa em S', '1 Obstáculo'],
       starterItems: [
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 1 (2 Curvas Sem Sensores): Use blocos rosa de Movimento (ex: mover reto / fazer curva por rotações) para desviar da Barreira Central, passar na Estrela Bônus (+★) e chegar na zona verde CHEGADA!'
+      noteText: '🏆 DESAFIO 2 (Desvio Lateral em S): O obstáculo bloqueia o caminho reto. Gire ligeiramente à esquerda para mudar para a faixa livre do norte, colete a Estrela (+★) e entre na CHEGADA sem encostar na barreira!'
     },
     {
-      id: 'desafio_2_slalom_sem_sensor',
-      number: 2,
+      id: 'desafio_3_portao_duplo',
+      number: 3,
       category: 'sem_sensores',
       levelBadge: 'NÍVEL 1 • SEM SENSORES',
-      title: '2. Slalom Duplo de Precisão (3 Curvas)',
-      xpReward: 150,
+      title: '3. Passagem Estreita entre Dois Obstáculos',
+      xpReward: 140,
+      bannerGradient: 'linear-gradient(135deg, #43A047, #1B5E20)',
+      description: 'Dois obstáculos deixam apenas uma fresta central. Mantenha o robô perfeitamente alinhado e cruze o portão sem bater em nenhum dos lados.',
+      tags: ['Sem Sensores', 'Passagem Estreita', 'Alinhamento Fino'],
+      starterItems: [
+        { type: 'when_program_starts' },
+        { type: 'move_set_speed', params: { speed: 45 } }
+      ],
+      noteText: '🏆 DESAFIO 3 (Portão Duplo): Atravesse o vão central entre o Muro Norte e o Muro Sul em velocidade moderada, pegue a Estrela (+★) no meio do portão e avance até a CHEGADA!'
+    },
+    {
+      id: 'desafio_4_reta_alvo',
+      number: 4,
+      category: 'sem_sensores',
+      levelBadge: 'NÍVEL 1 • SEM SENSORES',
+      title: '4. Desvio em U (Contorno de Barreira Central)',
+      xpReward: 160,
+      bannerGradient: 'linear-gradient(135deg, #00C853, #007E33)',
+      description: 'Contorne a barreira central usando apenas blocos de Movimento (motores B+C), pegue a estrela bônus no topo e estacione na zona CHEGADA.',
+      tags: ['Sem Sensores', '2 Curvas em U', 'Barreira Central'],
+      starterItems: [
+        { type: 'when_program_starts' },
+        { type: 'move_set_speed', params: { speed: 50 } }
+      ],
+      noteText: '🏆 DESAFIO 4 (Desvio em U): Use blocos rosa de Movimento para desviar da Barreira Central, contornar pelo norte passando na Estrela (+★) e chegar na zona verde CHEGADA!'
+    },
+    {
+      id: 'desafio_5_desvio_duplo_z',
+      number: 5,
+      category: 'sem_sensores',
+      levelBadge: 'NÍVEL 1 • SEM SENSORES',
+      title: '5. Desvio Duplo em Z (Dois Obstáculos Alternados)',
+      xpReward: 190,
+      bannerGradient: 'linear-gradient(135deg, #FF6D00, #BF360C)',
+      description: 'Navegue entre dois obstáculos intercalados: desvie do Obstáculo 1 pela direita, passe pela estrela ao sul e contorne o Obstáculo 2 até a CHEGADA.',
+      tags: ['Sem Sensores', 'Curvas em Z', '2 Obstáculos Fixos'],
+      starterItems: [
+        { type: 'when_program_starts' },
+        { type: 'move_set_speed', params: { speed: 50 } }
+      ],
+      noteText: '🏆 DESAFIO 5 (Desvio Duplo em Z): Obstáculo 1 bloqueia o norte e Obstáculo 2 bloqueia o sul. Faça uma manobra em zigue-zague para passar entre eles sem colidir!'
+    },
+    {
+      id: 'desafio_6_slalom_sem_sensor',
+      number: 6,
+      category: 'sem_sensores',
+      levelBadge: 'NÍVEL 1 • SEM SENSORES',
+      title: '6. Slalom Duplo de Precisão (3 Curvas)',
+      xpReward: 210,
       bannerGradient: 'linear-gradient(135deg, #EC407A, #AD1457)',
       description: 'Execute um zigue-zague preciso entre as barreiras Sul e Norte calculando rotações e 3 curvas sem usar sensores até a CHEGADA.',
       tags: ['Sem Sensores', '3 Curvas', 'Slalom'],
@@ -1065,15 +1130,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 2 (Slalom 3 Curvas): Contorne a Barreira Sul por cima, colete a Estrela Bônus (+★) no centro e desça após a Barreira Norte até a CHEGADA sem encostar nos muros!'
+      noteText: '🏆 DESAFIO 6 (Slalom 3 Curvas): Contorne a Barreira Sul por cima, colete a Estrela Bônus (+★) no centro e desça após a Barreira Norte até a CHEGADA sem encostar nos muros!'
     },
     {
-      id: 'desafio_3_serpentina_curvas',
-      number: 3,
+      id: 'desafio_7_serpentina_curvas',
+      number: 7,
       category: 'sem_sensores',
       levelBadge: 'NÍVEL 1 • SEM SENSORES',
-      title: '3. Corredor Serpentina (4 Curvas)',
-      xpReward: 200,
+      title: '7. Corredor Serpentina com 3 Divisórias (4 Curvas)',
+      xpReward: 250,
       bannerGradient: 'linear-gradient(135deg, #26A69A, #00695C)',
       description: 'Atravesse 3 divisórias intercaladas fazendo 4 curvas fechadas em serpentina, valide o Checkpoint CURVA 2 e alcance a CHEGADA.',
       tags: ['Sem Sensores', '4 Curvas', 'Checkpoint 🚩'],
@@ -1081,15 +1146,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 3 (Serpentina de 4 Curvas): Suba após a Divisória 1 (pegando a Estrela +★), desça entre as Divisórias 1 e 2 até o Checkpoint 🚩 CURVA 2 e suba após a Divisória 3 até a CHEGADA!'
+      noteText: '🏆 DESAFIO 7 (Serpentina de 4 Curvas): Suba após a Divisória 1 (pegando a Estrela +★), desça entre as Divisórias 1 e 2 até o Checkpoint 🚩 CURVA 2 e suba após a Divisória 3 até a CHEGADA!'
     },
     {
-      id: 'desafio_4_circuito_4_cantos',
-      number: 4,
+      id: 'desafio_8_circuito_4_cantos',
+      number: 8,
       category: 'sem_sensores',
       levelBadge: 'NÍVEL 1 • SEM SENSORES',
-      title: '4. Volta Completa nos 4 Cantos',
-      xpReward: 250,
+      title: '8. Volta Completa nos 4 Cantos (Circuito Fechado)',
+      xpReward: 280,
       bannerGradient: 'linear-gradient(135deg, #D81B60, #880E4F)',
       description: 'Dê a volta completa ao redor da Ilha Central realizando 4 curvas de 90°, ativando os Checkpoints CANTO 1 e CANTO 2 até a CHEGADA.',
       tags: ['Sem Sensores', '4 Cantos 90°', '2 Checkpoints 🚩'],
@@ -1097,16 +1162,16 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 55 } }
       ],
-      noteText: '🏆 DESAFIO 4 (Circuito 4 Cantos): Contorne a Ilha Central pelo corredor externo! Passe pelo 🚩 CANTO 1 (nordeste), 🚩 CANTO 2 (noroeste), Estrela (+★) no oeste e chegue na CHEGADA ao sul (dica: use um bloco Repetir!).'
+      noteText: '🏆 DESAFIO 8 (Circuito 4 Cantos): Contorne a Ilha Central pelo corredor externo! Passe pelo 🚩 CANTO 1 (nordeste), 🚩 CANTO 2 (noroeste), Estrela (+★) no oeste e chegue na CHEGADA ao sul (dica: use um bloco Repetir!).'
     },
 
     // ==================== NÍVEL 2: DESVIO COM SENSORES (4 DESAFIOS) ====================
     {
-      id: 'desafio_5_sonar_parede',
-      number: 5,
+      id: 'desafio_9_sonar_parede',
+      number: 9,
       category: 'com_sensores',
       levelBadge: 'NÍVEL 2 • COM SENSORES',
-      title: '5. Alerta de Parede com Ultrassônico',
+      title: '9. Alerta de Parede com Ultrassônico',
       xpReward: 200,
       bannerGradient: 'linear-gradient(135deg, #00B0FF, #0077C2)',
       description: 'Avance até o Sensor Ultrassônico (Porta 4) detectar o Muro Sonar (< 22 cm), faça uma curva de 90° à esquerda e suba até o ALVO SONAR.',
@@ -1118,15 +1183,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'sensor_wait_distance', params: { port: '4', comparator: 'lt', distance: 22 } },
         { type: 'move_stop' }
       ],
-      noteText: '🏆 DESAFIO 5 (Alerta de Parede): O robô já inicia avançando até detectar o muro a menos de 22 cm. Adicione os blocos para girar 90° à esquerda e subir passando pela Estrela (+★) até o ALVO SONAR!'
+      noteText: '🏆 DESAFIO 9 (Alerta de Parede): O robô já inicia avançando até detectar o muro a menos de 22 cm. Adicione os blocos para girar 90° à esquerda e subir passando pela Estrela (+★) até o ALVO SONAR!'
     },
     {
-      id: 'desafio_6_labirinto_sonar',
-      number: 6,
+      id: 'desafio_10_labirinto_sonar',
+      number: 10,
       category: 'com_sensores',
       levelBadge: 'NÍVEL 2 • COM SENSORES',
-      title: '6. Corredor Duplo com Sonar (2 Paredes)',
-      xpReward: 250,
+      title: '10. Corredor Duplo com Sonar (2 Paredes)',
+      xpReward: 260,
       bannerGradient: 'linear-gradient(135deg, #0084FF, #004ECB)',
       description: 'Navegue pelo corredor em Z detectando duas paredes em sequência com o Sensor Ultrassônico (Porta 4) até alcançar a SAÍDA LAB.',
       tags: ['Ultrassônico (Porta 4)', '2 Paredes', 'Corredor em Z'],
@@ -1134,14 +1199,14 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 6 (Corredor Duplo): Use o bloco azul-claro "esperar até distância < X cm" na Porta 4 para detectar a Parede 1, virar à esquerda para subir, detectar a Parede Norte, virar à direita e chegar na SAÍDA LAB!'
+      noteText: '🏆 DESAFIO 10 (Corredor Duplo): Use o bloco azul-claro "esperar até distância < X cm" na Porta 4 para detectar a Parede 1, virar à esquerda para subir, detectar a Parede Norte, virar à direita e chegar na SAÍDA LAB!'
     },
     {
-      id: 'desafio_7_espiral_sonar',
-      number: 7,
+      id: 'desafio_11_espiral_sonar',
+      number: 11,
       category: 'com_sensores',
       levelBadge: 'NÍVEL 2 • COM SENSORES',
-      title: '7. Labirinto em Espiral (4 Paredes)',
+      title: '11. Labirinto em Espiral (4 Paredes)',
       xpReward: 320,
       bannerGradient: 'linear-gradient(135deg, #00ACC1, #006064)',
       description: 'Avance pelo caracol de 4 muros detectando cada parede com o Sensor Ultrassônico (Porta 4) e virando 90° à esquerda até o CENTRO ESPIRAL.',
@@ -1151,15 +1216,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'move_set_speed', params: { speed: 50 } },
         { type: 'control_repeat', params: { times: 4 } }
       ],
-      noteText: '🏆 DESAFIO 7 (Espiral de 4 Paredes): Em cada parede (Leste, Norte, Oeste e Sul), avance até o Sensor Ultrassônico (Porta 4) medir < 20 cm, pare e vire 90° à esquerda até entrar no CENTRO ESPIRAL!'
+      noteText: '🏆 DESAFIO 11 (Espiral de 4 Paredes): Em cada parede (Leste, Norte, Oeste e Sul), avance até o Sensor Ultrassônico (Porta 4) medir < 20 cm, pare e vire 90° à esquerda até entrar no CENTRO ESPIRAL!'
     },
     {
-      id: 'desafio_8_tunel_zigzag_sonar',
-      number: 8,
+      id: 'desafio_12_tunel_zigzag_sonar',
+      number: 12,
       category: 'com_sensores',
       levelBadge: 'NÍVEL 2 • COM SENSORES',
-      title: '8. Túnel Zig-Zag Escalonado (4 Paredes)',
-      xpReward: 360,
+      title: '12. Túnel Zig-Zag Escalonado (4 Paredes)',
+      xpReward: 380,
       bannerGradient: 'linear-gradient(135deg, #1E88E5, #0D47A1)',
       description: 'Supere 4 anteparos escalonados alternando curvas à esquerda e à direita sempre que o Sensor Ultrassônico detectar parede à frente.',
       tags: ['Ultrassônico (Porta 4)', 'Zig-Zag 4 Curvas', 'Checkpoint 🚩'],
@@ -1167,17 +1232,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 8 (Túnel Zig-Zag com Sonar): Detecte cada um dos 4 muros escalonados com o Sensor Ultrassônico (Porta 4): vire à esquerda no Muro 1, à direita no Muro 2 (passe no 🚩 MEIO), à direita no Muro 3 e à esquerda no Muro 4 até a SAÍDA ZIG-ZAG!'
+      noteText: '🏆 DESAFIO 12 (Túnel Zig-Zag com Sonar): Detecte cada um dos 4 muros escalonados com o Sensor Ultrassônico (Porta 4): vire à esquerda no Muro 1, à direita no Muro 2, à direita no Muro 3 e à esquerda no Muro 4 até a SAÍDA ZIG-ZAG!'
     },
 
     // ==================== NÍVEL 3: SEGUIR E DETECTAR LINHAS (4 DESAFIOS) ====================
     {
-      id: 'desafio_9_parar_na_linha',
-      number: 9,
+      id: 'desafio_13_parar_na_linha',
+      number: 13,
       category: 'seguir_linhas',
       levelBadge: 'NÍVEL 3 • SEGUIR LINHAS',
-      title: '9. Frenagem de Precisão na Faixa Preta',
-      xpReward: 200,
+      title: '13. Frenagem de Precisão na Faixa Preta',
+      xpReward: 220,
       bannerGradient: 'linear-gradient(135deg, #7C4DFF, #4527A0)',
       description: 'Avance passando pela estrela bônus e utilize o Sensor de Cor (Porta 3) para parar completamente em cima da faixa preta final!',
       tags: ['Sensor de Cor (Porta 3)', 'Parada na Linha'],
@@ -1186,15 +1251,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'move_set_speed', params: { speed: 45 } },
         { type: 'move_start_steer', params: { steering: 0 } }
       ],
-      noteText: '🏆 DESAFIO 9 (Sensor de Cor Porta 3): Use o bloco "esperar até cor ser Preto" (Porta 3) seguido de "parar de mover" para que o robô freie exatamente sobre a faixa preta dentro da zona PARAR AQUI!'
+      noteText: '🏆 DESAFIO 13 (Sensor de Cor Porta 3): Use o bloco "esperar até cor ser Preto" (Porta 3) seguido de "parar de mover" para que o robô freie exatamente sobre a faixa preta dentro da zona PARAR AQUI!'
     },
     {
-      id: 'desafio_10_circuito_linha',
-      number: 10,
+      id: 'desafio_14_circuito_linha',
+      number: 14,
       category: 'seguir_linhas',
       levelBadge: 'NÍVEL 3 • SEGUIR LINHAS',
-      title: '10. Trilha Preta em Z (2 Curvas)',
-      xpReward: 280,
+      title: '14. Trilha Preta em Z (2 Curvas)',
+      xpReward: 290,
       bannerGradient: 'linear-gradient(135deg, #AB47BC, #6A1B9A)',
       description: 'Siga a trilha preta usando o Sensor de Cor (Porta 3): vire à esquerda no marcador Vermelho, à direita no Azul e pare no Verde!',
       tags: ['Sensor de Cor (Porta 3)', '2 Curvas', 'Trilha + Cores'],
@@ -1202,15 +1267,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 45 } }
       ],
-      noteText: '🏆 DESAFIO 10 (Trilha em Z): Avance pela linha preta até o Sensor de Cor (Porta 3) detectar Vermelho (1ª esquina), vire 90° à esquerda, colete a Estrela (+★) até detectar Azul (2ª esquina), vire à direita e vá até o marcador Verde!'
+      noteText: '🏆 DESAFIO 14 (Trilha em Z): Avance pela linha preta até o Sensor de Cor (Porta 3) detectar Vermelho (1ª esquina), vire 90° à esquerda, colete a Estrela (+★) até detectar Azul (2ª esquina), vire à direita e vá até o marcador Verde!'
     },
     {
-      id: 'desafio_11_linha_serpentina',
-      number: 11,
+      id: 'desafio_15_linha_serpentina',
+      number: 15,
       category: 'seguir_linhas',
       levelBadge: 'NÍVEL 3 • SEGUIR LINHAS',
-      title: '11. Trilha Sinuosa de 4 Curvas',
-      xpReward: 350,
+      title: '15. Trilha Sinuosa de 4 Curvas',
+      xpReward: 360,
       bannerGradient: 'linear-gradient(135deg, #5E35B1, #311B92)',
       description: 'Percorra a serpentina de linha preta com 4 esquinas demarcadas por cores (Vermelho, Amarelo, Azul e Vermelho) até a zona FIM DA LINHA.',
       tags: ['Sensor de Cor (Porta 3)', '4 Curvas na Linha', 'Checkpoint 🚩'],
@@ -1218,15 +1283,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 45 } }
       ],
-      noteText: '🏆 DESAFIO 11 (Serpentina de Linha 4 Curvas): Siga a linha preta e use o Sensor de Cor (Porta 3) nas 4 esquinas coloridas: 1ª Vermelho (esquerda), 2ª Amarelo (direita), 3ª Azul no 🚩 CURVA 3 (direita) e 4ª Vermelho (esquerda) até o Verde!'
+      noteText: '🏆 DESAFIO 15 (Serpentina de Linha 4 Curvas): Siga a linha preta e use o Sensor de Cor (Porta 3) nas 4 esquinas coloridas: 1ª Vermelho (esquerda), 2ª Amarelo (direita), 3ª Azul no 🚩 CURVA 3 (direita) e 4ª Vermelho (esquerda) até o Verde!'
     },
     {
-      id: 'desafio_12_linha_autodromo',
-      number: 12,
+      id: 'desafio_16_linha_autodromo',
+      number: 16,
       category: 'seguir_linhas',
       levelBadge: 'NÍVEL 3 • SEGUIR LINHAS',
-      title: '12. Autódromo Chicane (5 Curvas)',
-      xpReward: 400,
+      title: '16. Autódromo Chicane (5 Curvas)',
+      xpReward: 420,
       bannerGradient: 'linear-gradient(135deg, #3949AB, #1A237E)',
       description: 'Complete a volta completa no circuito de linha preta com 5 curvas de 90° e chicanes coloridas, passando pelo SETOR NORTE até o PIT-STOP!',
       tags: ['Sensor de Cor (Porta 3)', '5 Curvas', 'Autódromo Completo'],
@@ -1234,17 +1299,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'when_program_starts' },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 12 (Autódromo 5 Curvas): Siga os trechos da pista preta guiando-se pelos marcadores de cor na Porta 3 (Vermelho → Amarelo → Azul → 🚩 SETOR NORTE → Vermelho → Amarelo) até estacionar no PIT-STOP 🏁!'
+      noteText: '🏆 DESAFIO 16 (Autódromo 5 Curvas): Siga os trechos da pista preta guiando-se pelos marcadores de cor na Porta 3 (Vermelho → Amarelo → Azul → 🚩 SETOR NORTE → Vermelho → Amarelo) até estacionar no PIT-STOP 🏁!'
     },
 
     // ==================== NÍVEL 4: PEGAR E LEVAR CAIXAS (4 DESAFIOS) ====================
     {
-      id: 'desafio_13_entrega_simples',
-      number: 13,
+      id: 'desafio_17_entrega_simples',
+      number: 17,
       category: 'pegar_caixas',
       levelBadge: 'NÍVEL 4 • PEGAR CAIXAS',
-      title: '13. Coleta e Entrega Direta (1 Caixa)',
-      xpReward: 250,
+      title: '17. Coleta e Entrega Direta (1 Caixa)',
+      xpReward: 260,
       bannerGradient: 'linear-gradient(135deg, #FF8F00, #E65100)',
       description: 'Avance até a Caixa 1, feche a Garra (Motor A no sentido anti-horário) para agarrá-la e leve-a até a zona laranja ENTREGA 📦.',
       tags: ['Garra (Motor A)', '1 Caixa', 'Logística'],
@@ -1253,15 +1318,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'motor_set_speed', params: { port: 'A', speed: 40 } },
         { type: 'move_set_speed', params: { speed: 45 } }
       ],
-      noteText: '🏆 DESAFIO 13 (1 Caixa Direta): 1) Avance ~1 rotação até a Caixa 1; 2) Gire o Motor A no sentido anti-horário por 100 graus para fechar a garra; 3) Avance até a zona ENTREGA 📦 e abra a garra!'
+      noteText: '🏆 DESAFIO 17 (1 Caixa Direta): 1) Avance ~1 rotação até a Caixa 1; 2) Gire o Motor A no sentido anti-horário por 100 graus para fechar a garra; 3) Avance até a zona ENTREGA 📦 e abra a garra!'
     },
     {
-      id: 'desafio_14_logistica_obstaculo',
-      number: 14,
+      id: 'desafio_18_logistica_obstaculo',
+      number: 18,
       category: 'pegar_caixas',
       levelBadge: 'NÍVEL 4 • PEGAR CAIXAS',
-      title: '14. Entrega com Desvio de Obstáculo',
-      xpReward: 320,
+      title: '18. Entrega com Desvio de Obstáculo',
+      xpReward: 340,
       bannerGradient: 'linear-gradient(135deg, #FB8C00, #BF360C)',
       description: 'Agarre a Carga VIP com a Garra (Motor A), contorne o Muro Logístico fazendo curvas com a caixa acoplada e entregue na DOCA NORTE 📦.',
       tags: ['Garra (Motor A)', '1 Caixa + Curvas', 'Desvio'],
@@ -1270,15 +1335,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'motor_set_speed', params: { port: 'A', speed: 45 } },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 14 (Entrega com Obstáculo): Pegue a Carga VIP com a Garra (Motor A anti-horário 100°), contorne o Muro Logístico pelo norte coletando a Estrela Bônus (+★) e leve a caixa até a DOCA NORTE 📦!'
+      noteText: '🏆 DESAFIO 18 (Entrega com Obstáculo): Pegue a Carga VIP com a Garra (Motor A anti-horário 100°), contorne o Muro Logístico pelo norte coletando a Estrela Bônus (+★) e leve a caixa até a DOCA NORTE 📦!'
     },
     {
-      id: 'desafio_15_duas_caixas_docas',
-      number: 15,
+      id: 'desafio_19_duas_caixas_docas',
+      number: 19,
       category: 'pegar_caixas',
       levelBadge: 'NÍVEL 4 • PEGAR CAIXAS',
-      title: '15. Operação Dupla: 2 Caixas em 2 Docas',
-      xpReward: 420,
+      title: '19. Operação Dupla: 2 Caixas em 2 Docas',
+      xpReward: 440,
       bannerGradient: 'linear-gradient(135deg, #F4511E, #B71C1C)',
       description: 'Colete a Caixa 1 e entregue na DOCA NORTE 📦; depois retorne para buscar a Caixa 2 (azul) e entregue na DOCA SUL 📦!',
       tags: ['Garra (Motor A)', '2 Caixas', '2 Docas de Entrega'],
@@ -1287,15 +1352,15 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'motor_set_speed', params: { port: 'A', speed: 45 } },
         { type: 'move_set_speed', params: { speed: 50 } }
       ],
-      noteText: '🏆 DESAFIO 15 (2 Caixas em 2 Docas): 1) Pegue a Caixa 1 à frente, leve até a DOCA NORTE 📦 e abra a garra (Motor A horário 100°); 2) Manobre até a Caixa 2 ao sul, feche a garra e entregue na DOCA SUL 📦!'
+      noteText: '🏆 DESAFIO 19 (2 Caixas em 2 Docas): 1) Pegue a Caixa 1 à frente, leve até a DOCA NORTE 📦 e abra a garra (Motor A horário 100°); 2) Manobre até a Caixa 2 ao sul, feche a garra e entregue na DOCA SUL 📦!'
     },
     {
-      id: 'desafio_16_tres_caixas_armazem',
-      number: 16,
+      id: 'desafio_20_tres_caixas_armazem',
+      number: 20,
       category: 'pegar_caixas',
       levelBadge: 'NÍVEL 4 • PEGAR CAIXAS',
-      title: '16. Mestre da Logística: 3 Caixas e 3 Docas',
-      xpReward: 550,
+      title: '20. Mestre da Logística: 3 Caixas e 3 Docas',
+      xpReward: 560,
       bannerGradient: 'linear-gradient(135deg, #D50000, #7F0000)',
       description: 'Desafio Supremo RoboSim: recolha as 3 cargas (Carga 1, Carga 2 e Carga 3), desvie do Pilar Central e distribua uma caixa em cada doca (DOCA A, DOCA B e DOCA C)!',
       tags: ['Garra (Motor A)', '3 Caixas + 3 Docas', 'Desafio Mestre'],
@@ -1304,7 +1369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { type: 'motor_set_speed', params: { port: 'A', speed: 50 } },
         { type: 'move_set_speed', params: { speed: 55 } }
       ],
-      noteText: '🏆 DESAFIO 16 (Mestre da Logística - 3 Caixas): Entregue as 3 caixas (Carga 1 vermelha, Carga 2 azul e Carga 3 roxa) nas 3 docas (DOCA A, DOCA B e DOCA C) contornando o Pilar Central sem colidir!'
+      noteText: '🏆 DESAFIO 20 (Mestre da Logística - 3 Caixas): Entregue as 3 caixas (Carga 1 vermelha, Carga 2 azul e Carga 3 roxa) nas 3 docas (DOCA A, DOCA B e DOCA C) contornando o Pilar Central sem colidir!'
     }
   ];
 
@@ -1313,14 +1378,32 @@ document.addEventListener('DOMContentLoaded', () => {
       const raw = localStorage.getItem(CHALLENGES_STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw) || {};
-        // Migra chaves antigas caso o aluno já tivesse progresso nos 8 desafios anteriores
+        // Migra chaves antigas de campanhas anteriores (v1 de 8 desafios e v2 de 16 desafios)
         const legacyKeyMap = {
-          desafio_3_sonar_parede: 'desafio_5_sonar_parede',
-          desafio_4_labirinto_sonar: 'desafio_6_labirinto_sonar',
-          desafio_5_parar_na_linha: 'desafio_9_parar_na_linha',
-          desafio_6_circuito_linha: 'desafio_10_circuito_linha',
-          desafio_7_entrega_simples: 'desafio_13_entrega_simples',
-          desafio_8_logistica_obstaculo: 'desafio_14_logistica_obstaculo'
+          // v1 (8 desafios)
+          desafio_1_reta_alvo: 'desafio_4_reta_alvo',
+          desafio_2_slalom_sem_sensor: 'desafio_6_slalom_sem_sensor',
+          desafio_3_serpentina_curvas: 'desafio_7_serpentina_curvas',
+          desafio_4_circuito_4_cantos: 'desafio_8_circuito_4_cantos',
+          desafio_3_sonar_parede: 'desafio_9_sonar_parede',
+          desafio_4_labirinto_sonar: 'desafio_10_labirinto_sonar',
+          desafio_5_parar_na_linha: 'desafio_13_parar_na_linha',
+          desafio_6_circuito_linha: 'desafio_14_circuito_linha',
+          desafio_7_entrega_simples: 'desafio_17_entrega_simples',
+          desafio_8_logistica_obstaculo: 'desafio_18_logistica_obstaculo',
+          // v2 (16 desafios)
+          desafio_5_sonar_parede: 'desafio_9_sonar_parede',
+          desafio_6_labirinto_sonar: 'desafio_10_labirinto_sonar',
+          desafio_7_espiral_sonar: 'desafio_11_espiral_sonar',
+          desafio_8_tunel_zigzag_sonar: 'desafio_12_tunel_zigzag_sonar',
+          desafio_9_parar_na_linha: 'desafio_13_parar_na_linha',
+          desafio_10_circuito_linha: 'desafio_14_circuito_linha',
+          desafio_11_linha_serpentina: 'desafio_15_linha_serpentina',
+          desafio_12_linha_autodromo: 'desafio_16_linha_autodromo',
+          desafio_13_entrega_simples: 'desafio_17_entrega_simples',
+          desafio_14_logistica_obstaculo: 'desafio_18_logistica_obstaculo',
+          desafio_15_duas_caixas_docas: 'desafio_19_duas_caixas_docas',
+          desafio_16_tres_caixas_armazem: 'desafio_20_tres_caixas_armazem'
         };
         Object.keys(legacyKeyMap).forEach(oldKey => {
           const newKey = legacyKeyMap[oldKey];
@@ -1361,10 +1444,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let rank = '🤖 Cadete RoboSim';
     if (totalStars >= maxStars) rank = '👑 Mestre Supremo RoboSim';
-    else if (totalStars >= 36) rank = '🚀 Engenheiro Sênior RoboSim';
-    else if (totalStars >= 24) rank = '📦 Especialista Logístico';
-    else if (totalStars >= 12) rank = '🧭 Navegador de Sensores';
-    else if (totalStars >= 4) rank = '🏎️ Piloto de Precisão';
+    else if (totalStars >= 45) rank = '🚀 Engenheiro Sênior RoboSim';
+    else if (totalStars >= 30) rank = '📦 Especialista Logístico';
+    else if (totalStars >= 18) rank = '🧭 Navegador de Sensores';
+    else if (totalStars >= 8) rank = '🏎️ Piloto de Precisão';
     else if (totalStars >= 1) rank = '⚙️ Piloto de Testes';
 
     return { totalStars, maxStars, totalXp, completedCount, rank };
@@ -1953,9 +2036,23 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('addObstacleBtn').addEventListener('click', () => {
+    if (arena.isChallengeScenario()) {
+      showToast('⚠️ Nos desafios oficiais, os obstáculos são fixos para avaliação do trajeto!');
+      if (statusLogText) {
+        statusLogText.textContent = 'Não é permitido adicionar ou mover obstáculos nos desafios oficiais.';
+      }
+      return;
+    }
     arena.addCustomObstacle();
     statusLogText.textContent = 'Novo obstáculo adicionado! Arraste-o com o mouse na pista.';
   });
+
+  arena.onObstacleDragBlocked = (obs) => {
+    showToast('⚠️ Nos desafios oficiais, os obstáculos são fixos para testar a programação!');
+    if (statusLogText) {
+      statusLogText.textContent = `Aviso: Posição do obstáculo "${obs?.label || 'fixo'}" travada durante o desafio.`;
+    }
+  };
 
   const toggleConeBtn = document.getElementById('toggleConeBtn');
   toggleConeBtn.addEventListener('click', () => {

@@ -98,9 +98,12 @@ class EV3PhysicsArena {
     }
   }
 
-  // ==================== CENÁRIOS DE PISTA E 16 DESAFIOS GAMIFICADOS ====================
+  isChallengeScenario() {
+    return typeof this.currentScenario === 'string' && this.currentScenario.startsWith('desafio_');
+  }
+
+  // ==================== CENÁRIOS DE PISTA E 20 DESAFIOS GAMIFICADOS ====================
   loadScenario(scenarioName) {
-    this.currentScenario = scenarioName;
     this.trailPoints = [];
     const w = this.width || 500;
     const h = this.height || 460;
@@ -120,14 +123,33 @@ class EV3PhysicsArena {
     this.robot.grabbedCuboid = null;
     this.robot.clawAngleDeg = 0;
 
-    // Compatibilidade caso projetos antigos usem os IDs antigos de 3..8
+    // Compatibilidade caso projetos ou estados no localStorage usem IDs de versões anteriores
     const legacyMap = {
-      desafio_3_sonar_parede: 'desafio_5_sonar_parede',
-      desafio_4_labirinto_sonar: 'desafio_6_labirinto_sonar',
-      desafio_5_parar_na_linha: 'desafio_9_parar_na_linha',
-      desafio_6_circuito_linha: 'desafio_10_circuito_linha',
-      desafio_7_entrega_simples: 'desafio_13_entrega_simples',
-      desafio_8_logistica_obstaculo: 'desafio_14_logistica_obstaculo'
+      // De 8 desafios antigos (v1)
+      desafio_1_reta_alvo: 'desafio_4_reta_alvo',
+      desafio_2_slalom_sem_sensor: 'desafio_6_slalom_sem_sensor',
+      desafio_3_serpentina_curvas: 'desafio_7_serpentina_curvas',
+      desafio_4_circuito_4_cantos: 'desafio_8_circuito_4_cantos',
+      desafio_3_sonar_parede: 'desafio_9_sonar_parede',
+      desafio_4_labirinto_sonar: 'desafio_10_labirinto_sonar',
+      desafio_5_parar_na_linha: 'desafio_13_parar_na_linha',
+      desafio_6_circuito_linha: 'desafio_14_circuito_linha',
+      desafio_7_entrega_simples: 'desafio_17_entrega_simples',
+      desafio_8_logistica_obstaculo: 'desafio_18_logistica_obstaculo',
+
+      // De 16 desafios antigos (v2)
+      desafio_5_sonar_parede: 'desafio_9_sonar_parede',
+      desafio_6_labirinto_sonar: 'desafio_10_labirinto_sonar',
+      desafio_7_espiral_sonar: 'desafio_11_espiral_sonar',
+      desafio_8_tunel_zigzag_sonar: 'desafio_12_tunel_zigzag_sonar',
+      desafio_9_parar_na_linha: 'desafio_13_parar_na_linha',
+      desafio_10_circuito_linha: 'desafio_14_circuito_linha',
+      desafio_11_linha_serpentina: 'desafio_15_linha_serpentina',
+      desafio_12_linha_autodromo: 'desafio_16_linha_autodromo',
+      desafio_13_entrega_simples: 'desafio_17_entrega_simples',
+      desafio_14_logistica_obstaculo: 'desafio_18_logistica_obstaculo',
+      desafio_15_duas_caixas_docas: 'desafio_19_duas_caixas_docas',
+      desafio_16_tres_caixas_armazem: 'desafio_20_tres_caixas_armazem'
     };
     const scen = legacyMap[scenarioName] || scenarioName;
     this.currentScenario = scen;
@@ -202,47 +224,105 @@ class EV3PhysicsArena {
       this.robot.y = h * 0.55;
       this.robot.angle = 0;
 
-    // ==================== NÍVEL 1: TRAJETOS SEM SENSORES (4 DESAFIOS) ====================
-    } else if (scen === 'desafio_1_reta_alvo') {
-      // Desafio 1: Desvio Inicial em U (2 curvas)
+    // ==================== NÍVEL 1: DESVIO DE OBSTÁCULOS SEM SENSORES (8 DESAFIOS) ====================
+    } else if (scen === 'desafio_1_parada_barreira') {
+      // Desafio 1: Parada Segura Antes da Barreira Frontal (Avanço linear sem colisão)
+      this.robot.x = 80;
+      this.robot.y = Math.round(h * 0.50);
+      this.robot.angle = 0;
+
+      this.startPad = { x: 40, y: Math.round(h * 0.50 - 35), w: 76, h: 70, label: 'SAÍDA' };
+      this.obstacles = [
+        { id: 'obs_d1_stop', x: w - 78, y: Math.round(h * 0.50 - 58), w: 32, h: 116, color: '#E65100', label: 'Barreira Frontal' }
+      ];
+      this.bonusStar = { x: Math.round(w * 0.48), y: Math.round(h * 0.50), r: 14, collected: false };
+      this.goalZones = [
+        { x: w - 168, y: Math.round(h * 0.50 - 42), w: 80, h: 84, type: 'robot', label: 'ESTACIONAR', color: '#00C853' }
+      ];
+    } else if (scen === 'desafio_2_desvio_lateral') {
+      // Desafio 2: Desvio Lateral em S (1 Obstáculo na faixa sul)
+      this.robot.x = 80;
+      this.robot.y = Math.round(h * 0.70);
+      this.robot.angle = 0;
+
+      this.startPad = { x: 40, y: Math.round(h * 0.70 - 35), w: 76, h: 70, label: 'SAÍDA' };
+      this.obstacles = [
+        { id: 'obs_d2_block', x: Math.round(w * 0.44), y: Math.round(h * 0.52), w: 36, h: Math.round(h * 0.44), color: '#E65100', label: 'Barreira Faixa Sul' }
+      ];
+      this.bonusStar = { x: Math.round(w * 0.46), y: Math.round(h * 0.28), r: 14, collected: false };
+      this.goalZones = [
+        { x: w - 112, y: Math.round(h * 0.28 - 42), w: 78, h: 84, type: 'robot', label: 'CHEGADA', color: '#00C853' }
+      ];
+    } else if (scen === 'desafio_3_portao_duplo') {
+      // Desafio 3: Passagem Estreita entre Dois Obstáculos (Portão Central)
+      this.robot.x = 80;
+      this.robot.y = Math.round(h * 0.50);
+      this.robot.angle = 0;
+
+      this.startPad = { x: 40, y: Math.round(h * 0.50 - 35), w: 76, h: 70, label: 'SAÍDA' };
+      this.obstacles = [
+        { id: 'obs_d3_top', x: Math.round(w * 0.48), y: 20, w: 34, h: Math.round(h * 0.36), color: '#37474F', label: 'Barreira Norte' },
+        { id: 'obs_d3_bot', x: Math.round(w * 0.48), y: Math.round(h * 0.64), w: 34, h: Math.round(h * 0.34), color: '#37474F', label: 'Barreira Sul' }
+      ];
+      this.bonusStar = { x: Math.round(w * 0.495), y: Math.round(h * 0.50), r: 14, collected: false };
+      this.goalZones = [
+        { x: w - 110, y: Math.round(h * 0.50 - 42), w: 78, h: 84, type: 'robot', label: 'CHEGADA', color: '#00C853' }
+      ];
+    } else if (scen === 'desafio_4_reta_alvo') {
+      // Desafio 4: Desvio em U (Contorno de Barreira Central)
       this.robot.x = 85;
       this.robot.y = h * 0.5;
       this.robot.angle = 0;
 
       this.startPad = { x: 45, y: h * 0.5 - 35, w: 76, h: 70, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d1', x: Math.round(w * 0.46), y: Math.round(h * 0.5 - 55), w: 36, h: 110, color: '#E65100', label: 'Barreira Central' }
+        { id: 'obs_d4', x: Math.round(w * 0.46), y: Math.round(h * 0.5 - 55), w: 36, h: 110, color: '#E65100', label: 'Barreira Central' }
       ];
       this.bonusStar = { x: Math.round(w * 0.49), y: Math.round(h * 0.22), r: 14, collected: false };
       this.goalZones = [
         { x: w - 115, y: Math.round(h * 0.5 - 42), w: 80, h: 84, type: 'robot', label: 'CHEGADA', color: '#00C853' }
       ];
-    } else if (scen === 'desafio_2_slalom_sem_sensor') {
-      // Desafio 2: Slalom Duplo (3 curvas)
+    } else if (scen === 'desafio_5_desvio_duplo_z') {
+      // Desafio 5: Desvio Duplo em Z (Dois Obstáculos Alternados)
+      this.robot.x = 80;
+      this.robot.y = Math.round(h * 0.50);
+      this.robot.angle = 0;
+
+      this.startPad = { x: 40, y: Math.round(h * 0.50 - 35), w: 76, h: 70, label: 'SAÍDA' };
+      this.obstacles = [
+        { id: 'obs_d5_1', x: Math.round(w * 0.36), y: 22, w: 34, h: Math.round(h * 0.50), color: '#E65100', label: 'Obstáculo 1 (Norte)' },
+        { id: 'obs_d5_2', x: Math.round(w * 0.64), y: Math.round(h * 0.48), w: 34, h: Math.round(h * 0.48), color: '#37474F', label: 'Obstáculo 2 (Sul)' }
+      ];
+      this.bonusStar = { x: Math.round(w * 0.50), y: Math.round(h * 0.76), r: 14, collected: false };
+      this.goalZones = [
+        { x: w - 110, y: Math.round(h * 0.24 - 38), w: 78, h: 76, type: 'robot', label: 'CHEGADA', color: '#00C853' }
+      ];
+    } else if (scen === 'desafio_6_slalom_sem_sensor') {
+      // Desafio 6: Slalom Duplo de Precisão (3 curvas)
       this.robot.x = 82;
       this.robot.y = h * 0.72;
       this.robot.angle = 0;
 
       this.startPad = { x: 44, y: h * 0.72 - 35, w: 74, h: 70, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d2_1', x: Math.round(w * 0.35), y: Math.round(h * 0.42), w: 34, h: Math.round(h * 0.50), color: '#E65100', label: 'Barreira Sul' },
-        { id: 'obs_d2_2', x: Math.round(w * 0.63), y: 24, w: 34, h: Math.round(h * 0.52), color: '#37474F', label: 'Barreira Norte' }
+        { id: 'obs_d6_1', x: Math.round(w * 0.35), y: Math.round(h * 0.42), w: 34, h: Math.round(h * 0.50), color: '#E65100', label: 'Barreira Sul' },
+        { id: 'obs_d6_2', x: Math.round(w * 0.63), y: 24, w: 34, h: Math.round(h * 0.52), color: '#37474F', label: 'Barreira Norte' }
       ];
       this.bonusStar = { x: Math.round(w * 0.49), y: Math.round(h * 0.24), r: 14, collected: false };
       this.goalZones = [
         { x: w - 112, y: Math.round(h * 0.72 - 42), w: 78, h: 84, type: 'robot', label: 'CHEGADA', color: '#00C853' }
       ];
-    } else if (scen === 'desafio_3_serpentina_curvas') {
-      // Desafio 3: Corredor Serpentina com 4 Curvas Fechadas
+    } else if (scen === 'desafio_7_serpentina_curvas') {
+      // Desafio 7: Corredor Serpentina com 3 Divisórias (4 Curvas)
       this.robot.x = 76;
       this.robot.y = h * 0.80;
       this.robot.angle = -Math.PI / 2; // Apontando para cima
 
       this.startPad = { x: 40, y: h * 0.80 - 34, w: 72, h: 68, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d3_1', x: Math.round(w * 0.28), y: 22, w: 30, h: Math.round(h * 0.64), color: '#E65100', label: 'Divisória 1' },
-        { id: 'obs_d3_2', x: Math.round(w * 0.52), y: Math.round(h * 0.34), w: 30, h: Math.round(h * 0.60), color: '#37474F', label: 'Divisória 2' },
-        { id: 'obs_d3_3', x: Math.round(w * 0.75), y: 22, w: 30, h: Math.round(h * 0.64), color: '#E65100', label: 'Divisória 3' }
+        { id: 'obs_d7_1', x: Math.round(w * 0.28), y: 22, w: 30, h: Math.round(h * 0.64), color: '#E65100', label: 'Divisória 1' },
+        { id: 'obs_d7_2', x: Math.round(w * 0.52), y: Math.round(h * 0.34), w: 30, h: Math.round(h * 0.60), color: '#37474F', label: 'Divisória 2' },
+        { id: 'obs_d7_3', x: Math.round(w * 0.75), y: 22, w: 30, h: Math.round(h * 0.64), color: '#E65100', label: 'Divisória 3' }
       ];
       this.checkpoints = [
         { x: Math.round(w * 0.36), y: Math.round(h * 0.72), w: 66, h: 62, label: 'CURVA 2', visited: false }
@@ -251,16 +331,16 @@ class EV3PhysicsArena {
       this.goalZones = [
         { x: w - 98, y: 36, w: 74, h: 74, type: 'robot', label: 'CHEGADA', color: '#00C853' }
       ];
-    } else if (scen === 'desafio_4_circuito_4_cantos') {
-      // Desafio 4: Volta Completa nos 4 Cantos (4 curvas de 90° ao redor do bloco central)
+    } else if (scen === 'desafio_8_circuito_4_cantos') {
+      // Desafio 8: Volta Completa nos 4 Cantos (Circuito Fechado)
       this.robot.x = 86;
       this.robot.y = h * 0.80;
       this.robot.angle = 0;
 
       this.startPad = { x: 46, y: h * 0.80 - 33, w: 76, h: 66, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d4_center', x: Math.round(w * 0.30), y: Math.round(h * 0.30), w: Math.round(w * 0.42), h: Math.round(h * 0.38), color: '#37474F', label: 'Ilha Central' },
-        { id: 'obs_d4_block', x: 20, y: Math.round(h * 0.52), w: Math.round(w * 0.28), h: 28, color: '#E65100', label: 'Bloqueio Direto' }
+        { id: 'obs_d8_center', x: Math.round(w * 0.30), y: Math.round(h * 0.30), w: Math.round(w * 0.42), h: Math.round(h * 0.38), color: '#37474F', label: 'Ilha Central' },
+        { id: 'obs_d8_block', x: 20, y: Math.round(h * 0.52), w: Math.round(w * 0.28), h: 28, color: '#E65100', label: 'Bloqueio Direto' }
       ];
       this.checkpoints = [
         { x: w - 105, y: Math.round(h * 0.72), w: 74, h: 66, label: 'CANTO 1', visited: false },
@@ -272,66 +352,66 @@ class EV3PhysicsArena {
       ];
 
     // ==================== NÍVEL 2: DESVIO COM SENSORES (4 DESAFIOS) ====================
-    } else if (scen === 'desafio_5_sonar_parede') {
-      // Desafio 5: Alerta de Parede com Ultrassônico (1 muro)
+    } else if (scen === 'desafio_9_sonar_parede') {
+      // Desafio 9: Alerta de Parede com Ultrassônico (1 muro)
       this.robot.x = 88;
       this.robot.y = h * 0.76;
       this.robot.angle = 0;
 
       this.startPad = { x: 48, y: h * 0.76 - 35, w: 76, h: 70, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d5_wall', x: w - 78, y: Math.round(h * 0.16), w: 36, h: Math.round(h * 0.74), color: '#E65100', label: 'Muro Sonar' },
-        { id: 'obs_d5_guide', x: 40, y: Math.round(h * 0.44), w: Math.round(w * 0.54), h: 32, color: '#37474F', label: 'Divisória' }
+        { id: 'obs_d9_wall', x: w - 78, y: Math.round(h * 0.16), w: 36, h: Math.round(h * 0.74), color: '#E65100', label: 'Muro Sonar' },
+        { id: 'obs_d9_guide', x: 40, y: Math.round(h * 0.44), w: Math.round(w * 0.54), h: 32, color: '#37474F', label: 'Divisória' }
       ];
       this.bonusStar = { x: w - 145, y: Math.round(h * 0.48), r: 14, collected: false };
       this.goalZones = [
         { x: w - 185, y: 38, w: 84, h: 74, type: 'robot', label: 'ALVO SONAR', color: '#00B0FF' }
       ];
-    } else if (scen === 'desafio_6_labirinto_sonar') {
-      // Desafio 6: Corredor Duplo de Sensores (2 paredes)
+    } else if (scen === 'desafio_10_labirinto_sonar') {
+      // Desafio 10: Corredor Duplo de Sensores (2 paredes)
       this.robot.x = 82;
       this.robot.y = h * 0.78;
       this.robot.angle = 0;
 
       this.startPad = { x: 44, y: h * 0.78 - 34, w: 74, h: 68, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d6_1', x: Math.round(w * 0.56), y: Math.round(h * 0.38), w: 34, h: Math.round(h * 0.54), color: '#E65100', label: 'Parede 1' },
-        { id: 'obs_d6_2', x: Math.round(w * 0.25), y: 20, w: Math.round(w * 0.62), h: 30, color: '#E65100', label: 'Parede Norte' },
-        { id: 'obs_d6_3', x: 24, y: Math.round(h * 0.46), w: Math.round(w * 0.26), h: 30, color: '#37474F', label: 'Guia' }
+        { id: 'obs_d10_1', x: Math.round(w * 0.56), y: Math.round(h * 0.38), w: 34, h: Math.round(h * 0.54), color: '#E65100', label: 'Parede 1' },
+        { id: 'obs_d10_2', x: Math.round(w * 0.25), y: 20, w: Math.round(w * 0.62), h: 30, color: '#E65100', label: 'Parede Norte' },
+        { id: 'obs_d10_3', x: 24, y: Math.round(h * 0.46), w: Math.round(w * 0.26), h: 30, color: '#37474F', label: 'Guia' }
       ];
       this.bonusStar = { x: Math.round(w * 0.42), y: Math.round(h * 0.24), r: 14, collected: false };
       this.goalZones = [
         { x: w - 115, y: Math.round(h * 0.18), w: 80, h: 76, type: 'robot', label: 'SAÍDA LAB', color: '#00B0FF' }
       ];
-    } else if (scen === 'desafio_7_espiral_sonar') {
-      // Desafio 7: Espiral Autônoma de 4 Paredes (Ultrassônico Porta 4 em loop)
+    } else if (scen === 'desafio_11_espiral_sonar') {
+      // Desafio 11: Espiral Autônoma de 4 Paredes (Ultrassônico Porta 4 em loop)
       this.robot.x = 80;
       this.robot.y = h * 0.82;
       this.robot.angle = 0;
 
       this.startPad = { x: 42, y: h * 0.82 - 32, w: 72, h: 64, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d7_east', x: w - 58, y: 24, w: 28, h: h - 48, color: '#E65100', label: 'Muro Leste' },
-        { id: 'obs_d7_north', x: 50, y: 24, w: w - 108, h: 28, color: '#E65100', label: 'Muro Norte' },
-        { id: 'obs_d7_west', x: 50, y: 52, w: 28, h: Math.round(h * 0.54), color: '#E65100', label: 'Muro Oeste' },
-        { id: 'obs_d7_inner', x: 165, y: Math.round(h * 0.55), w: Math.round(w * 0.48), h: 28, color: '#37474F', label: 'Espiral Interna' }
+        { id: 'obs_d11_east', x: w - 58, y: 24, w: 28, h: h - 48, color: '#E65100', label: 'Muro Leste' },
+        { id: 'obs_d11_north', x: 50, y: 24, w: w - 108, h: 28, color: '#E65100', label: 'Muro Norte' },
+        { id: 'obs_d11_west', x: 50, y: 52, w: 28, h: Math.round(h * 0.54), color: '#E65100', label: 'Muro Oeste' },
+        { id: 'obs_d11_inner', x: 165, y: Math.round(h * 0.55), w: Math.round(w * 0.48), h: 28, color: '#37474F', label: 'Espiral Interna' }
       ];
       this.bonusStar = { x: Math.round(w * 0.50), y: 92, r: 14, collected: false };
       this.goalZones = [
         { x: Math.round(w * 0.42), y: Math.round(h * 0.34), w: 82, h: 74, type: 'robot', label: 'CENTRO ESPIRAL', color: '#00B0FF' }
       ];
-    } else if (scen === 'desafio_8_tunel_zigzag_sonar') {
-      // Desafio 8: Túnel Zig-Zag de 4 Paredes Escalonadas
+    } else if (scen === 'desafio_12_tunel_zigzag_sonar') {
+      // Desafio 12: Túnel Zig-Zag de 4 Paredes Escalonadas
       this.robot.x = 76;
       this.robot.y = h * 0.82;
       this.robot.angle = 0;
 
       this.startPad = { x: 40, y: h * 0.82 - 32, w: 72, h: 64, label: 'SAÍDA' };
       this.obstacles = [
-        { id: 'obs_d8_1', x: Math.round(w * 0.40), y: Math.round(h * 0.58), w: 30, h: Math.round(h * 0.36), color: '#E65100', label: 'Degrau 1' },
-        { id: 'obs_d8_2', x: 24, y: Math.round(h * 0.36), w: Math.round(w * 0.38), h: 28, color: '#37474F', label: 'Teto 1' },
-        { id: 'obs_d8_3', x: Math.round(w * 0.68), y: Math.round(h * 0.26), w: 30, h: Math.round(h * 0.48), color: '#E65100', label: 'Degrau 2' },
-        { id: 'obs_d8_4', x: Math.round(w * 0.38), y: 20, w: Math.round(w * 0.56), h: 26, color: '#E65100', label: 'Teto Norte' }
+        { id: 'obs_d12_1', x: Math.round(w * 0.40), y: Math.round(h * 0.58), w: 30, h: Math.round(h * 0.36), color: '#E65100', label: 'Degrau 1' },
+        { id: 'obs_d12_2', x: 24, y: Math.round(h * 0.36), w: Math.round(w * 0.38), h: 28, color: '#37474F', label: 'Teto 1' },
+        { id: 'obs_d12_3', x: Math.round(w * 0.68), y: Math.round(h * 0.26), w: 30, h: Math.round(h * 0.48), color: '#E65100', label: 'Degrau 2' },
+        { id: 'obs_d12_4', x: Math.round(w * 0.38), y: 20, w: Math.round(w * 0.56), h: 26, color: '#E65100', label: 'Teto Norte' }
       ];
       this.bonusStar = { x: Math.round(w * 0.53), y: Math.round(h * 0.48), r: 14, collected: false };
       this.goalZones = [
@@ -339,8 +419,8 @@ class EV3PhysicsArena {
       ];
 
     // ==================== NÍVEL 3: SEGUIR E DETECTAR LINHAS (4 DESAFIOS) ====================
-    } else if (scen === 'desafio_9_parar_na_linha') {
-      // Desafio 9: Frenagem de Precisão na Faixa Preta
+    } else if (scen === 'desafio_13_parar_na_linha') {
+      // Desafio 13: Frenagem de Precisão na Faixa Preta
       this.robot.x = 85;
       this.robot.y = h * 0.5;
       this.robot.angle = 0;
@@ -356,8 +436,8 @@ class EV3PhysicsArena {
       this.goalZones = [
         { x: w - 152, y: Math.round(h * 0.5 - 45), w: 74, h: 90, type: 'robot', mustStop: true, label: 'PARAR AQUI', color: '#7C4DFF' }
       ];
-    } else if (scen === 'desafio_10_circuito_linha') {
-      // Desafio 10: Trilha Preta em Z com 2 Curvas e Marcadores de Cor
+    } else if (scen === 'desafio_14_circuito_linha') {
+      // Desafio 14: Trilha Preta em Z com 2 Curvas e Marcadores de Cor
       this.robot.x = 85;
       this.robot.y = h * 0.76;
       this.robot.angle = 0;
@@ -380,8 +460,8 @@ class EV3PhysicsArena {
       this.goalZones = [
         { x: w - 118, y: topY - 38, w: 78, h: 76, type: 'robot', label: 'FIM DA LINHA', color: '#7C4DFF' }
       ];
-    } else if (scen === 'desafio_11_linha_serpentina') {
-      // Desafio 11: Linha Preta Sinuosa com 4 Curvas (Serpentina Completa)
+    } else if (scen === 'desafio_15_linha_serpentina') {
+      // Desafio 15: Linha Preta Sinuosa com 4 Curvas (Serpentina Completa)
       this.robot.x = 78;
       this.robot.y = h * 0.78;
       this.robot.angle = 0;
@@ -413,8 +493,8 @@ class EV3PhysicsArena {
       this.goalZones = [
         { x: w - 116, y: yLow - 38, w: 76, h: 76, type: 'robot', label: 'CHEGADA', color: '#7C4DFF' }
       ];
-    } else if (scen === 'desafio_12_linha_autodromo') {
-      // Desafio 12: Autódromo Chicane de 5 Curvas e Retorno
+    } else if (scen === 'desafio_16_linha_autodromo') {
+      // Desafio 16: Autódromo Chicane de 5 Curvas e Retorno
       this.robot.x = 80;
       this.robot.y = h * 0.80;
       this.robot.angle = 0;
@@ -449,15 +529,15 @@ class EV3PhysicsArena {
       ];
 
     // ==================== NÍVEL 4: PEGAR E LEVAR CAIXAS (4 DESAFIOS — 1, 2 E 3 CAIXAS) ====================
-    } else if (scen === 'desafio_13_entrega_simples') {
-      // Desafio 13: Coleta e Entrega Direta (1 Caixa)
+    } else if (scen === 'desafio_17_entrega_simples') {
+      // Desafio 17: Coleta e Entrega Direta (1 Caixa)
       this.robot.x = 88;
       this.robot.y = h * 0.5;
       this.robot.angle = 0;
 
       this.startPad = { x: 48, y: h * 0.5 - 35, w: 76, h: 70, label: 'SAÍDA' };
       this.cuboids = [
-        { id: 'cub_d13_1', x: 182, y: h * 0.5, size: 28, color: '#E53935', label: 'Caixa 1' }
+        { id: 'cub_d17_1', x: 182, y: h * 0.5, size: 28, color: '#E53935', label: 'Caixa 1' }
       ];
       this.colorZones = [
         { x: 164, y: Math.round(h * 0.5 - 22), w: 36, h: 44, color: '#FDD835', name: 'yellow', label: 'Amarelo' }
@@ -466,53 +546,53 @@ class EV3PhysicsArena {
       this.goalZones = [
         { x: w - 125, y: Math.round(h * 0.5 - 45), w: 86, h: 90, type: 'cuboid', label: 'ENTREGA 📦', color: '#FF6D00' }
       ];
-    } else if (scen === 'desafio_14_logistica_obstaculo') {
-      // Desafio 14: Entrega com Desvio de Obstáculo (1 Caixa + Curva)
+    } else if (scen === 'desafio_18_logistica_obstaculo') {
+      // Desafio 18: Entrega com Desvio de Obstáculo (1 Caixa + Curva)
       this.robot.x = 85;
       this.robot.y = h * 0.74;
       this.robot.angle = 0;
 
       this.startPad = { x: 45, y: h * 0.74 - 35, w: 76, h: 70, label: 'SAÍDA' };
       this.cuboids = [
-        { id: 'cub_d14_1', x: 175, y: h * 0.74, size: 28, color: '#D32F2F', label: 'Carga VIP' }
+        { id: 'cub_d18_1', x: 175, y: h * 0.74, size: 28, color: '#D32F2F', label: 'Carga VIP' }
       ];
       this.obstacles = [
-        { id: 'obs_d14_1', x: Math.round(w * 0.50), y: Math.round(h * 0.38), w: 36, h: Math.round(h * 0.54), color: '#37474F', label: 'Muro Logístico' }
+        { id: 'obs_d18_1', x: Math.round(w * 0.50), y: Math.round(h * 0.38), w: 36, h: Math.round(h * 0.54), color: '#37474F', label: 'Muro Logístico' }
       ];
       this.bonusStar = { x: Math.round(w * 0.42), y: Math.round(h * 0.24), r: 14, collected: false };
       this.goalZones = [
         { x: w - 125, y: Math.round(h * 0.24 - 42), w: 88, h: 86, type: 'cuboid', label: 'DOCA NORTE 📦', color: '#FF6D00' }
       ];
-    } else if (scen === 'desafio_15_duas_caixas_docas') {
-      // Desafio 15: Operação Dupla — 2 Caixas para 2 Docas Diferentes (Norte e Sul)
+    } else if (scen === 'desafio_19_duas_caixas_docas') {
+      // Desafio 19: Operação Dupla — 2 Caixas para 2 Docas Diferentes (Norte e Sul)
       this.robot.x = 82;
       this.robot.y = h * 0.50;
       this.robot.angle = 0;
 
       this.startPad = { x: 44, y: h * 0.50 - 35, w: 74, h: 70, label: 'SAÍDA' };
       this.cuboids = [
-        { id: 'cub_d15_1', x: 178, y: Math.round(h * 0.34), size: 28, color: '#E53935', label: 'Caixa 1' },
-        { id: 'cub_d15_2', x: 178, y: Math.round(h * 0.68), size: 28, color: '#1E88E5', label: 'Caixa 2' }
+        { id: 'cub_d19_1', x: 178, y: Math.round(h * 0.34), size: 28, color: '#E53935', label: 'Caixa 1' },
+        { id: 'cub_d19_2', x: 178, y: Math.round(h * 0.68), size: 28, color: '#1E88E5', label: 'Caixa 2' }
       ];
       this.bonusStar = { x: Math.round(w * 0.52), y: Math.round(h * 0.50), r: 14, collected: false };
       this.goalZones = [
         { x: w - 122, y: Math.round(h * 0.24 - 38), w: 86, h: 78, type: 'cuboid', label: 'DOCA NORTE 📦', color: '#FF6D00' },
         { x: w - 122, y: Math.round(h * 0.76 - 38), w: 86, h: 78, type: 'cuboid', label: 'DOCA SUL 📦', color: '#0084FF' }
       ];
-    } else if (scen === 'desafio_16_tres_caixas_armazem') {
-      // Desafio 16: Mestre da Logística — 3 Caixas e 3 Docas com Obstáculo Central
+    } else if (scen === 'desafio_20_tres_caixas_armazem') {
+      // Desafio 20: Mestre da Logística — 3 Caixas e 3 Docas com Obstáculo Central
       this.robot.x = 78;
       this.robot.y = h * 0.50;
       this.robot.angle = 0;
 
       this.startPad = { x: 40, y: h * 0.50 - 34, w: 72, h: 68, label: 'SAÍDA' };
       this.cuboids = [
-        { id: 'cub_d16_1', x: 172, y: Math.round(h * 0.22), size: 26, color: '#E53935', label: 'Carga 1' },
-        { id: 'cub_d16_2', x: 172, y: Math.round(h * 0.50), size: 26, color: '#FB8C00', label: 'Carga 2' },
-        { id: 'cub_d16_3', x: 172, y: Math.round(h * 0.78), size: 26, color: '#1E88E5', label: 'Carga 3' }
+        { id: 'cub_d20_1', x: 172, y: Math.round(h * 0.22), size: 26, color: '#E53935', label: 'Carga 1' },
+        { id: 'cub_d20_2', x: 172, y: Math.round(h * 0.50), size: 26, color: '#FB8C00', label: 'Carga 2' },
+        { id: 'cub_d20_3', x: 172, y: Math.round(h * 0.78), size: 26, color: '#1E88E5', label: 'Carga 3' }
       ];
       this.obstacles = [
-        { id: 'obs_d16_1', x: Math.round(w * 0.50), y: Math.round(h * 0.34), w: 30, h: Math.round(h * 0.32), color: '#37474F', label: 'Pilar Central' }
+        { id: 'obs_d20_1', x: Math.round(w * 0.50), y: Math.round(h * 0.34), w: 30, h: Math.round(h * 0.32), color: '#37474F', label: 'Pilar Central' }
       ];
       this.bonusStar = { x: Math.round(w * 0.52), y: Math.round(h * 0.16), r: 14, collected: false };
       this.goalZones = [
@@ -993,6 +1073,12 @@ class EV3PhysicsArena {
       for (let i = this.obstacles.length - 1; i >= 0; i--) {
         const obs = this.obstacles[i];
         if (pos.x >= obs.x && pos.x <= obs.x + obs.w && pos.y >= obs.y && pos.y <= obs.y + obs.h) {
+          if (this.isChallengeScenario()) {
+            if (typeof this.onObstacleDragBlocked === 'function') {
+              this.onObstacleDragBlocked(obs);
+            }
+            return;
+          }
           this.dragTarget = {
             type: 'obstacle',
             obs,
@@ -1001,6 +1087,39 @@ class EV3PhysicsArena {
           };
           return;
         }
+      }
+    });
+
+    this.canvas.addEventListener('mousemove', (e) => {
+      if (this.dragTarget) {
+        this.canvas.style.cursor = 'grabbing';
+        return;
+      }
+      const pos = getPos(e);
+      if (Math.hypot(pos.x - this.robot.x, pos.y - this.robot.y) <= 34) {
+        this.canvas.style.cursor = 'grab';
+        return;
+      }
+      for (let i = this.cuboids.length - 1; i >= 0; i--) {
+        const box = this.cuboids[i];
+        if (Math.hypot(pos.x - box.x, pos.y - box.y) <= 20) {
+          this.canvas.style.cursor = 'grab';
+          return;
+        }
+      }
+      for (let i = this.obstacles.length - 1; i >= 0; i--) {
+        const obs = this.obstacles[i];
+        if (pos.x >= obs.x && pos.x <= obs.x + obs.w && pos.y >= obs.y && pos.y <= obs.y + obs.h) {
+          this.canvas.style.cursor = this.isChallengeScenario() ? 'not-allowed' : 'move';
+          return;
+        }
+      }
+      this.canvas.style.cursor = 'default';
+    });
+
+    this.canvas.addEventListener('mouseleave', () => {
+      if (!this.dragTarget) {
+        this.canvas.style.cursor = 'default';
       }
     });
 
@@ -1025,6 +1144,7 @@ class EV3PhysicsArena {
 
     window.addEventListener('mouseup', () => {
       this.dragTarget = null;
+      if (this.canvas) this.canvas.style.cursor = 'default';
     });
 
     // Roda do mouse sobre a arena gira a orientação inicial do robô
@@ -1304,6 +1424,20 @@ class EV3PhysicsArena {
           ctx.arc(sx, sy, 3.5, 0, Math.PI * 2);
           ctx.fill();
         }
+      }
+
+      // Indicador visual de obstáculo fixo durante desafios oficiais
+      if (this.isChallengeScenario() && obs.w >= 24 && obs.h >= 24) {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.40)';
+        const badgeX = obs.x + obs.w - 11;
+        const badgeY = obs.y + 11;
+        ctx.beginPath();
+        ctx.arc(badgeX, badgeY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = '10px "Segoe UI Emoji", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🔒', badgeX, badgeY + 1);
       }
       ctx.restore();
     }
