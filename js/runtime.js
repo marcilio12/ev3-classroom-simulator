@@ -14,6 +14,7 @@ class EV3Runtime {
     this.isRunning = false;
     this.runToken = 0;
     this.audioCtx = null;
+    this.variables = {};
   }
 
   async startProgram() {
@@ -33,6 +34,7 @@ class EV3Runtime {
       this.arena.resetRobotPose();
     }
 
+    this.variables = {};
     this.runToken++;
     const token = this.runToken;
     this.isRunning = true;
@@ -67,6 +69,7 @@ class EV3Runtime {
       this.arena.resetRobotPose();
     }
 
+    this.variables = {};
     this.runToken++;
     const token = this.runToken;
     this.isRunning = true;
@@ -112,6 +115,107 @@ class EV3Runtime {
       const block = this.workspace.blocks.get(currId);
       await this.executeBlock(block, token);
       currId = block.nextId;
+    }
+  }
+
+  resolveValue(val, depth = 0) {
+    if (val === undefined || val === null || val === '') return 0;
+    if (depth > 20) return 0;
+
+    // Se for o ID de um bloco aninhado (operadores matemáticos, sensor reporter, variáveis)
+    if (typeof val === 'string' && this.workspace && this.workspace.blocks && this.workspace.blocks.has(val)) {
+      return this.evaluateReporterBlock(this.workspace.blocks.get(val), depth + 1);
+    }
+
+    const n = Number(val);
+    return isNaN(n) ? val : n;
+  }
+
+  evaluateReporterBlock(block, depth = 0) {
+    if (!block || depth > 20) return 0;
+    const p = block.params || {};
+    const s = this.arena && this.arena.robot ? this.arena.robot.sensors : {};
+
+    switch (block.type) {
+      // 1. Operadores Matemáticos Básicos (+, -, *, /, mod, arredondamento, aleatório)
+      case 'op_add': {
+        return Number(this.resolveValue(p.a, depth + 1)) + Number(this.resolveValue(p.b, depth + 1));
+      }
+      case 'op_sub': {
+        return Number(this.resolveValue(p.a, depth + 1)) - Number(this.resolveValue(p.b, depth + 1));
+      }
+      case 'op_mul': {
+        return Number(this.resolveValue(p.a, depth + 1)) * Number(this.resolveValue(p.b, depth + 1));
+      }
+      case 'op_div': {
+        const b = Number(this.resolveValue(p.b, depth + 1));
+        return b !== 0 ? Number(this.resolveValue(p.a, depth + 1)) / b : 0;
+      }
+      case 'op_mod': {
+        const b = Number(this.resolveValue(p.b, depth + 1));
+        return b !== 0 ? Number(this.resolveValue(p.a, depth + 1)) % b : 0;
+      }
+      case 'op_round': {
+        return Math.round(Number(this.resolveValue(p.num, depth + 1)));
+      }
+      case 'op_random': {
+        const from = Number(this.resolveValue(p.from, depth + 1)) || 1;
+        const to = Number(this.resolveValue(p.to, depth + 1)) || 10;
+        const min = Math.min(from, to);
+        const max = Math.max(from, to);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      case 'op_math': {
+        const func = p.func || 'abs';
+        const val = Number(this.resolveValue(p.num, depth + 1)) || 0;
+        switch (func) {
+          case 'abs': return Math.abs(val);
+          case 'floor': return Math.floor(val);
+          case 'ceil': return Math.ceil(val);
+          case 'sqrt': return Math.sqrt(Math.max(0, val));
+          case 'sin': return Math.sin((val * Math.PI) / 180);
+          case 'cos': return Math.cos((val * Math.PI) / 180);
+          case 'tan': return Math.tan((val * Math.PI) / 180);
+          default: return val;
+        }
+      }
+      case 'op_join': {
+        const a = this.resolveValue(p.a, depth + 1);
+        const b = this.resolveValue(p.b, depth + 1);
+        return `${a}${b}`;
+      }
+      case 'op_length': {
+        const str = String(this.resolveValue(p.text, depth + 1));
+        return str.length;
+      }
+
+      // 2. Sensores numéricos / Reporters
+      case 'sensor_distance':
+      case 'sensor_val_distance': {
+        return s && s.ultrasonicCm !== undefined ? Math.round(s.ultrasonicCm * 10) / 10 : 250;
+      }
+      case 'sensor_reflected_light':
+      case 'sensor_val_reflectance': {
+        return s && s.colorName === 'black' ? 12 : (s && s.colorName === 'white' ? 92 : (s && s.colorName === 'yellow' ? 68 : 45));
+      }
+      case 'sensor_gyro_angle':
+      case 'sensor_val_gyro': {
+        return s && s.gyroAngleDeg !== undefined ? Math.round(s.gyroAngleDeg) : 0;
+      }
+      case 'sensor_color':
+      case 'sensor_val_color': {
+        return s && s.colorName ? s.colorName : 'none';
+      }
+
+      // 3. Variáveis
+      case 'var_get':
+      case 'variable_get': {
+        const varName = p.variable || 'var';
+        return this.variables && this.variables[varName] !== undefined ? this.variables[varName] : 0;
+      }
+
+      default:
+        return 0;
     }
   }
 
@@ -184,19 +288,19 @@ class EV3Runtime {
 
       // 6. Operadores de Comparação (<, =, >)
       case 'op_lt': {
-        const a = Number(p.a) || 0;
-        const b = Number(p.b) || 0;
-        return a < b;
+        const a = this.resolveValue(p.a);
+        const b = this.resolveValue(p.b);
+        return Number(a) < Number(b);
       }
       case 'op_eq': {
-        const a = String(p.a ?? '').trim().toLowerCase();
-        const b = String(p.b ?? '').trim().toLowerCase();
-        return a === b;
+        const a = this.resolveValue(p.a);
+        const b = this.resolveValue(p.b);
+        return String(a ?? '').trim().toLowerCase() === String(b ?? '').trim().toLowerCase();
       }
       case 'op_gt': {
-        const a = Number(p.a) || 0;
-        const b = Number(p.b) || 0;
-        return a > b;
+        const a = this.resolveValue(p.a);
+        const b = this.resolveValue(p.b);
+        return Number(a) > Number(b);
       }
 
       // 7. Operadores Lógicos (E, OU, NÃO)
@@ -287,7 +391,7 @@ class EV3Runtime {
 
       // ==================== MOVIMENTO ====================
       case 'move_set_speed': {
-        const spd = Math.max(-100, Math.min(100, Number(p.speed) || 50));
+        const spd = Math.max(-100, Math.min(100, Number(this.resolveValue(p.speed)) || 50));
         this.arena.robot.defaultSpeedPct = spd;
         this.arena.robot.motors.B.speedPct = spd;
         this.arena.robot.motors.C.speedPct = spd;
@@ -299,7 +403,7 @@ class EV3Runtime {
       case 'move_direction_for': {
         const dirSign = p.direction === 'backward' ? -1 : 1;
         const speed = (this.arena.robot.defaultSpeedPct || 50) * dirSign;
-        const amount = Math.max(0, Number(p.amount) || 0);
+        const amount = Math.max(0, Number(this.resolveValue(p.amount)) || 0);
         const unit = p.unit || 'rotations';
         this.onLog(`Movendo para ${p.direction === 'backward' ? 'trás' : 'a frente'} por ${amount} ${this.translateUnit(unit)}`);
         await this.runDriveFor(0, speed, amount, unit, token);
@@ -307,9 +411,9 @@ class EV3Runtime {
       }
 
       case 'move_steer_for': {
-        const steering = Number(p.steering) || 0;
+        const steering = Number(this.resolveValue(p.steering)) || 0;
         const speed = this.arena.robot.defaultSpeedPct || 50;
-        const amount = Math.max(0, Number(p.amount) || 0);
+        const amount = Math.max(0, Number(this.resolveValue(p.amount)) || 0);
         const unit = p.unit || 'rotations';
         this.onLog(`Movendo (${window.formatEV3Steering(steering)}) por ${amount} ${this.translateUnit(unit)}`);
         await this.runDriveFor(steering, speed, amount, unit, token);
@@ -627,6 +731,30 @@ class EV3Runtime {
       case 'control_stop': {
         this.onLog('Comando parar executado.');
         this.stopProgram();
+        break;
+      }
+
+      // ==================== VARIÁVEIS ====================
+      case 'variable_set':
+      case 'var_set': {
+        const varName = p.variable || 'minha variável';
+        const val = this.resolveValue(p.value);
+        if (!this.variables) this.variables = {};
+        this.variables[varName] = val;
+        this.onLog(`Variável "${varName}" definida para ${val}`);
+        await this.sleep(30, token);
+        break;
+      }
+
+      case 'variable_change_by':
+      case 'var_change': {
+        const varName = p.variable || 'minha variável';
+        const delta = Number(this.resolveValue(p.value)) || 1;
+        if (!this.variables) this.variables = {};
+        const curr = Number(this.variables[varName]) || 0;
+        this.variables[varName] = curr + delta;
+        this.onLog(`Variável "${varName}" alterada por ${delta} (= ${this.variables[varName]})`);
+        await this.sleep(30, token);
         break;
       }
 

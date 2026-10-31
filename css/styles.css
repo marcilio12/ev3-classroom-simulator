@@ -968,6 +968,25 @@ body {
   stroke: rgba(255, 255, 255, 0.55);
 }
 
+/* Slot para blocos ovais (Reporters / Operadores Matemáticos) */
+.block-reporter-slot {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  position: relative;
+  user-select: none;
+  margin: 0 4px;
+}
+
+.block-reporter-slot.filled > .ev3-block {
+  margin: 0 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.block-input-pill.snap-hover,
+.block-reporter-slot.snap-hover,
 .block-boolean-slot.snap-hover {
   filter: drop-shadow(0 0 8px rgba(255, 214, 0, 0.95)) drop-shadow(0 0 14px rgba(255, 214, 0, 0.65));
   animation: booleanSlotSnapGlow 0.8s infinite alternate ease-in-out;
@@ -1102,13 +1121,37 @@ body {
 .simulation-panel {
   width: 500px;
   min-width: 340px;
-  max-width: 65vw;
+  max-width: 82vw;
   height: 100%;
   background: #FFFFFF;
   display: flex;
   flex-direction: column;
   position: relative;
   flex-shrink: 0;
+  transition: width 0.22s ease-in-out;
+}
+
+.simulation-panel.wide-arena {
+  width: 760px;
+  max-width: 82vw;
+}
+
+.arena-btn.arena-expand-btn {
+  font-weight: 600;
+  color: #0277BD;
+  border-color: #81D4FA;
+  background: #E1F5FE;
+}
+
+.arena-btn.arena-expand-btn:hover {
+  background: #B3E5FC;
+  color: #01579B;
+}
+
+.arena-btn.arena-expand-btn.active {
+  background: #0288D1;
+  color: #FFFFFF;
+  border-color: #0277BD;
 }
 
 /* ==================== 5B. POP-UP DE CONEXÃO ROBOSIM (FIEL A Conectar.jpg) ==================== */

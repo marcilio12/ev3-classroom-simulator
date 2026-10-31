@@ -1276,11 +1276,80 @@ window.EV3_BLOCK_DEFINITIONS = {
       { kind: 'label', text: 'de' },
       { kind: 'number', name: 'a', default: '' }
     ]
+  },
+
+  // ==================== VARIÁVEIS ====================
+  var_set: {
+    type: 'var_set',
+    category: 'variables',
+    shape: 'stack',
+    icon: null,
+    tokens: [
+      { kind: 'label', text: 'definir' },
+      {
+        kind: 'select',
+        name: 'variable',
+        default: 'minha variável',
+        options: [
+          { value: 'minha variável', label: 'minha variável' },
+          { value: 'contador', label: 'contador' },
+          { value: 'distância', label: 'distância' },
+          { value: 'velocidade', label: 'velocidade' }
+        ]
+      },
+      { kind: 'label', text: 'para' },
+      { kind: 'number', name: 'value', default: 0 }
+    ]
+  },
+
+  var_change: {
+    type: 'var_change',
+    category: 'variables',
+    shape: 'stack',
+    icon: null,
+    tokens: [
+      { kind: 'label', text: 'adicionar a' },
+      {
+        kind: 'select',
+        name: 'variable',
+        default: 'minha variável',
+        options: [
+          { value: 'minha variável', label: 'minha variável' },
+          { value: 'contador', label: 'contador' },
+          { value: 'distância', label: 'distância' },
+          { value: 'velocidade', label: 'velocidade' }
+        ]
+      },
+      { kind: 'number', name: 'value', default: 1 }
+    ]
+  },
+
+  var_get: {
+    type: 'var_get',
+    category: 'variables',
+    shape: 'reporter',
+    icon: null,
+    tokens: [
+      {
+        kind: 'select',
+        name: 'variable',
+        default: 'minha variável',
+        options: [
+          { value: 'minha variável', label: 'minha variável' },
+          { value: 'contador', label: 'contador' },
+          { value: 'distância', label: 'distância' },
+          { value: 'velocidade', label: 'velocidade' }
+        ]
+      }
+    ]
   }
 };
 
 // Alias para compatibilidade com projetos existentes
 window.EV3_BLOCK_DEFINITIONS.sensor_wait_distance = window.EV3_BLOCK_DEFINITIONS.sensor_Wait_distance;
+window.EV3_BLOCK_DEFINITIONS.variable_set = window.EV3_BLOCK_DEFINITIONS.var_set;
+window.EV3_BLOCK_DEFINITIONS.variable_change_by = window.EV3_BLOCK_DEFINITIONS.var_change;
+window.EV3_BLOCK_DEFINITIONS.variable_get = window.EV3_BLOCK_DEFINITIONS.var_get;
 
 window.formatEV3Steering = function (val) {
   const n = Number(val) || 0;

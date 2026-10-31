@@ -535,8 +535,16 @@ class EV3Workspace {
       if (tok.kind === 'label') {
         width += tok.text.length * 7.2 + 8;
       } else if (tok.kind === 'number') {
-        const numVal = String(block.params[tok.name] !== undefined ? block.params[tok.name] : (tok.default ?? 0));
-        width += Math.max(48, numVal.length * 8.5 + 24);
+        const childId = block.params[tok.name];
+        if (childId && typeof childId === 'string' && this.blocks.has(childId) && !visited.has(childId)) {
+          const nextVisited = new Set(visited);
+          nextVisited.add(block.id);
+          const childBlock = this.blocks.get(childId);
+          width += this.estimateBlockWidth(childBlock, nextVisited) + 8;
+        } else {
+          const numVal = String(block.params[tok.name] !== undefined ? block.params[tok.name] : (tok.default ?? 0));
+          width += Math.max(48, numVal.length * 8.5 + 24);
+        }
       } else if (tok.kind === 'text') {
         const val = String(block.params[tok.name] !== undefined ? block.params[tok.name] : (tok.default || ''));
         width += Math.max(54, val.length * 7.5 + 24);
@@ -918,12 +926,25 @@ class EV3Workspace {
         span.textContent = tok.text;
         bodyEl.appendChild(span);
       } else if (tok.kind === 'number') {
-        const inp = document.createElement('input');
-        inp.type = 'text';
-        inp.inputMode = 'decimal';
-        inp.className = 'block-input-pill';
-        const numVal = block.params[tok.name] !== undefined ? block.params[tok.name] : (tok.default ?? 0);
-        inp.value = numVal;
+        const childId = block.params[tok.name];
+        const childBlock = (typeof childId === 'string' && this.blocks.has(childId)) ? this.blocks.get(childId) : null;
+        if (childBlock) {
+          const slotEl = document.createElement('div');
+          slotEl.className = 'block-reporter-slot filled';
+          slotEl.dataset.slotName = tok.name;
+          slotEl.dataset.paramName = tok.name;
+          slotEl.dataset.parentBlockId = block.id;
+          const childDom = this.renderBlockElement(childBlock, isFlyoutPreview);
+          slotEl.appendChild(childDom);
+          bodyEl.appendChild(slotEl);
+        } else {
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.inputMode = 'decimal';
+          inp.className = 'block-input-pill';
+          inp.dataset.paramName = tok.name;
+          const numVal = block.params[tok.name] !== undefined ? block.params[tok.name] : (tok.default ?? 0);
+          inp.value = numVal;
 
         // Desativa completamente qualquer menu suspenso nativo de autocomplete/autofill do navegador
         inp.setAttribute('autocomplete', 'off');
@@ -968,6 +989,7 @@ class EV3Workspace {
           });
         }
         bodyEl.appendChild(inp);
+        }
       } else if (tok.kind === 'text') {
         const inp = document.createElement('input');
         inp.type = 'text';
@@ -1438,7 +1460,7 @@ class EV3Workspace {
 
   clearSnapGhost() {
     this.canvasEl.querySelectorAll('.snap-ghost-node').forEach(el => el.remove());
-    this.canvasEl.querySelectorAll('.block-boolean-slot.snap-hover').forEach(el => el.classList.remove('snap-hover'));
+    this.canvasEl.querySelectorAll('.block-boolean-slot.snap-hover, .block-input-pill.snap-hover, .block-reporter-slot.snap-hover').forEach(el => el.classList.remove('snap-hover'));
   }
 
   /**
@@ -1466,9 +1488,53 @@ class EV3Workspace {
 
   findNearestSnapTarget(draggedBlock, movingIds) {
     const draggedDef = window.EV3_BLOCK_DEFINITIONS[draggedBlock.type];
-    // Blocos ovais (reporter) não encaixam como pilha vertical nem em slots booleanos
+    // Blocos ovais (reporter / matemáticos / valores) encaixam em campos numéricos ou de texto
     if (draggedDef.shape === 'reporter') {
-      return null;
+      let best = null;
+      let bestDist = 65;
+      const wsRect = this.workspaceAreaEl.getBoundingClientRect();
+
+      for (const target of this.blocks.values()) {
+        if (movingIds.includes(target.id)) continue;
+        if (target.id === draggedBlock.id) continue;
+        if (this.isDescendantOf(target.id, draggedBlock.id)) continue;
+
+        const targetDef = window.EV3_BLOCK_DEFINITIONS[target.type];
+        if (!targetDef || !targetDef.tokens) continue;
+
+        targetDef.tokens.forEach(tok => {
+          if (tok.kind === 'number' || tok.kind === 'text') {
+            const slotEl = this.canvasEl.querySelector(
+              `[data-block-id="${target.id}"] [data-param-name="${tok.name}"], [data-block-id="${target.id}"] .block-reporter-slot[data-slot-name="${tok.name}"]`
+            );
+            if (slotEl) {
+              const slotRect = slotEl.getBoundingClientRect();
+              const slotCanvasX = (slotRect.left - (wsRect.left + this.panX)) / this.zoom;
+              const slotCanvasY = (slotRect.top - (wsRect.top + this.panY)) / this.zoom;
+
+              const slotCenterX = slotCanvasX + slotRect.width / (2 * this.zoom);
+              const slotCenterY = slotCanvasY + slotRect.height / (2 * this.zoom);
+              const draggedW = this.estimateBlockWidth(draggedBlock);
+              const draggedCenterX = draggedBlock.x + draggedW / 2;
+              const draggedCenterY = draggedBlock.y + 16;
+
+              const dist = Math.hypot(draggedCenterX - slotCenterX, draggedCenterY - slotCenterY);
+              if (dist < bestDist) {
+                bestDist = dist;
+                best = {
+                  targetId: target.id,
+                  slotName: tok.name,
+                  slotEl,
+                  slotCanvasX,
+                  slotCanvasY,
+                  mode: 'reporter_slot'
+                };
+              }
+            }
+          }
+        });
+      }
+      return best;
     }
 
     // 1. Blocos hexagonais (boolean) encaixam em slots/ranhuras losangos de outros blocos
@@ -1587,11 +1653,11 @@ class EV3Workspace {
     const target = this.blocks.get(snapCandidate.targetId);
     if (!target) return;
 
-    if (snapCandidate.mode === 'boolean_slot') {
+    if (snapCandidate.mode === 'boolean_slot' || snapCandidate.mode === 'reporter_slot') {
       const slotName = snapCandidate.slotName;
       // Se já houver um bloco no slot, desaloja o antigo para que fique livre ao lado
       const oldChildId = target.params[slotName];
-      if (oldChildId && this.blocks.has(oldChildId)) {
+      if (oldChildId && typeof oldChildId === 'string' && this.blocks.has(oldChildId)) {
         const oldChild = this.blocks.get(oldChildId);
         oldChild.parentSlot = null;
         oldChild.x = target.x + 36;
@@ -1663,7 +1729,9 @@ class EV3Workspace {
     if (block.parentSlot && this.blocks.has(block.parentSlot.parentId)) {
       const parent = this.blocks.get(block.parentSlot.parentId);
       if (parent && parent.params[block.parentSlot.slotName] === block.id) {
-        parent.params[block.parentSlot.slotName] = null;
+        const pDef = window.EV3_BLOCK_DEFINITIONS[parent.type];
+        const tok = pDef && pDef.tokens ? pDef.tokens.find(t => t.name === block.parentSlot.slotName) : null;
+        parent.params[block.parentSlot.slotName] = tok && tok.default !== undefined ? tok.default : null;
       }
       block.parentSlot = null;
     }
