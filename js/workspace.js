@@ -2331,7 +2331,7 @@ class EV3Workspace {
   getStartHatBlocks() {
     const hats = [];
     for (const blk of this.blocks.values()) {
-      if (blk.type === 'when_program_starts') {
+      if (blk.type === 'when_program_starts' || blk.type === 'when_brick_button') {
         hats.push(blk);
       }
     }

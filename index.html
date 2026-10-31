@@ -42,6 +42,10 @@
           <button class="dropdown-item" id="menuDuplicateProjectBtn">
             <span>Duplicar Projeto Atual</span>
           </button>
+          <button class="dropdown-item" id="menuSendToEv3Btn" style="color:#0077C2; font-weight:600;">
+            <span>⚡ Enviar para o Robô EV3...</span>
+            <small>Ctrl+B</small>
+          </button>
           <button class="dropdown-item" id="menuExportProjectBtn">
             <span>Exportar Projeto (.json)</span>
           </button>
@@ -124,6 +128,9 @@
     </button>
     <button class="ev3-context-item" id="tabMenuAddNoteBtn">
       <span>Adicionar comentário</span>
+    </button>
+    <button class="ev3-context-item" id="tabMenuSendEv3Btn" style="color:#0077C2; font-weight:600;">
+      <span>⚡ Enviar para o Robô EV3...</span>
     </button>
     <button class="ev3-context-item" id="tabMenuExportBtn">
       <span>Exportar arquivo (.json)</span>
@@ -500,9 +507,16 @@
 
     <!-- Botões Circulares no Canto Inferior Direito (visíveis tanto desconectado quanto conectado) -->
     <div class="floating-play-cluster">
-      <button id="resetArenaFabBtn" class="secondary-fab-btn" title="Reposicionar Robô / Download">
+      <button id="downloadEv3FabBtn" class="secondary-fab-btn download-ev3-btn" title="Baixar Programação para o Robô EV3 (Clique para gravar e rodar no robô)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <button id="resetArenaFabBtn" class="secondary-fab-btn" title="Reposicionar Robô no Início (Reset)">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-          <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 3v5h5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
 
@@ -540,21 +554,282 @@
       <!-- Corpo em Duas Colunas: Instruções à esquerda + Ilustração do Robô à direita -->
       <div class="ev3-connect-body">
         <div class="ev3-connect-steps">
-          <p class="ev3-connect-step-item">1. Ligue seu Bloco Inteligente.</p>
+          <p class="ev3-connect-step-item">1. <strong>Ligue o seu Bloco EV3</strong> (pressione o botão central; aguarde os LEDs verdes ficarem acesos).</p>
           <p id="connectStep2Text" class="ev3-connect-step-item">
-            2. Use o cabo USB para conectar o seu Bloco Inteligente ao computador.
+            2. Conecte o <strong>cabo mini-USB na porta lateral "PC"</strong> do Bloco Inteligente e ao computador.
           </p>
 
           <div class="ev3-connect-action-box">
-            <button type="button" id="confirmConnectSimBtn" class="ev3-connect-sim-btn">
-              Conectar Bloco Inteligente (Abrir Simulador)
+            <button type="button" id="connectUsbDirectFromConnectModalBtn" class="ev3-connect-sim-btn ev3-connect-usb-primary" title="Conectar ao Robô LEGO EV3 físico via cabo USB">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="margin-right:6px; vertical-align:middle;">
+                <path d="M12 2v10m-4-6l4-4 4 4M7 12h10a2 2 0 012 2v6a2 2 0 01-2 2H7a2 2 0 01-2-2v-6a2 2 0 012-2z"/>
+              </svg>
+              <span>Conectar Robô Físico via Cabo USB</span>
             </button>
-            <span class="ev3-connect-hint">Ou clique diretamente sobre o Bloco ao lado para conectar</span>
+
+            <button type="button" id="confirmConnectSimBtn" class="ev3-connect-sim-btn secondary" style="margin-top: 8px;">
+              <span>💻 Usar Somente Simulador 2D (Modo Virtual)</span>
+            </button>
+
+            <button type="button" id="openSendModalFromConnectBtn" class="ev3-connect-mode-link" style="margin-top: 10px; color: #7C3AED; font-weight: 700; font-size: 12px; text-decoration: underline;">
+              ⚡ Ver opções avançadas de envio, MicroPython e diagnóstico
+            </button>
+            <span class="ev3-connect-hint">Dica: Ao clicar em Conectar USB, selecione "EV3" na caixinha do navegador</span>
           </div>
         </div>
 
         <div class="ev3-connect-brick-col">
           <img id="connectBrickIllustration" class="ev3-connect-brick-img" src="Bloco Robo.jpg" alt="Bloco Inteligente RoboSim" title="Clique no Bloco Inteligente para conectar e abrir o Simulador 2D" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL: ENVIAR PROGRAMAÇÃO PARA O ROBÔ EV3 (DOWNLOAD / HARDWARE)
+       Permite enviar a programação para o Bloco EV3 físico via USB, Bluetooth,
+       ou baixar em MicroPython (.py) e pacote do projeto (.json / .lms)
+       ========================================================================= -->
+  <div id="ev3SendModal" class="ev3-send-modal-backdrop">
+    <div class="ev3-send-modal-card">
+      <div class="ev3-send-modal-header">
+        <div class="ev3-send-modal-title-wrap">
+          <div class="ev3-send-modal-icon-badge">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2.5"/>
+              <rect x="8" y="5" width="8" height="5" rx="1"/>
+              <circle cx="12" cy="15.5" r="2"/>
+              <path d="M9 15.5h6M12 13.5v4"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="ev3-send-modal-title">Enviar Programação para o Robô EV3</h3>
+            <p class="ev3-send-modal-subtitle">Transfira o seu código em blocos diretamente para o Bloco Inteligente LEGO MINDSTORMS</p>
+          </div>
+        </div>
+
+        <div class="ev3-send-header-right">
+          <div id="ev3HwStatusPill" class="ev3-hw-pill">
+            <span class="ev3-hw-pill-dot"></span>
+            <span id="ev3HwStatusText">Robô Físico: Desconectado</span>
+          </div>
+          <button type="button" id="closeEv3SendModalBtn" class="ev3-send-modal-close" title="Fechar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="5" y1="5" x2="19" y2="19"/>
+              <line x1="19" y1="5" x2="5" y2="19"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Abas do Modal -->
+      <div class="ev3-send-tabs">
+        <button type="button" class="ev3-send-tab-btn active" data-send-tab="direct">
+          <span>⚡ Envio Direto (USB / Bluetooth)</span>
+        </button>
+        <button type="button" class="ev3-send-tab-btn" data-send-tab="python">
+          <span>🐍 Código MicroPython (.py)</span>
+        </button>
+        <button type="button" class="ev3-send-tab-btn" data-send-tab="lms">
+          <span>📁 Pacote do Projeto (.json / .lms)</span>
+        </button>
+        <button type="button" class="ev3-send-tab-btn" data-send-tab="guide">
+          <span>📖 Guia de Conexão</span>
+        </button>
+      </div>
+
+      <div class="ev3-send-modal-body">
+        <!-- ABA 1: ENVIO DIRETO -->
+        <div id="sendPanelDirect" class="ev3-send-panel active">
+          <!-- Alerta de Bateria Fraca (Ativado dinamicamente se bateria <= 15%) -->
+          <div id="ev3LowBatteryAlert" class="ev3-battery-alert" style="display:none;">
+            <div class="ev3-battery-alert-icon">⚠️</div>
+            <div class="ev3-battery-alert-text">
+              <strong>Bateria do Robô EV3 Crítica (<span id="ev3BatteryAlertPct">5%</span>)!</strong>
+              <p>O robô desliga automaticamente quando a bateria atinge níveis baixos para proteger o circuito. Conecte o carregador ou troque as pilhas para continuar programando.</p>
+            </div>
+          </div>
+
+          <div class="ev3-direct-grid">
+            <div class="ev3-direct-card">
+              <div class="ev3-direct-card-head">
+                <div class="ev3-direct-card-icon">🔌</div>
+                <h4 class="ev3-direct-card-title">Cabo USB Direto (WebHID)</h4>
+              </div>
+              <p class="ev3-direct-card-desc">
+                Conecte o cabo USB do Bloco EV3 (porta lateral "PC") ao computador. Comunicação direta via WebHID sem necessidade de drivers adicionais.
+              </p>
+              <button type="button" id="connectUsbHwBtn" class="ev3-connect-btn">
+                <span>Conectar via USB</span>
+              </button>
+            </div>
+
+            <div class="ev3-direct-card">
+              <div class="ev3-direct-card-head">
+                <div class="ev3-direct-card-icon">📶</div>
+                <h4 class="ev3-direct-card-title">Bluetooth Serial (RFCOMM)</h4>
+              </div>
+              <p class="ev3-direct-card-desc">
+                Pareie o Bloco EV3 com o computador via Bluetooth (código padrão 1234) e selecione a porta serial correspondente.
+              </p>
+              <button type="button" id="connectBtHwBtn" class="ev3-connect-btn secondary">
+                <span>Conectar via Bluetooth</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="disconnectHwCard" class="ev3-direct-card" style="display:none; margin-bottom: 20px; background:#ECFDF5; border-color:#A7F3D0;">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div>
+                <strong id="connectedDeviceTitle" style="color:#047857;">Robô EV3 Conectado</strong>
+                <p id="connectedDeviceSubtitle" style="font-size:12px; color:#065F46; margin:2px 0 0 0;">Pronto para receber comandos e programação.</p>
+                <div id="ev3DeviceInfoTags" style="display:flex; gap:8px; margin-top:6px; flex-wrap:wrap;">
+                  <span id="ev3TagFw" class="ev3-info-tag">Firmware: V1.09E</span>
+                  <span id="ev3TagBatt" class="ev3-info-tag">Bateria: --</span>
+                  <span id="ev3TagPort" class="ev3-info-tag">Porta: USB HID</span>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <button type="button" id="disconnectHwBtn" class="ev3-connect-btn danger" style="padding:6px 12px; font-size:11.5px;">
+                  Desconectar
+                </button>
+              </div>
+            </div>
+
+            <!-- Botões de Teste Imediato de Hardware -->
+            <div class="ev3-hw-test-bar">
+              <span style="font-size:11.5px; font-weight:700; color:#065F46;">Testar Comunicação:</span>
+              <button type="button" id="testBeepHwBtn" class="ev3-test-action-btn" title="Toca um som no robô físico para testar o alto-falante">
+                🔔 Testar Bip
+              </button>
+              <button type="button" id="testMotorsHwBtn" class="ev3-test-action-btn" title="Gira os motores B e C por 1 volta para testar as rodas">
+                🔄 Testar Motores (B+C)
+              </button>
+              <button type="button" id="testLedHwBtn" class="ev3-test-action-btn" title="Acende os LEDs frontais do EV3 em verde piscante">
+                💡 Testar LEDs
+              </button>
+            </div>
+          </div>
+
+          <div class="ev3-upload-zone" id="ev3UploadZone">
+            <div style="font-size: 28px;">🤖 ➔ 📲</div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+              <button type="button" id="triggerSendToEv3Btn" class="ev3-main-upload-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>Gravar Programação no Robô EV3</span>
+              </button>
+              <button type="button" id="runProgramOnPhysicalEv3Btn" class="ev3-main-upload-btn run-realtime" title="Executa a sequência de blocos atual diretamente nos motores do robô físico">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5,3 19,12 5,21"/>
+                </svg>
+                <span>Executar Blocos no Robô Físico</span>
+              </button>
+            </div>
+            <label style="font-size:12px; color:#475569; display:flex; align-items:center; gap:6px; cursor:pointer;">
+              <input type="checkbox" id="playSuccessBeepCheck" checked />
+              <span>Tocar som de confirmação no robô após a gravação</span>
+            </label>
+
+            <div class="ev3-upload-progress-container" id="uploadProgressContainer">
+              <div class="ev3-upload-progress-bar-wrap">
+                <div class="ev3-upload-progress-bar-fill" id="uploadProgressBarFill"></div>
+              </div>
+              <span class="ev3-upload-status-text" id="uploadStatusText">Aguardando início...</span>
+            </div>
+          </div>
+
+          <!-- Card de Diagnóstico e Dicas de Solução -->
+          <div class="ev3-troubleshoot-card">
+            <div class="ev3-troubleshoot-header">
+              <span>💡 Dúvidas ou problemas para conectar via USB?</span>
+            </div>
+            <ul class="ev3-troubleshoot-list">
+              <li><strong>O robô está ligado?</strong> Pressione o botão central escuro do Bloco EV3 até as luzes ficarem vermelhas e aguarde os LEDs ficarem verdes com a tela inicial carregada.</li>
+              <li><strong>Bateria fraca:</strong> Se o EV3 desligar sozinho ou apitar e apagar a tela, é porque as pilhas estão fracas ou a bateria acabou. Recarregue-o antes de tentar conectar.</li>
+              <li><strong>Porta USB correta:</strong> O cabo deve estar conectado na porta mini-USB lateral com a indicação <strong>PC</strong> (não conecte na porta USB padrão grande).</li>
+              <li><strong>Permissão no Navegador:</strong> No Google Chrome ou Microsoft Edge, ao clicar em "Conectar via USB", uma caixinha suspensa aparecerá no topo: clique em <strong>EV3</strong> e em seguida no botão <strong>Conectar</strong>.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- ABA 2: CÓDIGO MICROPYTHON -->
+        <div id="sendPanelPython" class="ev3-send-panel">
+          <div class="ev3-code-header-bar">
+            <p>
+              Código MicroPython oficial gerado automaticamente a partir dos blocos atuais. Compatível com o firmware oficial LEGO MicroPython e Pybricks.
+            </p>
+            <div class="ev3-code-actions">
+              <button type="button" id="downloadPyFileBtn" class="ev3-connect-btn">
+                <span>📥 Baixar main.py</span>
+              </button>
+              <button type="button" id="copyPyCodeBtn" class="ev3-connect-btn secondary">
+                <span>📋 Copiar Código</span>
+              </button>
+            </div>
+          </div>
+          <div class="ev3-code-container">
+            <pre class="ev3-code-pre" id="pyCodePreview"># Gerando código...</pre>
+          </div>
+        </div>
+
+        <!-- ABA 3: PACOTE DO PROJETO -->
+        <div id="sendPanelLms" class="ev3-send-panel">
+          <div class="ev3-export-grid">
+            <div class="ev3-export-card">
+              <h4>📦 Arquivo de Projeto (.json)</h4>
+              <p>
+                Baixe o projeto completo em formato JSON para transferir entre computadores, restaurar no RoboSim ou arquivar em pendrive.
+              </p>
+              <button type="button" id="downloadProjectJsonBtn" class="ev3-connect-btn">
+                <span>Baixar Projeto (.json)</span>
+              </button>
+            </div>
+            <div class="ev3-export-card">
+              <h4>🐍 Script MicroPython Executável</h4>
+              <p>
+                Gera o arquivo executável para cartão microSD ou para envio via VS Code com a extensão LEGO MINDSTORMS EV3.
+              </p>
+              <button type="button" id="downloadPyFromLmsBtn" class="ev3-connect-btn secondary">
+                <span>Baixar main.py</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 4: GUIA DE CONEXÃO -->
+        <div id="sendPanelGuide" class="ev3-send-panel">
+          <div class="ev3-guide-steps">
+            <div class="ev3-guide-step-card">
+              <div class="ev3-guide-num">1</div>
+              <div class="ev3-guide-text">
+                <h4>Ligar o Bloco Inteligente EV3</h4>
+                <p>Pressione o botão central escuro do EV3. Aguarde a luz ficar vermelha e depois verde com o som de inicialização.</p>
+              </div>
+            </div>
+            <div class="ev3-guide-step-card">
+              <div class="ev3-guide-num">2</div>
+              <div class="ev3-guide-text">
+                <h4>Conexão via Cabo USB (Recomendado)</h4>
+                <p>Conecte o cabo na porta mini-USB identificada como <strong>PC</strong> na lateral superior do EV3 e plugue no computador. Clique em <strong>Conectar via USB</strong> e selecione o dispositivo EV3.</p>
+              </div>
+            </div>
+            <div class="ev3-guide-step-card">
+              <div class="ev3-guide-num">3</div>
+              <div class="ev3-guide-text">
+                <h4>Conexão sem fio via Bluetooth</h4>
+                <p>No EV3, vá na 4ª aba (Chave Inglesa) &gt; Bluetooth &gt; Marque <em>Visibility</em> e <em>Bluetooth</em>. No Windows ou Mac, pareie o dispositivo EV3 usando o PIN padrão <strong>1234</strong>. Em seguida, clique em <strong>Conectar via Bluetooth</strong> nesta tela.</p>
+              </div>
+            </div>
+            <div class="ev3-guide-step-card">
+              <div class="ev3-guide-num">4</div>
+              <div class="ev3-guide-text">
+                <h4>Executando com Cartão MicroSD ou MicroPython</h4>
+                <p>Você também pode salvar o arquivo <code>main.py</code> na pasta do seu projeto no cartão SD do EV3 e executá-lo diretamente no visor do robô.</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1122,6 +1397,8 @@
   <script src="js/workspace.js"></script>
   <script src="js/physics-arena.js"></script>
   <script src="js/runtime.js"></script>
+  <script src="js/ev3-transpiler.js"></script>
+  <script src="js/ev3-hardware.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

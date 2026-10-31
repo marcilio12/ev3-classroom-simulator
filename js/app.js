@@ -93,6 +93,33 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     onLog: (msg) => {
       if (statusLogText) statusLogText.textContent = msg;
+    },
+    onHardwareAction: (action) => {
+      if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+        try {
+          if (action.type === 'move_steer_for') {
+            ev3Hardware.sendSteerFor(action.steering, action.speed, action.degrees);
+          } else if (action.type === 'tank_drive_for') {
+            ev3Hardware.sendTankDriveFor(action.leftPct, action.rightPct, action.degrees);
+          } else if (action.type === 'tank_drive_speed') {
+            ev3Hardware.sendTankDriveSpeed(action.leftPct, action.rightPct);
+          } else if (action.type === 'move_for_rotations') {
+            ev3Hardware.sendMoveForRotations(action.direction, action.rotations, action.speed);
+          } else if (action.type === 'move_steer') {
+            ev3Hardware.sendSteer(action.steering, action.speed);
+          } else if (action.type === 'sound_beep') {
+            ev3Hardware.sendBeep(action.frequency, action.durationMs);
+          } else if (action.type === 'led') {
+            ev3Hardware.sendLED(action.pattern);
+          } else if (action.type === 'claw') {
+            ev3Hardware.sendClaw(action.rotations, action.speed);
+          } else if (action.type === 'stop') {
+            ev3Hardware.sendStopMotors();
+          }
+        } catch (e) {
+          console.warn('Erro ao repassar comando ao EV3 físico:', e);
+        }
+      }
     }
   });
 
@@ -2477,6 +2504,478 @@ document.addEventListener('DOMContentLoaded', () => {
     statusLogText.textContent = 'Posição do robô e contadores de motores reiniciados.';
   });
 
+  // ==================== 8. ENVIAR PROGRAMAÇÃO PARA O ROBÔ EV3 (TRANSPILER & HARDWARE) ====================
+  const ev3Transpiler = new EV3Transpiler(workspace);
+  const ev3Hardware = new EV3HardwareManager({
+    onStateChange: (status) => updateHwConnectionUI(status),
+    onLog: (msg, type) => {
+      if (statusLogText) statusLogText.textContent = msg;
+      if (type === 'success') showToast(msg, '⚡');
+      else if (type === 'error') showToast(msg, '⚠️');
+    }
+  });
+
+  const downloadEv3FabBtn = document.getElementById('downloadEv3FabBtn');
+  const menuSendToEv3Btn = document.getElementById('menuSendToEv3Btn');
+  const tabMenuSendEv3Btn = document.getElementById('tabMenuSendEv3Btn');
+  const openSendModalFromConnectBtn = document.getElementById('openSendModalFromConnectBtn');
+  const connectUsbDirectFromConnectModalBtn = document.getElementById('connectUsbDirectFromConnectModalBtn');
+
+  const ev3SendModal = document.getElementById('ev3SendModal');
+  const closeEv3SendModalBtn = document.getElementById('closeEv3SendModalBtn');
+  const ev3HwStatusPill = document.getElementById('ev3HwStatusPill');
+  const ev3HwStatusText = document.getElementById('ev3HwStatusText');
+  const disconnectHwCard = document.getElementById('disconnectHwCard');
+  const connectedDeviceTitle = document.getElementById('connectedDeviceTitle');
+  const connectedDeviceSubtitle = document.getElementById('connectedDeviceSubtitle');
+  const disconnectHwBtn = document.getElementById('disconnectHwBtn');
+  const connectUsbHwBtn = document.getElementById('connectUsbHwBtn');
+  const connectBtHwBtn = document.getElementById('connectBtHwBtn');
+
+  // Tags e Alerta de Bateria
+  const ev3TagFw = document.getElementById('ev3TagFw');
+  const ev3TagBatt = document.getElementById('ev3TagBatt');
+  const ev3TagPort = document.getElementById('ev3TagPort');
+  const ev3LowBatteryAlert = document.getElementById('ev3LowBatteryAlert');
+  const ev3BatteryAlertPct = document.getElementById('ev3BatteryAlertPct');
+
+  // Botões de Teste Imediato
+  const testBeepHwBtn = document.getElementById('testBeepHwBtn');
+  const testMotorsHwBtn = document.getElementById('testMotorsHwBtn');
+  const testLedHwBtn = document.getElementById('testLedHwBtn');
+  const runProgramOnPhysicalEv3Btn = document.getElementById('runProgramOnPhysicalEv3Btn');
+
+  const ev3UploadZone = document.getElementById('ev3UploadZone');
+  const triggerSendToEv3Btn = document.getElementById('triggerSendToEv3Btn');
+  const playSuccessBeepCheck = document.getElementById('playSuccessBeepCheck');
+  const uploadProgressContainer = document.getElementById('uploadProgressContainer');
+  const uploadProgressBarFill = document.getElementById('uploadProgressBarFill');
+  const uploadStatusText = document.getElementById('uploadStatusText');
+
+  const pyCodePreview = document.getElementById('pyCodePreview');
+  const downloadPyFileBtn = document.getElementById('downloadPyFileBtn');
+  const copyPyCodeBtn = document.getElementById('copyPyCodeBtn');
+  const downloadProjectJsonBtn = document.getElementById('downloadProjectJsonBtn');
+  const downloadPyFromLmsBtn = document.getElementById('downloadPyFromLmsBtn');
+
+  let activeSendTab = 'direct';
+
+  function openSendModal(defaultTab = 'direct') {
+    activeSendTab = defaultTab;
+    updateSendModalTabsUI();
+    refreshPyCodePreview();
+    if (ev3SendModal) {
+      ev3SendModal.classList.add('open');
+    }
+  }
+
+  function closeSendModal() {
+    if (ev3SendModal) {
+      ev3SendModal.classList.remove('open');
+    }
+  }
+
+  function switchSendTab(tabName) {
+    activeSendTab = tabName;
+    updateSendModalTabsUI();
+    if (tabName === 'python') {
+      refreshPyCodePreview();
+    }
+  }
+
+  function updateSendModalTabsUI() {
+    document.querySelectorAll('[data-send-tab]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.sendTab === activeSendTab);
+    });
+    const panels = {
+      direct: document.getElementById('sendPanelDirect'),
+      python: document.getElementById('sendPanelPython'),
+      lms: document.getElementById('sendPanelLms'),
+      guide: document.getElementById('sendPanelGuide')
+    };
+    Object.keys(panels).forEach(key => {
+      if (panels[key]) {
+        panels[key].classList.toggle('active', key === activeSendTab);
+      }
+    });
+  }
+
+  function refreshPyCodePreview() {
+    if (!pyCodePreview) return;
+    const curProj = activeProjectId ? projectsMap.get(activeProjectId) : null;
+    const projName = curProj ? curProj.name : 'Programa RoboSim';
+    const py = ev3Transpiler.toMicroPython(projName);
+    pyCodePreview.textContent = py;
+  }
+
+  function updateHwConnectionUI(status) {
+    if (!ev3HwStatusPill || !ev3HwStatusText) return;
+
+    if (status && status.connected) {
+      ev3HwStatusPill.classList.add('connected');
+      const typeLabel = status.type === 'usb' ? 'USB' : 'Bluetooth';
+      ev3HwStatusText.textContent = `Robô EV3 Conectado (${typeLabel})`;
+
+      if (disconnectHwCard) {
+        disconnectHwCard.style.display = 'block';
+        if (connectedDeviceTitle) connectedDeviceTitle.textContent = `Robô EV3 Conectado via ${typeLabel}`;
+        if (connectedDeviceSubtitle) connectedDeviceSubtitle.textContent = `Dispositivo: ${status.name || 'LEGO MINDSTORMS EV3'}`;
+      }
+
+      if (ev3TagFw) ev3TagFw.textContent = `Firmware: ${status.firmware || 'V1.09E'}`;
+      if (ev3TagBatt) ev3TagBatt.textContent = `Bateria: ${status.battery !== null ? status.battery + '%' : 'OK'}`;
+      if (ev3TagPort) ev3TagPort.textContent = `Porta: ${status.port || 'USB HID'}`;
+
+      if (ev3LowBatteryAlert) {
+        if (status.battery !== null && status.battery <= 15) {
+          ev3LowBatteryAlert.style.display = 'flex';
+          if (ev3BatteryAlertPct) ev3BatteryAlertPct.textContent = `${status.battery}%`;
+        } else {
+          ev3LowBatteryAlert.style.display = 'none';
+        }
+      }
+
+      if (ev3UploadZone) {
+        ev3UploadZone.classList.add('ready');
+      }
+
+      // Atualiza o botão flutuante principal
+      floatingBrickBtn.classList.remove('disconnected');
+      floatingBrickLabel.textContent = status.brickName ? `ev3: ${status.brickName}` : 'ev3 físico';
+      floatingBrickBtn.title = `Robô Físico EV3 Conectado (${status.name || 'EV3'}) - Clique para desconectar ou abrir opções`;
+    } else {
+      ev3HwStatusPill.classList.remove('connected');
+      ev3HwStatusText.textContent = 'Robô Físico: Desconectado';
+      if (disconnectHwCard) {
+        disconnectHwCard.style.display = 'none';
+      }
+      if (ev3LowBatteryAlert) {
+        ev3LowBatteryAlert.style.display = 'none';
+      }
+      if (ev3UploadZone) {
+        ev3UploadZone.classList.remove('ready');
+      }
+      if (!isEV3Connected) {
+        floatingBrickBtn.classList.add('disconnected');
+        floatingBrickLabel.textContent = 'conectar';
+        floatingBrickBtn.title = 'Clique para conectar o Robô e abrir o Simulador';
+      }
+    }
+  }
+
+  async function connectPhysicalEV3USB() {
+    try {
+      showToast('Solicitando acesso ao Bloco EV3 via USB...', '🔌');
+      const res = await ev3Hardware.connectUSB();
+      connectEV3AndOpenSimulator();
+      showToast('🎉 Bloco EV3 USB conectado com sucesso!', '🤖');
+      return res;
+    } catch (err) {
+      console.warn('Erro ao conectar EV3 via USB:', err);
+      showToast(`Falha na conexão USB: ${err.message}`, '⚠️');
+      throw err;
+    }
+  }
+
+  async function handleDownloadToEV3() {
+    // 1. Se o robô não estiver conectado, solicita conexão USB
+    if (!ev3Hardware.isConnected) {
+      showToast('Robô EV3 desconectado. Conectando via USB...', '🔌');
+      try {
+        await connectPhysicalEV3USB();
+      } catch (err) {
+        showToast('Conecte o cabo USB do Bloco EV3 e tente novamente.', '⚠️');
+        openConnectModal();
+        return;
+      }
+    }
+
+    // 2. Com o EV3 conectado, inicia o download imediatamente para o robô físico!
+    await uploadProgramToEv3();
+  }
+
+  async function uploadProgramToEv3() {
+    // 1. Se o robô não estiver conectado, solicita conexão USB
+    if (!ev3Hardware.isConnected) {
+      showToast('Robô EV3 desconectado. Conectando via USB...', '🔌');
+      try {
+        await connectPhysicalEV3USB();
+      } catch (err) {
+        showToast('Conecte o cabo USB do Bloco EV3 e tente novamente.', '⚠️');
+        openConnectModal();
+        return;
+      }
+    }
+
+    if (downloadEv3FabBtn) {
+      downloadEv3FabBtn.classList.add('downloading');
+    }
+    if (triggerSendToEv3Btn) {
+      triggerSendToEv3Btn.disabled = true;
+    }
+
+    if (uploadProgressContainer) {
+      uploadProgressContainer.classList.add('active');
+    }
+
+    try {
+      const curProj = activeProjectId ? projectsMap.get(activeProjectId) : null;
+      const projName = curProj ? curProj.name : 'Programa RoboSim';
+      const pyCode = ev3Transpiler.toMicroPython(projName);
+
+      showToast(`💾 Enviando "${projName}" para a pasta do Robô EV3...`, '🤖');
+
+      await ev3Hardware.uploadProgram(
+        { name: projName, code: pyCode, workspace: workspace },
+        (pct, text) => {
+          if (uploadProgressBarFill) uploadProgressBarFill.style.width = `${pct}%`;
+          if (uploadStatusText) uploadStatusText.textContent = `${pct}% - ${text}`;
+        },
+        false // autoRun = false: apenas grava na pasta sem executar imediatamente
+      );
+
+      showToast(`💾 Programa "${projName}" salvo na pasta do Robô EV3!`, '🎉');
+      if (statusLogText) {
+        statusLogText.textContent = `Sucesso: Programa "${projName}" salvo no Bloco EV3 (pasta RoboSim). Acesse pelo menu do robô para executar.`;
+      }
+    } catch (err) {
+      showToast(`Erro ao enviar programa: ${err.message}`, '⚠️');
+      if (uploadStatusText) {
+        uploadStatusText.textContent = `Falha: ${err.message}`;
+      }
+    } finally {
+      setTimeout(() => {
+        if (downloadEv3FabBtn) {
+          downloadEv3FabBtn.classList.remove('downloading');
+        }
+        if (triggerSendToEv3Btn) {
+          triggerSendToEv3Btn.disabled = false;
+        }
+        if (uploadProgressContainer) {
+          setTimeout(() => {
+            uploadProgressContainer.classList.remove('active');
+            if (uploadProgressBarFill) uploadProgressBarFill.style.width = '0%';
+          }, 3500);
+        }
+      }, 800);
+    }
+  }
+
+  function downloadMicroPythonFile() {
+    const curProj = activeProjectId ? projectsMap.get(activeProjectId) : null;
+    const projName = curProj ? curProj.name : 'Programa RoboSim';
+    const py = ev3Transpiler.toMicroPython(projName);
+
+    const safeName = projName.replace(/[^a-zA-Z0-9_\-]/g, '_').toLowerCase();
+    const filename = `${safeName || 'main'}.py`;
+
+    const blob = new Blob([py], { type: 'text/x-python;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast(`Arquivo "${filename}" baixado com sucesso!`, '🐍');
+  }
+
+  function copyMicroPythonCode() {
+    const curProj = activeProjectId ? projectsMap.get(activeProjectId) : null;
+    const projName = curProj ? curProj.name : 'Programa RoboSim';
+    const py = ev3Transpiler.toMicroPython(projName);
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(py).then(() => {
+        showToast('Código MicroPython copiado para a área de transferência!', '📋');
+      }).catch(() => {
+        fallbackCopyText(py);
+      });
+    } else {
+      fallbackCopyText(py);
+    }
+  }
+
+  function fallbackCopyText(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('Código MicroPython copiado!', '📋');
+    } catch (e) {
+      showToast('Selecione e copie o código manualmente.', 'ℹ️');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // Event Listeners do Envio e Conexão com o EV3
+  if (downloadEv3FabBtn) {
+    downloadEv3FabBtn.addEventListener('click', handleDownloadToEV3);
+    // Clique com o botão direito abre o modal de opções avançadas (ex: exportar código MicroPython)
+    downloadEv3FabBtn.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      openSendModal('direct');
+    });
+  }
+
+  if (menuSendToEv3Btn) {
+    menuSendToEv3Btn.addEventListener('click', async () => {
+      closeAllDropdowns();
+      await handleDownloadToEV3();
+    });
+  }
+
+  if (tabMenuSendEv3Btn) {
+    tabMenuSendEv3Btn.addEventListener('click', async () => {
+      closeTabContextMenu();
+      await handleDownloadToEV3();
+    });
+  }
+
+  if (openSendModalFromConnectBtn) {
+    openSendModalFromConnectBtn.addEventListener('click', async () => {
+      closeConnectModal();
+      if (ev3Hardware.isConnected) {
+        await uploadProgramToEv3();
+      } else {
+        openSendModal('direct');
+      }
+    });
+  }
+
+  if (connectUsbDirectFromConnectModalBtn) {
+    connectUsbDirectFromConnectModalBtn.addEventListener('click', async () => {
+      try {
+        await connectPhysicalEV3USB();
+        closeConnectModal();
+      } catch (err) {
+        // Erro já tratado com toast
+      }
+    });
+  }
+
+  if (closeEv3SendModalBtn) {
+    closeEv3SendModalBtn.addEventListener('click', closeSendModal);
+  }
+
+  if (ev3SendModal) {
+    ev3SendModal.addEventListener('click', (e) => {
+      if (e.target === ev3SendModal) {
+        closeSendModal();
+      }
+    });
+  }
+
+  document.querySelectorAll('[data-send-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchSendTab(btn.dataset.sendTab);
+    });
+  });
+
+  if (connectUsbHwBtn) {
+    connectUsbHwBtn.addEventListener('click', async () => {
+      try {
+        await connectPhysicalEV3USB();
+      } catch (err) {
+        // Erro exibido no toast
+      }
+    });
+  }
+
+  if (connectBtHwBtn) {
+    connectBtHwBtn.addEventListener('click', async () => {
+      try {
+        await ev3Hardware.connectBluetooth();
+        connectEV3AndOpenSimulator();
+        showToast('Bloco EV3 Bluetooth conectado com sucesso!', '📶');
+      } catch (err) {
+        showToast(err.message, '⚠️');
+      }
+    });
+  }
+
+  if (disconnectHwBtn) {
+    disconnectHwBtn.addEventListener('click', async () => {
+      await ev3Hardware.disconnect();
+      showToast('Robô EV3 físico desconectado.', 'ℹ️');
+    });
+  }
+
+  if (testBeepHwBtn) {
+    testBeepHwBtn.addEventListener('click', async () => {
+      try {
+        await ev3Hardware.sendBeep(880, 250);
+        showToast('🔔 Sinal sonoro enviado para o Robô EV3!', '🤖');
+      } catch (err) {
+        showToast(`Erro ao enviar som: ${err.message}`, '⚠️');
+      }
+    });
+  }
+
+  if (testMotorsHwBtn) {
+    testMotorsHwBtn.addEventListener('click', async () => {
+      try {
+        await ev3Hardware.testMotors();
+        showToast('🔄 Teste de rotação dos motores B+C iniciado!', '⚡');
+      } catch (err) {
+        showToast(`Erro no teste de motores: ${err.message}`, '⚠️');
+      }
+    });
+  }
+
+  if (testLedHwBtn) {
+    testLedHwBtn.addEventListener('click', async () => {
+      try {
+        await ev3Hardware.sendLED(4); // Verde piscante
+        showToast('💡 LEDs frontais ativados!', '🟢');
+        setTimeout(() => ev3Hardware.sendLED(1), 2500); // Volta ao verde contínuo
+      } catch (err) {
+        showToast(`Erro ao acionar LEDs: ${err.message}`, '⚠️');
+      }
+    });
+  }
+
+  if (runProgramOnPhysicalEv3Btn) {
+    runProgramOnPhysicalEv3Btn.addEventListener('click', () => {
+      closeSendModal();
+      if (!isEV3Connected) {
+        connectEV3AndOpenSimulator();
+      }
+      hideVictoryOverlay();
+      hideGameOverOverlay();
+      showToast('▶️ Executando blocos no Robô EV3 Físico!', '🤖');
+      runtime.startProgram();
+    });
+  }
+
+  if (triggerSendToEv3Btn) {
+    triggerSendToEv3Btn.addEventListener('click', uploadProgramToEv3);
+  }
+
+  if (downloadPyFileBtn) {
+    downloadPyFileBtn.addEventListener('click', downloadMicroPythonFile);
+  }
+
+  if (downloadPyFromLmsBtn) {
+    downloadPyFromLmsBtn.addEventListener('click', downloadMicroPythonFile);
+  }
+
+  if (copyPyCodeBtn) {
+    copyPyCodeBtn.addEventListener('click', copyMicroPythonCode);
+  }
+
+  if (downloadProjectJsonBtn) {
+    downloadProjectJsonBtn.addEventListener('click', () => {
+      exportCurrentProject();
+    });
+  }
+
   document.getElementById('scenarioSelect').addEventListener('change', (e) => {
     hideVictoryOverlay();
     hideGameOverOverlay();
@@ -2525,10 +3024,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-brick-btn]').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (!isEV3Connected) {
-        openConnectModal();
-        return;
-      }
       runtime.triggerBrickButton(btn.dataset.brickBtn);
     });
   });
@@ -2669,6 +3164,12 @@ document.addEventListener('DOMContentLoaded', () => {
         active.isContentEditable);
 
     if (isEditingField) return;
+
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B')) {
+      e.preventDefault();
+      openSendModal('direct');
+      return;
+    }
 
     if (e.code === 'Space') {
       e.preventDefault();

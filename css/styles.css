@@ -3395,3 +3395,678 @@ body {
 }
 
 
+
+/* =========================================================================
+   MODAL: ENVIAR PROGRAMAÇÃO PARA O ROBÔ EV3 (DOWNLOAD / HARDWARE)
+   ========================================================================= */
+
+.download-ev3-btn {
+  background: #0077C2 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #005F9E !important;
+  box-shadow: 0 4px 14px rgba(0, 119, 194, 0.4) !important;
+}
+
+.download-ev3-btn:hover {
+  background: #0088DD !important;
+  transform: scale(1.08) !important;
+}
+
+.download-ev3-btn.downloading {
+  background: #FFB703 !important;
+  color: #1A1A1A !important;
+  border-color: #FB8500 !important;
+  box-shadow: 0 0 16px rgba(255, 183, 3, 0.7) !important;
+  animation: pulse-download-btn 0.9s infinite alternate !important;
+  pointer-events: none;
+}
+
+.download-ev3-btn.downloading svg {
+  animation: spin-download-icon 1s linear infinite !important;
+}
+
+@keyframes pulse-download-btn {
+  0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 183, 3, 0.4); }
+  100% { transform: scale(1.12); box-shadow: 0 0 24px rgba(255, 183, 3, 0.85); }
+}
+
+@keyframes spin-download-icon {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ev3-send-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(18, 22, 28, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 4000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.ev3-send-modal-backdrop.open {
+  display: flex;
+}
+
+.ev3-send-modal-card {
+  width: 820px;
+  max-width: 95vw;
+  max-height: 88vh;
+  background: #FFFFFF;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: ev3ModalPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes ev3ModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.ev3-send-modal-header {
+  padding: 18px 24px;
+  background: #F8FAFC;
+  border-bottom: 1px solid #E2E8F0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.ev3-send-modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ev3-send-modal-icon-badge {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #E0F2FE;
+  color: #0284C7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ev3-send-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.ev3-send-modal-subtitle {
+  font-size: 12px;
+  color: #64748B;
+  margin: 2px 0 0 0;
+}
+
+.ev3-send-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ev3-hw-pill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #F1F5F9;
+  color: #64748B;
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s ease;
+}
+
+.ev3-hw-pill.connected {
+  background: #ECFDF5;
+  color: #047857;
+  border-color: #A7F3D0;
+}
+
+.ev3-hw-pill-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94A3B8;
+}
+
+.ev3-hw-pill.connected .ev3-hw-pill-dot {
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+}
+
+.ev3-send-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #94A3B8;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ev3-send-modal-close:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+}
+
+/* Abas de Navegação do Modal de Envio */
+.ev3-send-tabs {
+  display: flex;
+  background: #F1F5F9;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0 16px;
+  gap: 6px;
+}
+
+.ev3-send-tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748B;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ev3-send-tab-btn:hover {
+  color: #0284C7;
+}
+
+.ev3-send-tab-btn.active {
+  color: #0284C7;
+  font-weight: 700;
+}
+
+.ev3-send-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #0284C7;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Painel de Conteúdo das Abas */
+.ev3-send-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.ev3-send-panel {
+  display: none;
+}
+
+.ev3-send-panel.active {
+  display: block;
+}
+
+/* Painel 1: Envio Direto (USB / Bluetooth) */
+.ev3-direct-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.ev3-direct-card {
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 18px;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.ev3-direct-card:hover {
+  border-color: #38BDF8;
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.08);
+}
+
+.ev3-direct-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ev3-direct-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #F0F9FF;
+  color: #0284C7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.ev3-direct-card-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.ev3-direct-card-desc {
+  font-size: 12px;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.45;
+  flex: 1;
+}
+
+.ev3-connect-btn {
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #0284C7;
+  background: #0284C7;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.ev3-connect-btn:hover {
+  background: #0369A1;
+  border-color: #0369A1;
+}
+
+.ev3-connect-btn.secondary {
+  background: #FFFFFF;
+  color: #0284C7;
+  border-color: #BAE6FD;
+}
+
+.ev3-connect-btn.secondary:hover {
+  background: #F0F9FF;
+  border-color: #0284C7;
+}
+
+.ev3-connect-btn.danger {
+  background: #FEE2E2;
+  color: #DC2626;
+  border-color: #FECACA;
+}
+
+.ev3-connect-btn.danger:hover {
+  background: #FCA5A5;
+}
+
+/* Área de Upload / Ação Principal */
+.ev3-upload-zone {
+  background: #F8FAFC;
+  border: 2px dashed #CBD5E1;
+  border-radius: 12px;
+  padding: 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ev3-upload-zone.ready {
+  border-color: #0284C7;
+  background: #F0F9FF;
+}
+
+.ev3-main-upload-btn {
+  padding: 13px 28px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  color: #FFFFFF;
+  border: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.18s ease;
+}
+
+.ev3-main-upload-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+}
+
+.ev3-main-upload-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Barra de Progresso do Envio */
+.ev3-upload-progress-container {
+  width: 100%;
+  max-width: 480px;
+  margin-top: 8px;
+  display: none;
+}
+
+.ev3-upload-progress-container.active {
+  display: block;
+}
+
+.ev3-upload-progress-bar-wrap {
+  height: 8px;
+  background: #E2E8F0;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.ev3-upload-progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38BDF8, #0284C7);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.ev3-upload-status-text {
+  font-size: 12px;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Painel 2: Código MicroPython */
+.ev3-code-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ev3-code-header-bar p {
+  font-size: 12.5px;
+  color: #64748B;
+  margin: 0;
+  flex: 1;
+}
+
+.ev3-code-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ev3-code-container {
+  background: #0F172A;
+  border-radius: 10px;
+  padding: 14px 18px;
+  max-height: 380px;
+  overflow: auto;
+  border: 1px solid #1E293B;
+}
+
+.ev3-code-pre {
+  margin: 0;
+  font-family: 'Consolas', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #E2E8F0;
+  white-space: pre;
+}
+
+/* Painel 3: Pacote do Projeto */
+.ev3-export-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ev3-export-card {
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 20px;
+  background: #F8FAFC;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ev3-export-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0;
+}
+
+.ev3-export-card p {
+  font-size: 12px;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.45;
+  flex: 1;
+}
+
+/* Painel 4: Guia de Conexão */
+.ev3-guide-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ev3-guide-step-card {
+  display: flex;
+  gap: 14px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  align-items: flex-start;
+}
+
+.ev3-guide-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #0284C7;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ev3-guide-text h4 {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0F172A;
+  margin: 0 0 3px 0;
+}
+
+.ev3-guide-text p {
+  font-size: 12px;
+  color: #64748B;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ==================== ESTILOS AVANÇADOS DE DIAGNÓSTICO & HARDWARE EV3 ==================== */
+.ev3-connect-usb-primary {
+  background: linear-gradient(135deg, #0284C7, #0369A1) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35) !important;
+}
+
+.ev3-connect-usb-primary:hover {
+  background: linear-gradient(135deg, #0369A1, #075985) !important;
+  transform: translateY(-1px);
+}
+
+.ev3-connect-sim-btn.secondary {
+  background: #F8FAFC !important;
+  color: #475569 !important;
+  border: 1px solid #CBD5E1 !important;
+  box-shadow: none !important;
+}
+
+.ev3-connect-sim-btn.secondary:hover {
+  background: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+.ev3-battery-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #FFFBEB;
+  border: 1px solid #FCD34D;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+}
+
+.ev3-battery-alert-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.ev3-battery-alert-text strong {
+  font-size: 13px;
+  color: #B45309;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.ev3-battery-alert-text p {
+  font-size: 12px;
+  color: #92400E;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ev3-info-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #E2E8F0;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ev3-hw-test-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #D1FAE5;
+  flex-wrap: wrap;
+}
+
+.ev3-test-action-btn {
+  background: #FFFFFF;
+  border: 1px solid #A7F3D0;
+  color: #047857;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+.ev3-test-action-btn:hover {
+  background: #ECFDF5;
+  border-color: #059669;
+  transform: translateY(-1px);
+}
+
+.ev3-main-upload-btn.run-realtime {
+  background: linear-gradient(135deg, #10B981, #059669);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+}
+
+.ev3-main-upload-btn.run-realtime:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+.ev3-troubleshoot-card {
+  margin-top: 20px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.ev3-troubleshoot-header {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ev3-troubleshoot-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ev3-troubleshoot-list li {
+  font-size: 11.5px;
+  color: #64748B;
+  line-height: 1.45;
+}
+
+.ev3-troubleshoot-list li strong {
+  color: #1E293B;
+}

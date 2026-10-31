@@ -10,11 +10,13 @@ class EV3Runtime {
     this.arena = arena;
     this.onStateChange = callbacks.onStateChange || (() => {});
     this.onLog = callbacks.onLog || (() => {});
+    this.onHardwareAction = callbacks.onHardwareAction || (() => {});
 
     this.isRunning = false;
     this.runToken = 0;
     this.audioCtx = null;
     this.variables = {};
+    this.virtualButtonPressed = null;
   }
 
   async startProgram() {
@@ -25,7 +27,7 @@ class EV3Runtime {
 
     const startHats = this.workspace.getStartHatBlocks();
     if (startHats.length === 0) {
-      this.onLog('Adicione o bloco amarelo "quando o programa iniciar" para executar.');
+      this.onLog('Adicione um bloco de início (ex: "quando o programa iniciar" ou "quando o botão do bloco for...") para executar.');
       return;
     }
 
@@ -59,6 +61,18 @@ class EV3Runtime {
   }
 
   async triggerBrickButton(buttonName) {
+    this.virtualButtonPressed = buttonName;
+    setTimeout(() => {
+      if (this.virtualButtonPressed === buttonName) {
+        this.virtualButtonPressed = null;
+      }
+    }, 1500);
+
+    if (this.isRunning) {
+      this.onLog(`Botão "${buttonName}" acionado no simulador.`);
+      return;
+    }
+
     const hats = this.workspace.getButtonHatBlocks(buttonName, 'pressionado');
     if (hats.length === 0) {
       this.onLog(`Botão "${buttonName}" pressionado (nenhum bloco de evento associado).`);
@@ -97,6 +111,7 @@ class EV3Runtime {
     this.runToken++;
     this.isRunning = false;
     this.arena.stopAllMotors();
+    try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
     this.workspace.setRunningBlock(null);
     this.onStateChange(false);
     this.onLog('Execução interrompida pelo usuário.');
@@ -283,6 +298,10 @@ class EV3Runtime {
 
       // 5. Botões do Bloco EV3
       case 'sensor_is_brick_button': {
+        const btn = p.button || 'centro';
+        if (this.virtualButtonPressed && (this.virtualButtonPressed === btn || this.virtualButtonPressed === 'qualquer')) {
+          return true;
+        }
         return false;
       }
 
@@ -377,7 +396,6 @@ class EV3Runtime {
 
     switch (block.type) {
       case 'when_program_starts':
-      case 'when_brick_button':
       case 'when_color_is':
       case 'when_touch_is':
       case 'when_distance_is':
@@ -385,6 +403,47 @@ class EV3Runtime {
       case 'when_condition':
       case 'when_timer_gt':
       case 'when_message_received': {
+        await this.sleep(80, token);
+        break;
+      }
+
+      case 'when_brick_button': {
+        const btn = p.button || 'centro';
+        const action = p.action || 'pressionado';
+        this.onLog(`Aguardando botão "${btn}" do bloco ser ${action}...`);
+
+        let matched = false;
+        while (!matched) {
+          this.checkAborted(token);
+
+          // 1. Verifica no robô EV3 físico conectado via USB/Bluetooth
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            try {
+              const pressed = await ev3Hardware.readBrickButton(btn);
+              if (action === 'liberado') {
+                if (!pressed) { matched = true; break; }
+              } else {
+                if (pressed) { matched = true; break; }
+              }
+            } catch (e) {}
+          }
+
+          // 2. Verifica no botão virtual clicado no HUD da simulação
+          if (this.virtualButtonPressed && (this.virtualButtonPressed === btn || this.virtualButtonPressed === 'qualquer')) {
+            this.virtualButtonPressed = null;
+            matched = true;
+            break;
+          }
+
+          await this.sleep(50, token);
+        }
+
+        this.onLog(`Botão "${btn}" acionado! Continuando programa...`);
+        try {
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            await ev3Hardware.sendBeep(880, 80);
+          }
+        } catch (e) {}
         await this.sleep(80, token);
         break;
       }
@@ -445,6 +504,13 @@ class EV3Runtime {
         const speed = this.arena.robot.defaultSpeedPct || 50;
         const { leftPct, rightPct } = this.arena.computeDifferentialSpeeds(steering, speed);
         this.arena.setDriveSpeed(leftPct, rightPct);
+        try {
+          this.onHardwareAction({
+            type: 'move_steer',
+            steering,
+            speed
+          });
+        } catch (e) {}
         this.onLog(`Movimento contínuo iniciado (${window.formatEV3Steering(steering)}) a ${speed}%`);
         await this.sleep(50, token);
         break;
@@ -455,6 +521,13 @@ class EV3Runtime {
         const speed = Number(p.speed) !== undefined ? Number(p.speed) : 50;
         const { leftPct, rightPct } = this.arena.computeDifferentialSpeeds(steering, speed);
         this.arena.setDriveSpeed(leftPct, rightPct);
+        try {
+          this.onHardwareAction({
+            type: 'move_steer',
+            steering,
+            speed
+          });
+        } catch (e) {}
         this.onLog(`Movimento contínuo (${window.formatEV3Steering(steering)}) a ${speed}%`);
         await this.sleep(50, token);
         break;
@@ -464,6 +537,13 @@ class EV3Runtime {
         const leftSpd = Math.max(-100, Math.min(100, Number(p.leftSpeed) || 0));
         const rightSpd = Math.max(-100, Math.min(100, Number(p.rightSpeed) || 0));
         this.arena.setDriveSpeed(leftSpd, rightSpd);
+        try {
+          this.onHardwareAction({
+            type: 'tank_drive_speed',
+            leftPct: leftSpd,
+            rightPct: rightSpd
+          });
+        } catch (e) {}
         this.onLog(`Movimento tanque contínuo iniciado (${leftSpd}%, ${rightSpd}%)`);
         await this.sleep(50, token);
         break;
@@ -471,6 +551,7 @@ class EV3Runtime {
 
       case 'move_stop': {
         this.arena.stopDriveMotors();
+        try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
         this.onLog('Motores de movimento (B+C) parados.');
         await this.sleep(60, token);
         break;
@@ -598,6 +679,12 @@ class EV3Runtime {
       case 'brick_status_light': {
         const colorStr = String(p.lightColor || 'green').replace('_pulse', '');
         this.arena.robot.statusLight = colorStr;
+        try {
+          this.onHardwareAction({
+            type: 'led',
+            pattern: p.lightColor || 'green'
+          });
+        } catch (e) {}
         this.onLog(`Luz de status definida para ${p.lightColor}`);
         await this.sleep(60, token);
         break;
@@ -605,6 +692,12 @@ class EV3Runtime {
 
       case 'brick_status_light_off': {
         this.arena.robot.statusLight = 'off';
+        try {
+          this.onHardwareAction({
+            type: 'led',
+            pattern: 'off'
+          });
+        } catch (e) {}
         this.onLog('Luz de status desligada.');
         await this.sleep(60, token);
         break;
@@ -614,6 +707,13 @@ class EV3Runtime {
       case 'sound_play_until_done': {
         this.onLog(`Tocando som "${p.sound}" até concluir...`);
         this.playEV3Tone(64, 0.35);
+        try {
+          this.onHardwareAction({
+            type: 'sound_beep',
+            frequency: 330,
+            durationMs: 350
+          });
+        } catch (e) {}
         await this.sleep(380, token);
         break;
       }
@@ -621,6 +721,13 @@ class EV3Runtime {
       case 'sound_play_start': {
         this.onLog(`Som iniciado: "${p.sound}"`);
         this.playEV3Tone(67, 0.22);
+        try {
+          this.onHardwareAction({
+            type: 'sound_beep',
+            frequency: 392,
+            durationMs: 220
+          });
+        } catch (e) {}
         await this.sleep(60, token);
         break;
       }
@@ -630,6 +737,14 @@ class EV3Runtime {
         const secs = Math.max(0.05, Number(p.seconds) || 0.2);
         this.onLog(`Tocando bip (nota MIDI ${note}) por ${secs} s`);
         this.playEV3Tone(note, secs);
+        try {
+          const freq = Math.round(440 * Math.pow(2, (note - 69) / 12));
+          this.onHardwareAction({
+            type: 'sound_beep',
+            frequency: freq,
+            durationMs: Math.round(secs * 1000)
+          });
+        } catch (e) {}
         await this.sleep(secs * 1000, token);
         break;
       }
@@ -639,6 +754,14 @@ class EV3Runtime {
         const secs = Math.max(0.05, Number(p.seconds) || 0.2);
         this.onLog(`Tocando bip (nota MIDI ${note})`);
         this.playEV3Tone(note, secs);
+        try {
+          const freq = Math.round(440 * Math.pow(2, (note - 69) / 12));
+          this.onHardwareAction({
+            type: 'sound_beep',
+            frequency: freq,
+            durationMs: Math.round(secs * 1000)
+          });
+        } catch (e) {}
         await this.sleep(200, token);
         break;
       }
@@ -760,35 +883,62 @@ class EV3Runtime {
 
       // ==================== SENSORES ====================
       case 'sensor_wait_distance': {
-        const rawDist = Number(p.distance) || 15;
+        const rawDist = Number(p.distance) !== undefined && p.distance !== '' ? Number(p.distance) : 15;
         const unit = p.unit || 'cm';
         const thresholdCm = unit === 'inch' ? rawDist * 2.54 : rawDist;
         const comp = p.comparator || 'lt';
-        this.onLog(`Sensor Ultrassônico (Porta 4): aguardando distância ${comp === 'eq' ? '=' : '<'} ${rawDist} ${unit}...`);
-        await this.waitUntilCondition(() => {
-          const d = this.arena.robot.sensors.ultrasonicCm;
+        const compSym = comp === 'eq' ? '=' : (comp === 'gt' ? '>' : '<');
+        this.onLog(`Sensor Ultrassônico (Porta ${p.port || 4}): aguardando distância ${compSym} ${rawDist} ${unit}...`);
+        await this.waitUntilCondition(async () => {
+          let d = this.arena.robot.sensors.ultrasonicCm;
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            try {
+              const realD = await ev3Hardware.readUltrasonicDistance(p.port || 4);
+              if (realD !== null && !isNaN(realD) && realD >= 0 && realD <= 255) {
+                d = realD;
+                this.arena.robot.sensors.ultrasonicCm = realD;
+              }
+            } catch (e) {}
+          }
           if (comp === 'eq') return Math.abs(d - thresholdCm) <= 1.5;
           if (comp === 'gt') return d > thresholdCm;
           return d < thresholdCm;
         }, token);
-        this.onLog(`Sensor Ultrassônico detectou ${this.arena.robot.sensors.ultrasonicCm} cm!`);
+        this.onLog(`Sensor Ultrassônico detectou ${Math.round(this.arena.robot.sensors.ultrasonicCm)} cm!`);
         break;
       }
 
       case 'sensor_wait_color': {
         const targetColor = p.color || 'red';
-        this.onLog(`Sensor de Cor (Porta 3): aguardando cor "${targetColor}"...`);
-        await this.waitUntilCondition(() => {
-          return this.arena.robot.sensors.colorName === targetColor;
+        this.onLog(`Sensor de Cor (Porta ${p.port || 3}): aguardando cor "${targetColor}"...`);
+        await this.waitUntilCondition(async () => {
+          let c = this.arena.robot.sensors.colorName;
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            try {
+              const realC = await ev3Hardware.readColorSensor(p.port || 3);
+              if (realC && realC !== 'none') {
+                c = realC;
+                this.arena.robot.sensors.colorName = realC;
+              }
+            } catch (e) {}
+          }
+          return c === targetColor;
         }, token);
-        this.onLog(`Sensor de Cor detectou ${this.arena.robot.sensors.colorLabel}!`);
+        this.onLog(`Sensor de Cor detectou ${this.arena.robot.sensors.colorLabel || targetColor}!`);
         break;
       }
 
       case 'sensor_wait_touch': {
-        this.onLog(`Sensor de Toque (Porta ${p.port || 1}): aguardando ${p.state}...`);
-        await this.waitUntilCondition(() => {
-          return this.arena.robot.sensors.ultrasonicCm <= 10;
+        this.onLog(`Sensor de Toque (Porta ${p.port || 1}): aguardando ${p.state || 'pressionado'}...`);
+        await this.waitUntilCondition(async () => {
+          let touched = Boolean(this.arena.robot.sensors.touchPressed || this.arena.robot.sensors.ultrasonicCm <= 10);
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            try {
+              const realTouch = await ev3Hardware.readTouchSensor(p.port || 1);
+              if (realTouch) touched = true;
+            } catch (e) {}
+          }
+          return p.state === 'released' ? !touched : touched;
         }, token);
         break;
       }
@@ -796,8 +946,18 @@ class EV3Runtime {
       case 'sensor_wait_gyro': {
         const targetAngle = Number(p.angle) || 90;
         this.onLog(`Sensor Giroscópio (Porta ${p.port || 2}): aguardando ${targetAngle}°...`);
-        await this.waitUntilCondition(() => {
-          const deg = Math.round((this.arena.robot.angle * 180) / Math.PI);
+        await this.waitUntilCondition(async () => {
+          let deg = Math.round((this.arena.robot.angle * 180) / Math.PI);
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            try {
+              const realAngle = await ev3Hardware.readGyroAngle(p.port || 2);
+              if (realAngle !== null && !isNaN(realAngle)) {
+                deg = Math.round(realAngle);
+              }
+            } catch (e) {}
+          }
+          const comp = p.comparator || 'gt';
+          if (comp === 'lt') return deg < targetAngle;
           return Math.abs(deg) >= Math.abs(targetAngle);
         }, token);
         break;
@@ -816,8 +976,43 @@ class EV3Runtime {
       }
 
       case 'sensor_wait_brick_button': {
-        this.onLog(`Aguardando botão "${p.button}" ser ${p.action}...`);
-        await this.sleep(500, token);
+        const btn = p.button || 'centro';
+        const state = p.state || p.action || 'pressionado';
+        this.onLog(`Aguardando botão "${btn}" ser ${state}...`);
+
+        let matched = false;
+        while (!matched) {
+          this.checkAborted(token);
+
+          // 1. Robô EV3 físico
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            try {
+              const pressed = await ev3Hardware.readBrickButton(btn);
+              if (state === 'liberado') {
+                if (!pressed) { matched = true; break; }
+              } else {
+                if (pressed) { matched = true; break; }
+              }
+            } catch (e) {}
+          }
+
+          // 2. Botão virtual
+          if (this.virtualButtonPressed && (this.virtualButtonPressed === btn || this.virtualButtonPressed === 'qualquer')) {
+            this.virtualButtonPressed = null;
+            matched = true;
+            break;
+          }
+
+          await this.sleep(50, token);
+        }
+
+        this.onLog(`Botão "${btn}" atendido!`);
+        try {
+          if (typeof ev3Hardware !== 'undefined' && ev3Hardware && ev3Hardware.isConnected) {
+            await ev3Hardware.sendBeep(880, 80);
+          }
+        } catch (e) {}
+        await this.sleep(80, token);
         break;
       }
 
@@ -837,31 +1032,41 @@ class EV3Runtime {
   async runDriveFor(steering, speedPct, amount, unit, token) {
     if (amount <= 0 || Math.abs(speedPct) < 0.01) {
       this.arena.stopDriveMotors();
-      return;
-    }
-
-    const { leftPct, rightPct } = this.arena.computeDifferentialSpeeds(steering, speedPct);
-    await this.runTankDriveFor(leftPct, rightPct, amount, unit, token);
-  }
-
-  async runTankDriveFor(leftPct, rightPct, amount, unit, token) {
-    if (amount <= 0 || (Math.abs(leftPct) < 0.01 && Math.abs(rightPct) < 0.01)) {
-      this.arena.stopDriveMotors();
-      return;
-    }
-
-    if (unit === 'seconds') {
-      this.arena.setDriveSpeed(leftPct, rightPct);
-      await this.sleep(amount * 1000, token);
-      this.arena.stopDriveMotors();
+      try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
       return;
     }
 
     const targetDegrees = unit === 'rotations' ? amount * 360 : amount;
+
+    if (unit === 'seconds') {
+      const { leftPct, rightPct } = this.arena.computeDifferentialSpeeds(steering, speedPct);
+      this.arena.setDriveSpeed(leftPct, rightPct);
+      try {
+        this.onHardwareAction({
+          type: 'move_steer',
+          steering,
+          speed: speedPct
+        });
+      } catch (e) {}
+      await this.sleep(amount * 1000, token);
+      this.arena.stopDriveMotors();
+      try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
+      return;
+    }
+
+    const { leftPct, rightPct } = this.arena.computeDifferentialSpeeds(steering, speedPct);
     const startDegB = this.arena.robot.motors.B.degrees;
     const startDegC = this.arena.robot.motors.C.degrees;
 
     this.arena.setDriveSpeed(leftPct, rightPct);
+    try {
+      this.onHardwareAction({
+        type: 'move_steer_for',
+        steering,
+        speed: speedPct,
+        degrees: targetDegrees
+      });
+    } catch (e) {}
 
     await this.waitUntilCondition(() => {
       const movedB = Math.abs(this.arena.robot.motors.B.degrees - startDegB);
@@ -871,6 +1076,54 @@ class EV3Runtime {
     }, token);
 
     this.arena.stopDriveMotors();
+    try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
+  }
+
+  async runTankDriveFor(leftPct, rightPct, amount, unit, token) {
+    if (amount <= 0 || (Math.abs(leftPct) < 0.01 && Math.abs(rightPct) < 0.01)) {
+      this.arena.stopDriveMotors();
+      try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
+      return;
+    }
+
+    if (unit === 'seconds') {
+      this.arena.setDriveSpeed(leftPct, rightPct);
+      try {
+        this.onHardwareAction({
+          type: 'tank_drive_speed',
+          leftPct,
+          rightPct
+        });
+      } catch (e) {}
+      await this.sleep(amount * 1000, token);
+      this.arena.stopDriveMotors();
+      try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
+      return;
+    }
+
+    const targetDegrees = unit === 'rotations' ? amount * 360 : amount;
+    const startDegB = this.arena.robot.motors.B.degrees;
+    const startDegC = this.arena.robot.motors.C.degrees;
+
+    this.arena.setDriveSpeed(leftPct, rightPct);
+    try {
+      this.onHardwareAction({
+        type: 'tank_drive_for',
+        leftPct,
+        rightPct,
+        degrees: targetDegrees
+      });
+    } catch (e) {}
+
+    await this.waitUntilCondition(() => {
+      const movedB = Math.abs(this.arena.robot.motors.B.degrees - startDegB);
+      const movedC = Math.abs(this.arena.robot.motors.C.degrees - startDegC);
+      const dominantMoved = Math.max(movedB, movedC);
+      return dominantMoved >= targetDegrees;
+    }, token);
+
+    this.arena.stopDriveMotors();
+    try { this.onHardwareAction({ type: 'stop' }); } catch (e) {}
   }
 
   async runSingleMotorFor(port, speedPct, amount, unit, token) {
@@ -924,15 +1177,24 @@ class EV3Runtime {
 
   waitUntilCondition(predicate, token) {
     return new Promise((resolve, reject) => {
-      const check = () => {
+      const check = async () => {
         if (!this.isRunning || this.runToken !== token) {
           reject(new Error('EV3_ABORTED'));
           return;
         }
-        if (predicate()) {
-          resolve();
-        } else {
-          requestAnimationFrame(check);
+        try {
+          const res = await predicate();
+          if (res) {
+            resolve();
+          } else {
+            requestAnimationFrame(check);
+          }
+        } catch (e) {
+          if (e && e.message === 'EV3_ABORTED') {
+            reject(e);
+          } else {
+            requestAnimationFrame(check);
+          }
         }
       };
       requestAnimationFrame(check);
